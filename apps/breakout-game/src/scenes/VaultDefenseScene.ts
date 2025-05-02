@@ -23,6 +23,9 @@ class VaultDefenseScene extends Phaser.Scene {
     });
   }
 
+  /**
+   * Updates the vault health bar based on the current vault HP in the game state.
+   */
   updateVaultHealth() {
     this.vaultHealthBar = this.add.rectangle(
       400, 50,
@@ -31,6 +34,9 @@ class VaultDefenseScene extends Phaser.Scene {
     );
   }
 
+  /**
+   * Defends the vault by calling the defendVault method in the game context.
+   */
   defendVault() {
     this.gameContext.defendVault();
   }

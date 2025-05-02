@@ -1,13 +1,18 @@
 import { ethers } from 'ethers';
 
 export const connectWallet = async (type: WalletType) => {
-  if (type === 'eth') {
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-    this.gameContext.setWalletAddress(await signer.getAddress());
-  } else if (type === 'sol') {
-    const resp = await window.solana.connect();
-    this.gameContext.setWalletAddress(resp.publicKey.toString());
+  try {
+    if (type === 'eth') {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      this.gameContext.setWalletAddress(await signer.getAddress());
+    } else if (type === 'sol') {
+      const resp = await window.solana.connect();
+      this.gameContext.setWalletAddress(resp.publicKey.toString());
+    }
+  } catch (error) {
+    console.error('Failed to connect wallet:', error);
+    alert('Failed to connect wallet. Please check your wallet extension or internet connection.');
   }
 };
 

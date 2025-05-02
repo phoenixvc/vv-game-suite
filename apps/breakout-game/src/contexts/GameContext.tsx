@@ -64,6 +64,9 @@ interface GameContextType {
   makeStrategyDecision: (strategy: string) => void
   updateEducationalProgress: (topic: string) => void
   updatePerformanceMetrics: (metric: string, value: number) => void
+  initializeWallet: (provider: 'metamask'|'phantom') => void
+  updatePortfolio: (value: number) => void
+  defendVault: () => void
 }
 
 const defaultGameState: GameState = {
@@ -185,6 +188,21 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }))
   }
 
+  const initializeWallet = (provider: 'metamask'|'phantom') => {
+    // Wallet initialization logic
+  }
+
+  const updatePortfolio = (value: number) => {
+    setGameState((prev) => ({
+      ...prev,
+      portfolioBalance: prev.portfolioBalance + value,
+    }))
+  }
+
+  const defendVault = () => {
+    // Vault defense logic
+  }
+
   // TODO: Avoid Inline Functions in Context Value 
   // If you use useMemo, ensure all functions used in the context value are either stable (useCallback) or defined outside the render.
   const contextValue = useMemo(() => ({
@@ -216,6 +234,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
     makeStrategyDecision,
     updateEducationalProgress,
     updatePerformanceMetrics,
+    initializeWallet,
+    updatePortfolio,
+    defendVault,
   }), [
     gameState,
     walletConnected,

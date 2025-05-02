@@ -9,7 +9,7 @@ This is a template to create a game with [Phaser 3](https://phaser.io/phaser3) u
 **Installation**
 
 ```bash
-git clone git@github.com:Firnael/phaser-react-ts-vite-starter.git new-game
+git clone git@github.com:phoenixvc/vv-game-suite.git new-game
 cd new-game
 npm install
 ```
@@ -31,7 +31,7 @@ npm run build
 
 ## License
 
-Copyright © 2022 Audren Burlot  
+Copyright © 2022 Phoenix VC  
 This work is free. You can redistribute it and/or modify it under the
 terms of the [Do What The Fuck You Want To Public License](http://www.wtfpl.net/), Version 2,
 as published by Sam Hocevar. See the [LICENSE](LICENSE) file for more details.

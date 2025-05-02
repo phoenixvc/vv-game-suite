@@ -21,6 +21,7 @@ class BreakoutScene extends Phaser.Scene {
 	private marketSim!: MarketSim;
 	private scoreText!: Phaser.GameObjects.Text;
 	private livesText!: Phaser.GameObjects.Text;
+	private edge: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
   
 	constructor() {
 	  super({ key: 'Breakout', active: true });
@@ -30,6 +31,7 @@ class BreakoutScene extends Phaser.Scene {
 	  this.load.setBaseURL('/assets/games/breakout/');
 	  this.load.image('ball', 'ball.png');
 	  this.load.image('paddle', 'paddle.png');
+	  this.load.image('paddle-vertical', 'paddle-vertical.png');
 	  this.load.image('brick', 'brick.png');
 	}
   
@@ -46,8 +48,7 @@ class BreakoutScene extends Phaser.Scene {
 		.setCollideWorldBounds(true)
 		.setBounce(1);
 	  
-	  this.paddle = this.physics.add.sprite(400, 550, 'paddle')
-		.setImmovable(true);
+	  this.paddle = this.createPaddle(this.edge);
 	  
 	  // Collision setup
 	  this.physics.add.collider(this.ball, this.bricks, this.hitBrick, null, this);
@@ -78,13 +79,7 @@ class BreakoutScene extends Phaser.Scene {
   
 	update() {
 	  // Paddle movement
-	  if (this.input.keyboard?.addKey('LEFT').isDown) {
-		this.paddle.setVelocityX(-300);
-	  } else if (this.input.keyboard?.addKey('RIGHT').isDown) {
-		this.paddle.setVelocityX(300);
-	  } else {
-		this.paddle.setVelocityX(0);
-	  }
+	  this.controlPaddle(this.edge);
 	  
 	  // Ball reset logic
 	  if (this.ball.y > this.scale.height) {
@@ -101,18 +96,18 @@ class BreakoutScene extends Phaser.Scene {
 	
 	 ballLeaveScreen() {
 		this.lives--;
-		if (lives) {
-		  livesText.setText('Lives: ' + lives);
+		if (this.lives) {
+		  this.livesText.setText('Lives: ' + this.lives);
 		  lifeLostText.setVisible(true);
 	  
 		  // Reset ball and paddle position
-		  ball.setPosition(game.config.width / 2, game.config.height - 25);
-		  paddle.setPosition(game.config.width / 2, game.config.height - 5);
+		  this.ball.setPosition(game.config.width / 2, game.config.height - 25);
+		  this.paddle.setPosition(game.config.width / 2, game.config.height - 5);
 	  
 		  // Wait for player input to resume
 		  this.input.once('pointerdown', () => {
 			lifeLostText.setVisible(false);
-			ball.setVelocity(150, -150);
+			this.ball.setVelocity(150, -150);
 		  });
 		} else {
 		  alert("You lost, game over!");
@@ -169,13 +164,13 @@ class BreakoutScene extends Phaser.Scene {
 	}
 
 	private resetBallAndPaddles() {
-		ball.setVelocity(0, 0);
-		paddle.setPosition(game.config.width / 2, game.config.height - 50);
-		ball.setPosition(game.config.width / 2, game.config.height - 70);
+		this.ball.setVelocity(0, 0);
+		this.paddle.setPosition(game.config.width / 2, game.config.height - 50);
+		this.ball.setPosition(game.config.width / 2, game.config.height - 70);
 	  
 		// Wait for input to launch
 		this.input.once('pointerdown', () => {
-		  ball.setVelocity(150, -150);
+		  this.ball.setVelocity(150, -150);
 		});
 	  }
 	  
@@ -185,6 +180,59 @@ class BreakoutScene extends Phaser.Scene {
 		  fontSize: '48px',
 		  color: '#FF0000'
 		}).setOrigin(0.5);
+	  }
+
+	private createPaddle(edge: 'top' | 'bottom' | 'left' | 'right'): Phaser.Physics.Arcade.Sprite {
+		let paddle: Phaser.Physics.Arcade.Sprite;
+		switch (edge) {
+		  case 'top':
+			paddle = this.physics.add.sprite(400, 50, 'paddle')
+			  .setImmovable(true)
+			  .setCollideWorldBounds(true);
+			break;
+		  case 'bottom':
+			paddle = this.physics.add.sprite(400, 550, 'paddle')
+			  .setImmovable(true)
+			  .setCollideWorldBounds(true);
+			break;
+		  case 'left':
+			paddle = this.physics.add.sprite(50, 300, 'paddle-vertical')
+			  .setImmovable(true)
+			  .setCollideWorldBounds(true);
+			break;
+		  case 'right':
+			paddle = this.physics.add.sprite(750, 300, 'paddle-vertical')
+			  .setImmovable(true)
+			  .setCollideWorldBounds(true);
+			break;
+		}
+		return paddle;
+	  }
+	  
+	  private controlPaddle(edge: 'top' | 'bottom' | 'left' | 'right') {
+		const cursors = this.input.keyboard?.createCursorKeys();
+		switch (edge) {
+		  case 'top':
+		  case 'bottom':
+			if (cursors?.left.isDown) {
+			  this.paddle.setVelocityX(-300);
+			} else if (cursors?.right.isDown) {
+			  this.paddle.setVelocityX(300);
+			} else {
+			  this.paddle.setVelocityX(0);
+			}
+			break;
+		  case 'left':
+		  case 'right':
+			if (cursors?.up.isDown) {
+			  this.paddle.setVelocityY(-300);
+			} else if (cursors?.down.isDown) {
+			  this.paddle.setVelocityY(300);
+			} else {
+			  this.paddle.setVelocityY(0);
+			}
+			break;
+		}
 	  }
   }
   
@@ -200,3 +248,4 @@ class BreakoutScene extends Phaser.Scene {
 	}
   }
   
+export default BreakoutScene;

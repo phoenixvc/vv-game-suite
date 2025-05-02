@@ -1,0 +1,1 @@
+//User preferences, audio, controls, etc.	soundOn, setSoundOn

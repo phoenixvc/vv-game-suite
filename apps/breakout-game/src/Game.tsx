@@ -1,6 +1,6 @@
 import 'phaser'
 import { useState, useEffect } from 'react'
-import config from './Config/Config'
+import config from './config/Config'
 import './Assets/styles/style.css'
 
 export default function Game() {

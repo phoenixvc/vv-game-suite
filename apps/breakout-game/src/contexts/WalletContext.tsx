@@ -1,0 +1,1 @@
+// Wallet connection and balances	walletConnected, balance, type

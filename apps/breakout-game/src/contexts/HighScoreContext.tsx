@@ -1,0 +1,1 @@
+// Leaderboard and high scores	highScores, setHighScores

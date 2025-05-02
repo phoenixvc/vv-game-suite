@@ -1,5 +1,3 @@
-// Core game state and mechanics	score, lives, level, gameOver
-
 "use client"
 
 import { useEffect, useMemo } from "react"
@@ -62,7 +60,7 @@ interface GameContextType {
   getCurrentLevelTheme: () => string[]
   buyExtraLife: () => void
   captureSignal: () => void
-  defendVault: () => void
+  takeVaultDamage: (damage: number) => void
   makeStrategyDecision: (strategy: string) => void
   updateEducationalProgress: (topic: string) => void
   updatePerformanceMetrics: (metric: string, value: number) => void

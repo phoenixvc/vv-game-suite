@@ -15,6 +15,10 @@ class SignalHuntScene extends Phaser.Scene {
     this.createSignalBricks();
   }
 
+  /**
+   * Creates signal bricks based on the signals from the game context's market simulation.
+   * Each brick is placed at a random position and has an attractor based on the signal data.
+   */
   createSignalBricks() {
     const signals = this.gameContext.marketSim.getSignals();
 
@@ -37,6 +41,11 @@ class SignalHuntScene extends Phaser.Scene {
     });
   }
 
+  /**
+   * Creates an attractor function for a signal.
+   * @param signal - The signal data used to create the attractor.
+   * @returns A function that defines the attraction logic based on the signal data.
+   */
   createSignalAttractor(signal: any) {
     return (bodyA: any, bodyB: any) => {
       // Attraction logic based on signal data

@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "npx vite dev --open",
         "build": "tsc && vite build",
-        "test": "echo \"What test lol\" && exit 1"
+        "test": "jest"
     },
     "dependencies": {
         "matter-js": "^0.20.0",
@@ -22,7 +22,9 @@
         "nodemon": "^2.0.19",
         "ts-node": "^10.9.1",
         "typescript": "^4.6.4",
-        "vite": "^2.9.8"
+        "vite": "^2.9.8",
+        "jest": "^27.0.6",
+        "@types/jest": "^27.0.1"
     },
     "repository": {
         "type": "git",

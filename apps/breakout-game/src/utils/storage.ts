@@ -1,6 +1,9 @@
 import { EDUCATIONAL_ELEMENTS, PERFORMANCE_METRICS } from "@/utils/constants"
 
-// Function to get high score from localStorage
+/**
+ * Retrieves the high score from localStorage.
+ * @returns {number} The high score.
+ */
 export function getHighScore(): number {
   if (typeof window === "undefined") return 0
 
@@ -8,14 +11,20 @@ export function getHighScore(): number {
   return savedHighScore ? Number.parseInt(savedHighScore, 10) : 0
 }
 
-// Function to save high score to localStorage
+/**
+ * Saves the high score to localStorage.
+ * @param {number} score - The high score to save.
+ */
 export function saveHighScore(score: number): void {
   if (typeof window === "undefined") return
 
   localStorage.setItem("promptingGameHighScore", score.toString())
 }
 
-// Function to get daily games played
+/**
+ * Retrieves the number of daily games played and the last play date from localStorage.
+ * @returns {Object} An object containing the number of games played and the last play date.
+ */
 export function getDailyGamesPlayed(): { gamesPlayed: number; lastPlayDate: string } {
   if (typeof window === "undefined") return { gamesPlayed: 0, lastPlayDate: "" }
 
@@ -36,7 +45,10 @@ export function getDailyGamesPlayed(): { gamesPlayed: number; lastPlayDate: stri
   }
 }
 
-// Function to increment daily games played
+/**
+ * Increments the number of daily games played and saves it to localStorage.
+ * @returns {number} The updated number of daily games played.
+ */
 export function incrementDailyGamesPlayed(): number {
   if (typeof window === "undefined") return 0
 
@@ -46,7 +58,10 @@ export function incrementDailyGamesPlayed(): number {
   return newCount
 }
 
-// Function to get time until next day reset
+/**
+ * Retrieves the time until the next day reset.
+ * @returns {Object} An object containing the hours and minutes until the next day reset.
+ */
 export function getTimeUntilReset(): { hours: number; minutes: number } {
   const now = new Date()
   const tomorrow = new Date(now)
@@ -60,14 +75,20 @@ export function getTimeUntilReset(): { hours: number; minutes: number } {
   return { hours, minutes }
 }
 
-// Function to save educational progress to localStorage
+/**
+ * Saves the educational progress to localStorage.
+ * @param {Object} progress - The educational progress to save.
+ */
 export function saveEducationalProgress(progress: Record<string, boolean>): void {
   if (typeof window === "undefined") return
 
   localStorage.setItem("educationalProgress", JSON.stringify(progress))
 }
 
-// Function to load educational progress from localStorage
+/**
+ * Loads the educational progress from localStorage.
+ * @returns {Object} The loaded educational progress.
+ */
 export function loadEducationalProgress(): Record<string, boolean> {
   if (typeof window === "undefined") return {}
 
@@ -75,14 +96,20 @@ export function loadEducationalProgress(): Record<string, boolean> {
   return savedProgress ? JSON.parse(savedProgress) : {}
 }
 
-// Function to save performance metrics to localStorage
+/**
+ * Saves the performance metrics to localStorage.
+ * @param {Object} metrics - The performance metrics to save.
+ */
 export function savePerformanceMetrics(metrics: Record<string, number>): void {
   if (typeof window === "undefined") return
 
   localStorage.setItem("performanceMetrics", JSON.stringify(metrics))
 }
 
-// Function to load performance metrics from localStorage
+/**
+ * Loads the performance metrics from localStorage.
+ * @returns {Object} The loaded performance metrics.
+ */
 export function loadPerformanceMetrics(): Record<string, number> {
   if (typeof window === "undefined") return {}
 

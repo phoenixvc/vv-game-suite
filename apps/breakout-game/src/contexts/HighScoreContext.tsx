@@ -30,6 +30,12 @@ const HighScoreContext = createContext<HighScoreContextType | undefined>(undefin
 export function HighScoreProvider({ children }: { children: ReactNode }) {
   const [highScores, setHighScores] = useState<HighScore[]>(defaultHighScores)
 
+  /**
+   * Adds a new high score to the list and sorts it in descending order.
+   * Keeps only the top 10 scores.
+   * @param name - The name of the player.
+   * @param score - The score of the player.
+   */
   const addHighScore = (name: string, score: number) => {
     setHighScores((prevHighScores) => {
       const newHighScores = [...prevHighScores, { name, score }]

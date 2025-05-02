@@ -136,6 +136,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return LEVEL_THEMES[levelIndex]
   }
 
+  /**
+   * Buys an extra life for the player if they have enough wallet balance.
+   * Deducts 0.01 from the wallet balance and adds one life to the game state.
+   */
   const buyExtraLife = () => {
     if (walletBalance >= 0.01) {
       setWalletBalance((prev) => prev - 0.01)
@@ -147,6 +151,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  /**
+   * Captures a signal and increments the signalsCaptured count in the game state.
+   */
   const captureSignal = () => {
     setGameState((prev) => ({
       ...prev,
@@ -154,6 +161,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }))
   }
 
+  /**
+   * Takes damage to the vault and reduces the vaultHP in the game state.
+   * @param damage - The amount of damage to be taken.
+   */
   const takeVaultDamage  = (damage: number) => {
     setGameState((prev) => ({
       ...prev,
@@ -161,6 +172,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }))
   }
 
+  /**
+   * Makes a strategy decision and updates the strategy in the game state.
+   * @param strategy - The chosen strategy.
+   */
   const makeStrategyDecision = (strategy: string) => {
     setGameState((prev) => ({
       ...prev,

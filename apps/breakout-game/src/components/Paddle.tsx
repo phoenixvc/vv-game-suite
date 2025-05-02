@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Phaser from 'phaser';
 
 interface PaddleProps {
   edge: 'top' | 'bottom' | 'left' | 'right';
@@ -8,13 +9,14 @@ interface PaddleProps {
   speed: number;
   gameWidth: number;
   gameHeight: number;
+  paddleEdge: 'top' | 'bottom' | 'left' | 'right';
 }
 
-const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, gameWidth, gameHeight }) => {
+const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, gameWidth, gameHeight, paddleEdge }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    switch (edge) {
+    switch (paddleEdge) {
       case 'top':
         setPosition({ x: gameWidth / 2 - width / 2, y: height / 2 });
         break;
@@ -28,11 +30,11 @@ const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, game
         setPosition({ x: gameWidth - width / 2, y: gameHeight / 2 - height / 2 });
         break;
     }
-  }, [edge, width, height, gameWidth, gameHeight]);
+  }, [paddleEdge, width, height, gameWidth, gameHeight]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      switch (edge) {
+      switch (paddleEdge) {
         case 'top':
         case 'bottom':
           if (event.key === 'ArrowLeft') {
@@ -56,7 +58,40 @@ const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, game
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [edge, speed, gameWidth, gameHeight, width, height]);
+  }, [paddleEdge, speed, gameWidth, gameHeight, width, height]);
+
+  useEffect(() => {
+    const game = new Phaser.Game({
+      type: Phaser.AUTO,
+      width: gameWidth,
+      height: gameHeight,
+      physics: {
+        default: 'arcade',
+        arcade: {
+          gravity: { y: 0 },
+          debug: false
+        }
+      },
+      scene: {
+        preload: function () {
+          this.load.image('ball', 'path/to/ball.png');
+        },
+        create: function () {
+          const ball = this.physics.add.image(position.x, position.y, 'ball');
+          ball.setCollideWorldBounds(true);
+          ball.setBounce(1, 1);
+          this.physics.add.collider(ball, this.paddle, (ball: any, paddle: any) => {
+            const impactPoint = ball.x - paddle.x;
+            ball.setVelocityX(impactPoint * 10);
+          });
+        }
+      }
+    });
+
+    return () => {
+      game.destroy(true);
+    };
+  }, [position, gameWidth, gameHeight]);
 
   return (
     <div

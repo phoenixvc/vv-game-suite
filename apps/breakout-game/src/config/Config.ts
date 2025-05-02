@@ -1,5 +1,8 @@
 import 'phaser';
 import { GameScene } from '../scenes/BreakoutScene';
+import SignalHuntScene from '../scenes/SignalHuntScene';
+import VaultDefenseScene from '../scenes/VaultDefenseScene';
+import StrategyScene from '../scenes/StrategyScene';
 
 const config: Phaser.Types.Core.GameConfig = {
     title: "New Game",
@@ -9,7 +12,10 @@ const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     parent: 'game', // needs a div as id="game"
     scene: [
-      GameScene
+      GameScene,
+      SignalHuntScene,
+      VaultDefenseScene,
+      StrategyScene
     ],
     input: {
       keyboard: true

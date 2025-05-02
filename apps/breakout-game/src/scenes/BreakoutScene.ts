@@ -1,20 +1,8 @@
-/**
- * @instruction Implement a Phaser 3 Breakout scene with Arcade physics and simulated market data integration
- * @requirements
- * - Create `BreakoutScene.ts` in src/scenes/
- * - Use Arcade physics for initial implementation
- * - Include paddle, ball, and brick setup from Phaser examples
- * - Add simulated market data integration
- * - Implement basic score/lives system
- * - Add performance monitoring
- * 
- * @references 
- * Phaser Breakout Example[2], Matter.js Starter[3], Game Design Doc[9]
- */
+import { Ball } from '../objects/Ball';
 
 class BreakoutScene extends Phaser.Scene {
 	private paddle!: Phaser.Physics.Arcade.Sprite;
-	private ball!: Phaser.Physics.Arcade.Sprite;
+	private ball!: Ball;
 	private bricks!: Phaser.Physics.Arcade.StaticGroup;
 	private score: number = 0;
 	private lives: number = 3;
@@ -44,9 +32,7 @@ class BreakoutScene extends Phaser.Scene {
 	  this.createBricks(this.marketSim.getInitialSignals());
 	  
 	  // Set up game objects
-	  this.ball = this.physics.add.sprite(400, 500, 'ball')
-		.setCollideWorldBounds(true)
-		.setBounce(1);
+	  this.ball = new Ball(this, 400, 500, 'ball');
 	  
 	  this.paddle = this.createPaddle(this.edge);
 	  
@@ -154,13 +140,22 @@ class BreakoutScene extends Phaser.Scene {
 	  }
 	  
   
-	private hitPaddle() {
-	  // Add paddle hit physics logic[2][7]
+	private hitPaddle(ball: Phaser.GameObjects.GameObject, paddle: Phaser.GameObjects.GameObject) {
+		if (this.edge === 'bottom' || this.edge === 'top') {
+			const diff = ball.x - paddle.x;
+			ball.body.velocity.x = 10 * diff;
+			if (this.edge === 'top') ball.body.velocity.y = Math.abs(ball.body.velocity.y);
+			else ball.body.velocity.y = -Math.abs(ball.body.velocity.y);
+		  } else {
+			const diff = ball.y - paddle.y;
+			ball.body.velocity.y = 10 * diff;
+			if (this.edge === 'left') ball.body.velocity.x = Math.abs(ball.body.velocity.x);
+			else ball.body.velocity.x = -Math.abs(ball.body.velocity.x);
+		  }
 	}
   
 	private resetBall() {
-	  this.ball.setPosition(400, 500);
-	  this.ball.setVelocity(0);
+	  this.ball.resetToPaddle(this.paddle);
 	}
 
 	private resetBallAndPaddles() {
@@ -221,6 +216,7 @@ class BreakoutScene extends Phaser.Scene {
 			} else {
 			  this.paddle.setVelocityX(0);
 			}
+			this.paddle.y = (edge === 'bottom') ? this.scale.height - this.paddle.height / 2 : this.paddle.height / 2;
 			break;
 		  case 'left':
 		  case 'right':
@@ -231,6 +227,7 @@ class BreakoutScene extends Phaser.Scene {
 			} else {
 			  this.paddle.setVelocityY(0);
 			}
+			this.paddle.x = (edge === 'left') ? this.paddle.width / 2 : this.scale.width - this.paddle.width / 2;
 			break;
 		}
 	  }

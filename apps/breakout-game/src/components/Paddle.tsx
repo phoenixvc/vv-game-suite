@@ -11,9 +11,10 @@ interface PaddleProps {
   gameHeight: number;
   paddleEdge: 'top' | 'bottom' | 'left' | 'right';
   angleFactor: number; // Added angleFactor prop
+  player: number; // Added player prop for multiplayer
 }
 
-const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, gameWidth, gameHeight, paddleEdge, angleFactor }) => {
+const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, gameWidth, gameHeight, paddleEdge, angleFactor, player }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -38,18 +39,34 @@ const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, game
       switch (paddleEdge) {
         case 'top':
         case 'bottom':
-          if (event.key === 'ArrowLeft') {
-            setPosition(prev => ({ ...prev, x: Math.max(0, prev.x - speed) }));
-          } else if (event.key === 'ArrowRight') {
-            setPosition(prev => ({ ...prev, x: Math.min(gameWidth - width, prev.x + speed) }));
+          if (player === 1) {
+            if (event.key === 'ArrowLeft') {
+              setPosition(prev => ({ ...prev, x: Math.max(0, prev.x - speed) }));
+            } else if (event.key === 'ArrowRight') {
+              setPosition(prev => ({ ...prev, x: Math.min(gameWidth - width, prev.x + speed) }));
+            }
+          } else if (player === 2) {
+            if (event.key === 'a') {
+              setPosition(prev => ({ ...prev, x: Math.max(0, prev.x - speed) }));
+            } else if (event.key === 'd') {
+              setPosition(prev => ({ ...prev, x: Math.min(gameWidth - width, prev.x + speed) }));
+            }
           }
           break;
         case 'left':
         case 'right':
-          if (event.key === 'ArrowUp') {
-            setPosition(prev => ({ ...prev, y: Math.max(0, prev.y - speed) }));
-          } else if (event.key === 'ArrowDown') {
-            setPosition(prev => ({ ...prev, y: Math.min(gameHeight - height, prev.y + speed) }));
+          if (player === 1) {
+            if (event.key === 'ArrowUp') {
+              setPosition(prev => ({ ...prev, y: Math.max(0, prev.y - speed) }));
+            } else if (event.key === 'ArrowDown') {
+              setPosition(prev => ({ ...prev, y: Math.min(gameHeight - height, prev.y + speed) }));
+            }
+          } else if (player === 2) {
+            if (event.key === 'w') {
+              setPosition(prev => ({ ...prev, y: Math.max(0, prev.y - speed) }));
+            } else if (event.key === 's') {
+              setPosition(prev => ({ ...prev, y: Math.min(gameHeight - height, prev.y + speed) }));
+            }
           }
           break;
       }
@@ -59,7 +76,7 @@ const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, game
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [paddleEdge, speed, gameWidth, gameHeight, width, height]);
+  }, [paddleEdge, speed, gameWidth, gameHeight, width, height, player]);
 
   useEffect(() => {
     const game = new Phaser.Game({

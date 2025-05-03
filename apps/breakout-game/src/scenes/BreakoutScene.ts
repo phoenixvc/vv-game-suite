@@ -6,13 +6,21 @@ import { BrickManager, MarketSignal } from '../managers/BrickManager';
 import { UIManager } from '../managers/UIManager';
 
 class BreakoutScene extends Phaser.Scene {
-  private ball!: Ball;
-  private score: number = 0;
-  private lives: number = 3;
-  private marketSim!: MarketSim;
-  private marketData: any;
-  private edge: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
-  private angleFactor: number = 5;
+	private paddle!: Phaser.Physics.Arcade.Sprite;
+	private ball!: Ball;
+	private bricks!: Phaser.Physics.Arcade.StaticGroup;
+	private score: number = 0;
+	private lives: number = 3;
+	private marketSim!: MarketSim;
+	private scoreText!: Phaser.GameObjects.Text;
+	private livesText!: Phaser.GameObjects.Text;
+	private edge: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
+	private angleFactor: number = 5; // Default value, will be updated from context
+	private powerUps!: Phaser.Physics.Arcade.Group; // Group to hold power-ups
+	private marketData: any; // Placeholder for market data
+	private marketOverlayText!: Phaser.GameObjects.Text; // Placeholder for market overlay text
+	private levelThemeText!: Phaser.GameObjects.Text; // Placeholder for level theme text
+	private paddle2!: Phaser.Physics.Arcade.Sprite; // Second paddle for multiplayer mode
   
   // Managers
   private powerUpManager!: PowerUpManager;
@@ -52,148 +60,294 @@ class BreakoutScene extends Phaser.Scene {
     // Set up game objects
     this.ball = new Ball(this, 400, 500, 'ball');
 	  
-    // Collision setup
-    this.physics.add.collider(
-      this.ball, 
-      bricks, 
-      this.brickManager.hitBrick.bind(this.brickManager), 
-      null, 
-      this
-    );
+	  this.paddle = this.createPaddle(this.edge);
+	  this.paddle2 = this.createPaddle('top'); // Create second paddle for multiplayer mode
+	  
+	  // Collision setup
+	  this.physics.add.collider(this.ball, this.bricks, this.hitBrick, null, this);
+	  this.physics.add.collider(this.ball, this.paddle, this.hitPaddle, null, this);
+	  this.physics.add.collider(this.ball, this.paddle2, this.hitPaddle, null, this); // Add collision for second paddle
+	  
+	  // Input handling
+	  this.input.keyboard?.createCursorKeys();
+	  
+	  // Performance monitoring
+	  this.game.events.on('poststep', () => {
+		PerformanceMonitor.trackFPS(this.game.loop.actualFps);
+	  });
+	  // Score display
+	this.scoreText = this.add.text(20, 20, 'Score: 0', { 
+		fontSize: '24px',
+		color: '#FFFFFF',
+		fontFamily: 'Arial'
+	}).setScrollFactor(0);
+	
+	// Lives display
+	this.livesText = this.add.text(this.scale.width - 160, 20, 'Lives: 3', {
+		fontSize: '24px',
+		color: '#FFFFFF',
+		fontFamily: 'Arial' 
+	}).setScrollFactor(0);
+
+	// Create power-ups group
+	this.powerUps = this.physics.add.group({
+		classType: Phaser.Physics.Arcade.Image,
+		runChildUpdate: true
+	  });
+
+	// Fetch market data from registry
+	this.marketData = this.registry.get('marketData');
+
+	// Create market overlay text
+	this.marketOverlayText = this.add.text(20, 60, '', {
+		fontSize: '18px',
+		color: '#FFFFFF',
+		fontFamily: 'Arial'
+	  }).setScrollFactor(0);
+
+	// Create level theme text
+	this.levelThemeText = this.add.text(this.scale.width / 2, 20, '', {
+		fontSize: '24px',
+		color: '#FFFFFF',
+		fontFamily: 'Arial'
+	  }).setOrigin(0.5).setScrollFactor(0);
+  
+	}
+  
+	update() {
+	  // Paddle movement
+	  this.controlPaddle(this.edge);
+	  this.controlPaddle('top'); // Control second paddle
+	  
+	  // Ball reset logic
+	  if (this.ball.y > this.scale.height) {
+		this.lives--;
+		this.livesText.setText(`Lives: ${this.lives}`);
 		
-    this.physics.add.collider(
-      this.ball, 
-      this.paddleController.getPaddle(), 
-      this.hitPaddle, 
-      null, 
-      this
-    );
-    
-    // Input handling
-    this.input.keyboard?.createCursorKeys();
-    
-    // Performance monitoring
-    this.game.events.on('poststep', () => {
-      PerformanceMonitor.trackFPS(this.game.loop.actualFps);
-    });
-    // Fetch market data from registry
-    this.marketData = this.registry.get('marketData');
-  }
-  
-  update() {
-    // Paddle movement
-    this.paddleController.controlPaddle();
-    
-    // Ball reset logic
-    if (this.ball.y > this.scale.height) {
-      if (this.powerUpManager.isShieldActive()) {
-        // Shield is active, bounce the ball back up instead of losing a life
-        this.ball.setVelocityY(-this.ball.body.velocity.y);
-        // Position the ball just above the bottom edge to prevent multiple triggers
-        this.ball.y = this.scale.height - 5;
-      } else {
-        // No shield, lose a life
-        this.lives--;
-        this.uiManager.updateLivesText(this.lives);
-        
-        if(this.lives <= 0) {
-          this.gameOver();
-        } else {
-          this.resetBall();
-        }
-      }
-    }
-    
-    // Check for power-up collection
-    this.physics.overlap(
-      this.paddleController.getPaddle(), 
-      this.powerUpManager.getPowerUps(), 
-      this.powerUpManager.collectPowerUp.bind(this.powerUpManager), 
-      null, 
-      this
-    );
-    
-    // Display market data overlay
-    this.uiManager.displayMarketDataOverlay(this.marketData);
-  }
+		if(this.lives <= 0) {
+		  this.gameOver();
+		} else {
+		  this.resetBall();
+		}
+	  }
 
-  private hitPaddle(
-    object1: Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile,
-    object2: Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile
-  ): void {
-    // Extract the game objects
-    const ball = object1 as unknown as Phaser.GameObjects.GameObject;
-    const paddle = object2 as unknown as Phaser.Physics.Arcade.Sprite;
-    
-    if (this.edge === 'bottom' || this.edge === 'top') {
-      const diff = ball.x - paddle.x;
-      ball.body.velocity.x = diff * this.angleFactor;
-      ball.body.velocity.y *= -1;
-      if (this.edge === 'top') ball.body.velocity.y = Math.abs(ball.body.velocity.y);
-      else ball.body.velocity.y = -Math.abs(ball.body.velocity.y);
-    } else {
-      const diff = ball.y - paddle.y;
-      ball.body.velocity.y = diff * this.angleFactor;
-      ball.body.velocity.x *= -1;
-      if (this.edge === 'left') ball.body.velocity.x = Math.abs(ball.body.velocity.x);
-      else ball.body.velocity.x = -Math.abs(ball.body.velocity.x);
-    }
-  }
-  
-  private resetBall() {
-    this.ball.resetToPaddle(this.paddleController.getPaddle());
-  }
-  
-  private gameOver() {
-    this.scene.pause();
-    this.uiManager.showGameOver();
-  }
-  
-  // Public methods for managers to use
-  public getBall(): Ball {
-    return this.ball;
-  }
-  
-  public getPaddle(): Phaser.Physics.Arcade.Sprite {
-    return this.paddleController.getPaddle();
-  }
-  
-  public increaseScore(points: number): void {
-    this.score += points;
-    this.uiManager.updateScoreText(this.score);
-  }
-  
-  public addLife(): void {
-    this.lives++;
-    this.uiManager.updateLivesText(this.lives);
-  }
-  
-  public createPowerUp(x: number, y: number): void {
-    this.powerUpManager.createPowerUp(x, y);
-  }
-  
-  public addShield(): void {
-    this.powerUpManager.addShield();
-  }
-  
-  shutdown() {
-    // Clean up all managers
-    this.powerUpManager.cleanup();
-    
-    // Call parent shutdown
-    super.shutdown();
-  }
-}
-// Simulated market data class
-class MarketSim {
-  getInitialSignals(): MarketSignal[] {
-    // Stub for real data integration
-    return Array(60).fill(null).map((_,i) => ({
-      position: i,
-      value: Phaser.Math.Between(50, 200),
-      type: ['liquidity', 'price', 'volume'][i%3]
-    }));
-  }
-}
+	  // Check for power-up collection
+	  this.physics.overlap(this.paddle, this.powerUps, this.collectPowerUp, null, this);
+	  this.physics.overlap(this.paddle2, this.powerUps, this.collectPowerUp, null, this); // Check for power-up collection for second paddle
 
+	  // Display market data overlay
+	  this.displayMarketDataOverlay();
+
+	  // Display level theme
+	  this.displayLevelTheme();
+	}
+	
+	 ballLeaveScreen() {
+		this.lives--;
+		if (this.lives) {
+		  this.livesText.setText('Lives: ' + this.lives);
+		  lifeLostText.setVisible(true);
+	  
+		  // Reset ball and paddle position
+		  this.ball.setPosition(game.config.width / 2, game.config.height - 25);
+		  this.paddle.setPosition(game.config.width / 2, game.config.height - 5);
+	  
+		  // Wait for player input to resume
+		  this.input.once('pointerdown', () => {
+			lifeLostText.setVisible(false);
+			this.ball.setVelocity(150, -150);
+		  });
+		} else {
+		  alert("You lost, game over!");
+		  location.reload();
+		}
+	  }
+	  
+	private createBricks(signals: MarketSignal[]) {
+	  this.bricks = this.physics.add.staticGroup({
+		key: 'brick',
+		frameQuantity: 10,
+		gridAlign: {
+		  width: 10,
+		  height: 6,
+		  cellWidth: 64,
+		  cellHeight: 32,
+		  x: 112,
+		  y: 100
+		}
+	  });
+	  
+	  signals.forEach(signal => {
+		this.bricks.children.entries[signal.position].setData('signal', signal);
+	  });
+	}
+  
+	private hitBrick(ball: Phaser.GameObjects.GameObject, brick: Phaser.GameObjects.GameObject) {
+		this.score += 100; // Base points per brick
+		this.scoreText.setText(`Score: ${this.score}`);
+		
+		this.add.particles(brick.body?.position.x, brick.body?.position.y, 'star', {
+			speed: 100,
+			scale: { start: 1, end: 0 },
+			lifespan: 500
+		  });
+		  
+		  this.cameras.main.shake(50, 0.01);
+
+		// Optional: Different points per brick type
+		const brickType = brick.getData('type');
+		if(brickType === 'special') this.score += 200;
+		
+		brick.destroy();
+
+		// Randomly spawn power-ups
+		if (Phaser.Math.Between(0, 100) < 20) { // 20% chance
+			this.createPowerUp(brick.x, brick.y);
+		  }
+	  }
+	  
+  
+	private hitPaddle(ball: Phaser.GameObjects.GameObject, paddle: Phaser.GameObjects.GameObject) {
+		if (this.edge === 'bottom' || this.edge === 'top') {
+			const diff = ball.x - paddle.x;
+			ball.body.velocity.x = diff * this.angleFactor;
+			ball.body.velocity.y *= -1;
+			if (this.edge === 'top') ball.body.velocity.y = Math.abs(ball.body.velocity.y);
+			else ball.body.velocity.y = -Math.abs(ball.body.velocity.y);
+		  } else {
+			const diff = ball.y - paddle.y;
+			ball.body.velocity.y = diff * this.angleFactor;
+			ball.body.velocity.x *= -1;
+			if (this.edge === 'left') ball.body.velocity.x = Math.abs(ball.body.velocity.x);
+			else ball.body.velocity.x = -Math.abs(ball.body.velocity.x);
+		  }
+	}
+  
+	private resetBall() {
+	  this.ball.resetToPaddle(this.paddle);
+	}
+
+	private resetBallAndPaddles() {
+		this.ball.setVelocity(0, 0);
+		this.paddle.setPosition(game.config.width / 2, game.config.height - 50);
+		this.ball.setPosition(game.config.width / 2, game.config.height - 70);
+	  
+		// Wait for input to launch
+		this.input.once('pointerdown', () => {
+		  this.ball.setVelocity(150, -150);
+		});
+	  }
+	  
+	private gameOver() {
+		this.scene.pause();
+		this.add.text(this.scale.width/2, this.scale.height/2, 'GAME OVER', {
+		  fontSize: '48px',
+		  color: '#FF0000'
+		}).setOrigin(0.5);
+	  }
+
+	private createPaddle(edge: 'top' | 'bottom' | 'left' | 'right'): Phaser.Physics.Arcade.Sprite {
+		let paddle: Phaser.Physics.Arcade.Sprite;
+		switch (edge) {
+		  case 'top':
+			paddle = this.physics.add.sprite(400, 50, 'paddle')
+			  .setImmovable(true)
+			  .setCollideWorldBounds(true);
+			break;
+		  case 'bottom':
+			paddle = this.physics.add.sprite(400, 550, 'paddle')
+			  .setImmovable(true)
+			  .setCollideWorldBounds(true);
+			break;
+		  case 'left':
+			paddle = this.physics.add.sprite(50, 300, 'paddle-vertical')
+			  .setImmovable(true)
+			  .setCollideWorldBounds(true);
+			break;
+		  case 'right':
+			paddle = this.physics.add.sprite(750, 300, 'paddle-vertical')
+			  .setImmovable(true)
+			  .setCollideWorldBounds(true);
+			break;
+		}
+		return paddle;
+	  }
+	  
+	  private controlPaddle(edge: 'top' | 'bottom' | 'left' | 'right') {
+		const cursors = this.input.keyboard?.createCursorKeys();
+		const wasdKeys = this.input.keyboard?.addKeys('W,A,S,D'); // Add WASD keys for second paddle
+		switch (edge) {
+		  case 'top':
+			if (wasdKeys?.A.isDown) {
+			  this.paddle2.setVelocityX(-300);
+			} else if (wasdKeys?.D.isDown) {
+			  this.paddle2.setVelocityX(300);
+			} else {
+			  this.paddle2.setVelocityX(0);
+			}
+			this.paddle2.y = this.paddle2.height / 2;
+			break;
+		  case 'bottom':
+			if (cursors?.left.isDown) {
+			  this.paddle.setVelocityX(-300);
+			} else if (cursors?.right.isDown) {
+			  this.paddle.setVelocityX(300);
+			} else {
+			  this.paddle.setVelocityX(0);
+			}
+			this.paddle.y = this.scale.height - this.paddle.height / 2;
+			break;
+		  case 'left':
+		  case 'right':
+			if (cursors?.up.isDown) {
+			  this.paddle.setVelocityY(-300);
+			} else if (cursors?.down.isDown) {
+			  this.paddle.setVelocityY(300);
+			} else {
+			  this.paddle.setVelocityY(0);
+			}
+			this.paddle.x = (edge === 'left') ? this.paddle.width / 2 : this.scale.width - this.paddle.width / 2;
+			break;
+		}
+	  }
+
+	private createPowerUp(x: number, y: number) {
+		const powerUpTypes = [PowerUpType.EXTRA_LIFE, PowerUpType.PADDLE_GROW]; // Add other power-up types here
+		const type = powerUpTypes[Phaser.Math.Between(0, powerUpTypes.length - 1)];
+		const powerUp = this.physics.add.image(x, y, `powerup_${type}`);
+		powerUp.setVelocityY(150);
+		this.powerUps.add(powerUp);
+	  }
+	  
+	  private collectPowerUp(paddle: Phaser.Physics.Arcade.Sprite, powerUp: Phaser.Physics.Arcade.Image) {
+		const type = powerUp.texture.key.replace('powerup_', '') as PowerUpType;
+		this.events.emit('collectPowerUp', { type, duration: 10000 }); // Example duration
+		powerUp.destroy();
+	  }
+
+	  private displayMarketDataOverlay() {
+		if (this.marketData) {
+		  const overlayText = `Price: ${this.marketData.price}, Volume: ${this.marketData.volume}, Trend: ${this.marketData.trend}`;
+		  this.marketOverlayText.setText(overlayText);
+		}
+	  }
+
+	  private displayLevelTheme() {
+		const levelTheme = this.registry.get('levelTheme');
+		this.levelThemeText.setText(`Level Theme: ${levelTheme}`);
+	  }
+  }
+  
+  // Simulated market data class
+  class MarketSim {
+	getInitialSignals(): MarketSignal[] {
+	  // Stub for real data integration
+	  return Array(60).fill(null).map((_,i) => ({
+		position: i,
+		value: Phaser.Math.Between(50, 200),
+		type: ['liquidity', 'price', 'volume'][i%3]
+	  }));
+	}
+  }
+  
 export default BreakoutScene;

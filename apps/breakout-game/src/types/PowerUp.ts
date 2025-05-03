@@ -34,9 +34,11 @@ export class PowerUp extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  removeEffect(game: GameScene) {
+  removeEffect(game: Phaser.Scene) {
     if (this.type === PowerUpType.PADDLE_GROW) {
-      game.paddle.setScale(1, 1);
+      if ('paddle' in game && game.paddle instanceof Phaser.GameObjects.Sprite) {
+        game.paddle.setScale(1, 1);
+      }
     }
     // ...other cases
   }

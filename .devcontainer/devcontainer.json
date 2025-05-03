@@ -1,8 +1,6 @@
 {
-  "name": "VV Chain Services",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "app",
-  "workspaceFolder": "/workspace",
+  "name": "VV Game Suite",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "forwardPorts": [8000, 7071],
   
   "customizations": {
@@ -39,7 +37,7 @@
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   
-  // Setup authentication during container creation - using the comprehensive script
+  // Setup authentication during container creation
   "postCreateCommand": "./.devcontainer/scripts/setup-monica-auth.sh",
   
   // Forward GitHub credentials from host to container

@@ -2,8 +2,8 @@ import 'phaser'
 import { useState, useEffect } from 'react'
 import config from './config/Config'
 import './Assets/styles/style.css'
-import { GameProvider } from './contexts/GameContext';
 import { MarketDataProvider } from './context/MarketDataContext';
+import { GameProvider, useGameContext } from './contexts/GameContext';
 
 export default function Game() {
   const { getAngleFactor } = useGameContext();

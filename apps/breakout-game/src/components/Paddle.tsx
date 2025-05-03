@@ -10,9 +10,10 @@ interface PaddleProps {
   gameWidth: number;
   gameHeight: number;
   paddleEdge: 'top' | 'bottom' | 'left' | 'right';
+  angleFactor: number; // Added angleFactor prop
 }
 
-const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, gameWidth, gameHeight, paddleEdge }) => {
+const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, gameWidth, gameHeight, paddleEdge, angleFactor }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -84,6 +85,7 @@ const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, game
             const impactPoint = ball.x - paddle.x;
             ball.setVelocityX(impactPoint * 10);
           });
+          this.registry.set('angleFactor', angleFactor); // Pass angleFactor to the scene
         }
       }
     });
@@ -91,7 +93,7 @@ const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, game
     return () => {
       game.destroy(true);
     };
-  }, [position, gameWidth, gameHeight]);
+  }, [position, gameWidth, gameHeight, angleFactor]);
 
   return (
     <div

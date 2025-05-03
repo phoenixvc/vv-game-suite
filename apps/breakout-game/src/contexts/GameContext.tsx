@@ -34,6 +34,7 @@ interface GameState {
   educationalProgress: Record<string, boolean>
   performanceMetrics: Record<string, number>
   angleFactor: number // Added angleFactor property
+  collectedPowerUps: PowerUp[] // Added collectedPowerUps property
 }
 
 interface GameContextType {
@@ -101,6 +102,7 @@ const defaultGameState: GameState = {
   educationalProgress: {},
   performanceMetrics: {},
   angleFactor: 5, // Initialized angleFactor
+  collectedPowerUps: [] // Initialized collectedPowerUps
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined)
@@ -232,10 +234,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   };
 
   const collectPowerUp = (powerUp: PowerUp) => {
-    applyPowerUpEffect(powerUp);
-    setTimeout(() => {
-      removePowerUpEffect(powerUp);
-    }, powerUp.duration);
+    setGameState((prev) => ({
+      ...prev,
+      collectedPowerUps: [...prev.collectedPowerUps, powerUp],
+    }));
   };
 
   const applyPowerUpEffect = (powerUp: PowerUp) => {
@@ -270,6 +272,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return gameState.angleFactor;
   }
 
+  useEffect(() => {
+    const handleCollectPowerUp = (event: CustomEvent) => {
+      const { type, duration } = event.detail;
+      const powerUp: PowerUp = { x: 0, y: 0, type, duration }; // Example power-up object
+      collectPowerUp(powerUp);
+    };
+
+    window.addEventListener('collectPowerUp', handleCollectPowerUp as EventListener);
+
+    return () => {
+      window.removeEventListener('collectPowerUp', handleCollectPowerUp as EventListener);
+    };
+  }, []);
 
   // TODO: Avoid Inline Functions in Context Value 
   // If you use useMemo, ensure all functions used in the context value are either stable (useCallback) or defined outside the render.

@@ -16,12 +16,33 @@
         "github.copilot",
         "github.copilot-chat",
         "github.monica"
-      ]
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "python.formatting.provider": "black",
+        "github.monica.enabled": true,
+        "github.monica.features.codeEditing": true,
+        "github.monica.features.pullRequests": true,
+        "github.monica.authentication.method": "github",
+        "github.monica.authentication.tokenStorage": "secureStorage"
+      }
     }
   },
   
   "remoteUser": "vscode",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  
+  "postCreateCommand": "mkdir -p .devcontainer/scripts && echo '#!/bin/bash\necho \"Setting up Monica authentication...\"\nif [ -n \"$GITHUB_TOKEN\" ]; then\n  echo \"GitHub token found, configuring...\"\n  gh auth setup-git\nelse\n  echo \"No GitHub token found. Please authenticate manually.\"\nfi' > .devcontainer/scripts/setup-monica-auth.sh && chmod +x .devcontainer/scripts/setup-monica-auth.sh && .devcontainer/scripts/setup-monica-auth.sh",
+  
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.config/gh,target=/home/vscode/.config/gh,type=bind,consistency=cached"
+  ],
+  
+  "remoteEnv": {
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
   }
 }

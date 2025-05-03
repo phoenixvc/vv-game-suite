@@ -1,4 +1,5 @@
 import { Ball } from '../objects/Ball';
+import { useGameContext } from '../contexts/GameContext';
 
 class BreakoutScene extends Phaser.Scene {
 	private paddle!: Phaser.Physics.Arcade.Sprite;

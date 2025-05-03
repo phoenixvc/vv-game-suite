@@ -21,6 +21,14 @@ export class Ball extends Phaser.Physics.Arcade.Sprite {
   }
 
   applyPowerUp(type: string) {
-    // e.g., increase speed, change color, etc.
+    switch (type) {
+      case 'extraLife':
+        // Implement extra life logic
+        break;
+      case 'paddleGrow':
+        // Implement paddle grow logic
+        break;
+      // Add other power-up types here
+    }
   }
 }

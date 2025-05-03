@@ -68,6 +68,7 @@ interface GameContextType {
   initializeWallet: (provider: 'metamask'|'phantom') => void
   updatePortfolio: (value: number) => void
   defendVault: () => void
+  getAngleFactor: () => number // Added getAngleFactor method
 }
 
 const defaultGameState: GameState = {
@@ -220,6 +221,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     // Vault defense logic
   }
 
+  const getAngleFactor = () => {
+    return gameState.angleFactor;
+  }
+
   // TODO: Avoid Inline Functions in Context Value 
   // If you use useMemo, ensure all functions used in the context value are either stable (useCallback) or defined outside the render.
   const contextValue = useMemo(() => ({
@@ -254,6 +259,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     initializeWallet,
     updatePortfolio,
     defendVault,
+    getAngleFactor, // Added getAngleFactor to context value
   }), [
     gameState,
     walletConnected,

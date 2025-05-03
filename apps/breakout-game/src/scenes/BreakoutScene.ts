@@ -1,5 +1,4 @@
 import { Ball } from '../objects/Ball';
-import { useGameContext } from '../contexts/GameContext';
 
 class BreakoutScene extends Phaser.Scene {
 	private paddle!: Phaser.Physics.Arcade.Sprite;
@@ -11,10 +10,11 @@ class BreakoutScene extends Phaser.Scene {
 	private scoreText!: Phaser.GameObjects.Text;
 	private livesText!: Phaser.GameObjects.Text;
 	private edge: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
-	private angleFactor: number = 5; // Default value, will be updated from context
+	private angleFactor: number; // Removed default value, will be set via constructor
   
-	constructor() {
+	constructor(angleFactor: number) {
 	  super({ key: 'Breakout', active: true });
+	  this.angleFactor = angleFactor;
 	}
   
 	preload() {
@@ -143,9 +143,6 @@ class BreakoutScene extends Phaser.Scene {
 	  
   
 	private hitPaddle(ball: Phaser.GameObjects.GameObject, paddle: Phaser.GameObjects.GameObject) {
-		const { gameState } = useGameContext();
-		this.angleFactor = gameState.angleFactor;
-
 		if (this.edge === 'bottom' || this.edge === 'top') {
 			const diff = ball.x - paddle.x;
 			ball.body.velocity.x = diff * this.angleFactor;

@@ -10,7 +10,8 @@ class BreakoutScene extends Phaser.Scene {
 	private scoreText!: Phaser.GameObjects.Text;
 	private livesText!: Phaser.GameObjects.Text;
 	private edge: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
-	private angleFactor: number; // Removed default value, will be set via constructor
+	private angleFactor: number = 5; // Default value, will be updated from context
+	private powerUps!: Phaser.Physics.Arcade.Group; // Group to hold power-ups
   
 	constructor(angleFactor: number) {
 	  super({ key: 'Breakout', active: true });
@@ -23,6 +24,9 @@ class BreakoutScene extends Phaser.Scene {
 	  this.load.image('paddle', 'paddle.png');
 	  this.load.image('paddle-vertical', 'paddle-vertical.png');
 	  this.load.image('brick', 'brick.png');
+	  this.load.image('powerup_extraLife', 'powerup_extraLife.png');
+	  this.load.image('powerup_paddleGrow', 'powerup_paddleGrow.png');
+	  // Load other power-up images here
 	}
   
 	create() {
@@ -62,6 +66,12 @@ class BreakoutScene extends Phaser.Scene {
 		color: '#FFFFFF',
 		fontFamily: 'Arial' 
 	}).setScrollFactor(0);
+
+	// Create power-ups group
+	this.powerUps = this.physics.add.group({
+		classType: Phaser.Physics.Arcade.Image,
+		runChildUpdate: true
+	  });
   
 	}
   
@@ -80,6 +90,9 @@ class BreakoutScene extends Phaser.Scene {
 		  this.resetBall();
 		}
 	  }
+
+	  // Check for power-up collection
+	  this.physics.overlap(this.paddle, this.powerUps, this.collectPowerUp, null, this);
 	}
 	
 	 ballLeaveScreen() {
@@ -139,6 +152,11 @@ class BreakoutScene extends Phaser.Scene {
 		if(brickType === 'special') this.score += 200;
 		
 		brick.destroy();
+
+		// Randomly spawn power-ups
+		if (Phaser.Math.Between(0, 100) < 20) { // 20% chance
+			this.createPowerUp(brick.x, brick.y);
+		  }
 	  }
 	  
   
@@ -234,6 +252,21 @@ class BreakoutScene extends Phaser.Scene {
 			this.paddle.x = (edge === 'left') ? this.paddle.width / 2 : this.scale.width - this.paddle.width / 2;
 			break;
 		}
+	  }
+
+	private createPowerUp(x: number, y: number) {
+		const powerUpTypes = ['extraLife', 'paddleGrow']; // Add other power-up types here
+		const type = powerUpTypes[Phaser.Math.Between(0, powerUpTypes.length - 1)];
+		const powerUp = this.physics.add.image(x, y, `powerup_${type}`);
+		powerUp.setVelocityY(150);
+		this.powerUps.add(powerUp);
+	  }
+	  
+	  private collectPowerUp(paddle: Phaser.Physics.Arcade.Sprite, powerUp: Phaser.Physics.Arcade.Image) {
+		const { collectPowerUp } = useGameContext();
+		const type = powerUp.texture.key.replace('powerup_', '');
+		collectPowerUp({ type, duration: 10000 }); // Example duration
+		powerUp.destroy();
 	  }
   }
   

@@ -68,6 +68,10 @@ interface GameContextType {
   initializeWallet: (provider: 'metamask'|'phantom') => void
   updatePortfolio: (value: number) => void
   defendVault: () => void
+  spawnPowerUp: (x: number, y: number, type: string) => void
+  collectPowerUp: (powerUp: PowerUp) => void
+  applyPowerUpEffect: (powerUp: PowerUp) => void
+  removePowerUpEffect: (powerUp: PowerUp) => void
   getAngleFactor: () => number // Added getAngleFactor method
 }
 
@@ -221,9 +225,51 @@ export function GameProvider({ children }: { children: ReactNode }) {
     // Vault defense logic
   }
 
+
+  const spawnPowerUp = (x: number, y: number, type: string) => {
+    const newPowerUp: PowerUp = { x, y, type, duration: 10000 }; // Example duration
+    powerUpsRef.current.push(newPowerUp);
+  };
+
+  const collectPowerUp = (powerUp: PowerUp) => {
+    applyPowerUpEffect(powerUp);
+    setTimeout(() => {
+      removePowerUpEffect(powerUp);
+    }, powerUp.duration);
+  };
+
+  const applyPowerUpEffect = (powerUp: PowerUp) => {
+    switch (powerUp.type) {
+      case 'extraLife':
+        setGameState((prev) => ({
+          ...prev,
+          lives: prev.lives + 1,
+        }));
+        break;
+      case 'paddleGrow':
+        paddlesRef.current.forEach((paddle) => {
+          paddle.width *= 1.5;
+        });
+        break;
+      // Add other power-up effects here
+    }
+  };
+
+  const removePowerUpEffect = (powerUp: PowerUp) => {
+    switch (powerUp.type) {
+      case 'paddleGrow':
+        paddlesRef.current.forEach((paddle) => {
+          paddle.width /= 1.5;
+        });
+        break;
+      // Add other power-up expiration logic here
+    }
+  };
+
   const getAngleFactor = () => {
     return gameState.angleFactor;
   }
+
 
   // TODO: Avoid Inline Functions in Context Value 
   // If you use useMemo, ensure all functions used in the context value are either stable (useCallback) or defined outside the render.
@@ -259,7 +305,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
     initializeWallet,
     updatePortfolio,
     defendVault,
-    getAngleFactor, // Added getAngleFactor to context value
+    spawnPowerUp,
+    collectPowerUp,
+    applyPowerUpEffect,
+    removePowerUpEffect,
+    getAngleFactor
   }), [
     gameState,
     walletConnected,

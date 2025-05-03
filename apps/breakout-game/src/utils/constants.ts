@@ -71,3 +71,51 @@ export const PERFORMANCE_METRICS = {
   VAULT_HP: "Vault HP",
   PORTFOLIO_BALANCE: "Portfolio Balance",
 }
+
+// Define power-up types
+export const POWER_UP_TYPES = [
+  'extraLife',
+  'paddleGrow',
+  'paddleShrink',
+  'multiBall',
+  'speedUp',
+  'sticky',
+  'laser',
+  'shield'
+];
+
+// Define power-up sprites
+export const POWER_UP_SPRITES = {
+  extraLife: 'powerup_extraLife',
+  paddleGrow: 'powerup_paddleGrow',
+  paddleShrink: 'powerup_paddleShrink',
+  multiBall: 'powerup_multiBall',
+  speedUp: 'powerup_speedUp',
+  sticky: 'powerup_sticky',
+  laser: 'powerup_laser',
+  shield: 'powerup_shield'
+};
+
+// Define power-up effects
+export const POWER_UP_EFFECTS = {
+  extraLife: (game) => game.addLife(),
+  paddleGrow: (game) => {
+    game.paddle.setScale(1.5, 1);
+    game.setPowerUpTimer('paddleGrow', 10000); // 10 seconds
+  },
+  paddleShrink: (game) => {
+    game.paddle.setScale(0.5, 1);
+    game.setPowerUpTimer('paddleShrink', 10000); // 10 seconds
+  },
+  multiBall: (game) => game.addMultiBall(),
+  speedUp: (game) => {
+    game.ball.setVelocity(game.ball.body.velocity.x * 1.5, game.ball.body.velocity.y * 1.5);
+    game.setPowerUpTimer('speedUp', 10000); // 10 seconds
+  },
+  sticky: (game) => {
+    game.paddle.setSticky(true);
+    game.setPowerUpTimer('sticky', 10000); // 10 seconds
+  },
+  laser: (game) => game.enableLaser(),
+  shield: (game) => game.addShield()
+};

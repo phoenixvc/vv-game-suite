@@ -3,3 +3,60 @@ main {
     align-items: center;
     justify-content: center;
 }
+
+.power-up {
+    width: 32px;
+    height: 32px;
+    background-size: cover;
+}
+
+.power-up.extraLife {
+    background-image: url('/assets/powerups/extraLife.png');
+}
+
+.power-up.paddleGrow {
+    background-image: url('/assets/powerups/paddleGrow.png');
+}
+
+.power-up.paddleShrink {
+    background-image: url('/assets/powerups/paddleShrink.png');
+}
+
+.power-up.multiBall {
+    background-image: url('/assets/powerups/multiBall.png');
+}
+
+.power-up.speedUp {
+    background-image: url('/assets/powerups/speedUp.png');
+}
+
+.power-up.sticky {
+    background-image: url('/assets/powerups/sticky.png');
+}
+
+.power-up.laser {
+    background-image: url('/assets/powerups/laser.png');
+}
+
+.power-up.shield {
+    background-image: url('/assets/powerups/shield.png');
+}
+
+@keyframes powerUpCollection {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+.power-up-collected {
+    animation: powerUpCollection 0.5s ease-out;
+}

@@ -119,3 +119,23 @@ export const POWER_UP_EFFECTS = {
   laser: (game) => game.enableLaser(),
   shield: (game) => game.addShield()
 };
+
+// New constants for market data types
+export const MARKET_DATA_TYPES = {
+  PRICE: 'price',
+  VOLUME: 'volume',
+  LIQUIDITY: 'liquidity',
+  TREND: 'trend'
+};
+
+// New constants for integration points
+export const INTEGRATION_POINTS = {
+  BLOCK_TYPES: 'blockTypes',
+  BLOCK_COLORS: 'blockColors',
+  BLOCK_BEHAVIORS: 'blockBehaviors',
+  SPECIAL_EVENTS: 'specialEvents',
+  POWER_UPS: 'powerUps',
+  DATA_OVERLAYS: 'dataOverlays',
+  DIFFICULTY_ADJUSTMENT: 'difficultyAdjustment',
+  REWARDS: 'rewards'
+};

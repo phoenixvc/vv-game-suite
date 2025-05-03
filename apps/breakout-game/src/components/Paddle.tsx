@@ -75,7 +75,7 @@ const Paddle: React.FC<PaddleProps> = ({ edge, width, height, color, speed, game
       },
       scene: {
         preload: function () {
-          this.load.image('ball', 'path/to/ball.png');
+          this.load.image('ball', 'path/to/ball.svg');
         },
         create: function () {
           const ball = this.physics.add.image(position.x, position.y, 'ball');

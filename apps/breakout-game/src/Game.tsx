@@ -18,6 +18,8 @@ export default function Game() {
         ...config.scene,
         create: function () {
           this.registry.set('angleFactor', angleFactor);
+          const marketData = this.registry.get('marketData');
+          this.registry.set('marketData', marketData);
         }
       }
     });

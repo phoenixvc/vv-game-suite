@@ -1,0 +1,43 @@
+name: Monica Authentication Setup
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/monica.yml'
+      - '.devcontainer/devcontainer.json'
+
+jobs:
+  setup-monica-auth:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Configure GitHub CLI
+        run: |
+          echo "Setting up GitHub CLI authentication"
+          gh auth setup-git
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Verify Monica Configuration
+        run: |
+          echo "Verifying Monica configuration"
+          if [ -f .github/monica.yml ]; then
+            echo "Monica configuration found"
+          else
+            echo "Monica configuration not found"
+            exit 1
+          fi
+      
+      - name: Set Repository Secret for Monica
+        uses: gliech/create-github-secret-action@v1
+        with:
+          name: MONICA_AUTH_TOKEN
+          value: ${{ secrets.GITHUB_TOKEN }}
+          pa_token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,42 @@
+# .github/monica.yml
+enabled: true
+mode: auto
+base_branch: main
+branch_name_pattern: monica/{base_branch}/{timestamp}
+commit_message_template: "Monica: {description}"
+
+# Authentication and permissions configuration
+authentication:
+  # Define which GitHub token to use
+  github_token: GITHUB_TOKEN
+  # Optional: Specify scopes needed
+  scopes:
+    - repo
+    - user
+    - workflow
+
+# Define permissions Monica needs
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write  # For OIDC authentication flows
+  packages: read   # If accessing GitHub packages
+  actions: write   # If Monica will trigger workflows
+
+pull_request:
+  title_template: "Monica: {description}"
+  body_template: |
+    This PR was created by [Monica](https://github.com/github/monica).
+    
+    **Changes:**
+    {description}
+    
+    **Context:**
+    {context}
+
+features:
+  code_editing: true
+  pull_requests: true
+  comments: true
+  code_review: true

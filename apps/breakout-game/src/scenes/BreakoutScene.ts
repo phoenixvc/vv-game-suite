@@ -1,5 +1,5 @@
 import { Ball } from '../objects/Ball';
-import { useGameContext } from '../contexts/GameContext';
+import { PowerUpType } from '../types/PowerUp';
 
 class BreakoutScene extends Phaser.Scene {
 	private paddle!: Phaser.Physics.Arcade.Sprite;
@@ -271,7 +271,7 @@ class BreakoutScene extends Phaser.Scene {
 	  }
 
 	private createPowerUp(x: number, y: number) {
-		const powerUpTypes = ['extraLife', 'paddleGrow']; // Add other power-up types here
+		const powerUpTypes = [PowerUpType.EXTRA_LIFE, PowerUpType.PADDLE_GROW]; // Add other power-up types here
 		const type = powerUpTypes[Phaser.Math.Between(0, powerUpTypes.length - 1)];
 		const powerUp = this.physics.add.image(x, y, `powerup_${type}`);
 		powerUp.setVelocityY(150);
@@ -279,9 +279,8 @@ class BreakoutScene extends Phaser.Scene {
 	  }
 	  
 	  private collectPowerUp(paddle: Phaser.Physics.Arcade.Sprite, powerUp: Phaser.Physics.Arcade.Image) {
-		const { collectPowerUp } = useGameContext();
-		const type = powerUp.texture.key.replace('powerup_', '');
-		collectPowerUp({ type, duration: 10000 }); // Example duration
+		const type = powerUp.texture.key.replace('powerup_', '') as PowerUpType;
+		this.events.emit('collectPowerUp', { type, duration: 10000 }); // Example duration
 		powerUp.destroy();
 	  }
 

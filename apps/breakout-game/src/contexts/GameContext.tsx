@@ -33,6 +33,7 @@ interface GameState {
   strategy: string
   educationalProgress: Record<string, boolean>
   performanceMetrics: Record<string, number>
+  angleFactor: number // Added angleFactor property
 }
 
 interface GameContextType {
@@ -94,6 +95,7 @@ const defaultGameState: GameState = {
   strategy: "",
   educationalProgress: {},
   performanceMetrics: {},
+  angleFactor: 5 // Initialized angleFactor
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined)
@@ -197,7 +199,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setGameState((prev) => ({
       ...prev,
       performanceMetrics: {
-        ...prev.performanceMetrics,
+        ...prev,
         [metric]: value,
       },
     }))

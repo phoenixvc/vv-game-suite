@@ -1,4 +1,5 @@
 import { Ball } from '../objects/Ball';
+import { useGameContext } from '../contexts/GameContext';
 
 class BreakoutScene extends Phaser.Scene {
 	private paddle!: Phaser.Physics.Arcade.Sprite;
@@ -10,6 +11,7 @@ class BreakoutScene extends Phaser.Scene {
 	private scoreText!: Phaser.GameObjects.Text;
 	private livesText!: Phaser.GameObjects.Text;
 	private edge: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
+	private angleFactor: number = 5; // Default value, will be updated from context
   
 	constructor() {
 	  super({ key: 'Breakout', active: true });
@@ -25,7 +27,7 @@ class BreakoutScene extends Phaser.Scene {
   
 	create() {
 	  // Initialize physics
-	  this.physics.world.setBoundsCollision(true, true, true, false);
+	  this.physics.world.setBoundsCollision(true, true, true, true);
 	  
 	  // Create bricks using simulated market data
 	  this.marketSim = new MarketSim();
@@ -141,14 +143,19 @@ class BreakoutScene extends Phaser.Scene {
 	  
   
 	private hitPaddle(ball: Phaser.GameObjects.GameObject, paddle: Phaser.GameObjects.GameObject) {
+		const { gameState } = useGameContext();
+		this.angleFactor = gameState.angleFactor;
+
 		if (this.edge === 'bottom' || this.edge === 'top') {
 			const diff = ball.x - paddle.x;
-			ball.body.velocity.x = 10 * diff;
+			ball.body.velocity.x = diff * this.angleFactor;
+			ball.body.velocity.y *= -1;
 			if (this.edge === 'top') ball.body.velocity.y = Math.abs(ball.body.velocity.y);
 			else ball.body.velocity.y = -Math.abs(ball.body.velocity.y);
 		  } else {
 			const diff = ball.y - paddle.y;
-			ball.body.velocity.y = 10 * diff;
+			ball.body.velocity.y = diff * this.angleFactor;
+			ball.body.velocity.x *= -1;
 			if (this.edge === 'left') ball.body.velocity.x = Math.abs(ball.body.velocity.x);
 			else ball.body.velocity.x = -Math.abs(ball.body.velocity.x);
 		  }

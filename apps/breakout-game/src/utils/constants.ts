@@ -1,4 +1,4 @@
-import { PowerUpType } from "@/types/game-types"
+import { PowerUpType } from "../types/PowerUp";
 
 // Update the color scheme to match the website's theme
 export const COLOR = "#61AEEE" // Light blue from the website's "AI-Powered" text
@@ -11,28 +11,26 @@ export const WORD_SPACING = 3
 
 // Update power-up colors to be more consistent with the website theme
 export const POWER_UP_COLORS = {
-  [PowerUpType.PADDLE_SIZE_INCREASE]: "#3B82F6", // Blue
-  [PowerUpType.PADDLE_SIZE_DECREASE]: "#EF4444", // Red
+  [PowerUpType.PADDLE_GROW]: "#3B82F6", // Blue
+  [PowerUpType.PADDLE_SHRINK]: "#EF4444", // Red
   [PowerUpType.MULTI_BALL]: "#61AEEE", // Light blue
   [PowerUpType.EXTRA_LIFE]: "#10B981", // Green
   [PowerUpType.SCORE_MULTIPLIER]: "#F59E0B", // Amber
-  [PowerUpType.SLOW_BALL]: "#8B5CF6", // Purple
-  [PowerUpType.FAST_BALL]: "#EC4899", // Pink
-  [PowerUpType.STICKY_PADDLE]: "#14B8A6", // Teal
-  [PowerUpType.GHOST_BALL]: "#A3E635", // Lime
+  [PowerUpType.SPEED_UP]: "#8B5CF6", // Purple
+  [PowerUpType.STICKY]: "#14B8A6", // Teal
+  [PowerUpType.SHIELD]: "#A3E635", // Lime
 }
 
 // Power-up symbols
 export const POWER_UP_SYMBOLS = {
-  [PowerUpType.PADDLE_SIZE_INCREASE]: "+",
-  [PowerUpType.PADDLE_SIZE_DECREASE]: "-",
+  [PowerUpType.PADDLE_GROW]: "+",
+  [PowerUpType.PADDLE_SHRINK]: "-",
   [PowerUpType.MULTI_BALL]: "×",
   [PowerUpType.EXTRA_LIFE]: "♥",
   [PowerUpType.SCORE_MULTIPLIER]: "2×",
-  [PowerUpType.SLOW_BALL]: "↓",
-  [PowerUpType.FAST_BALL]: "↑",
-  [PowerUpType.STICKY_PADDLE]: "≡",
-  [PowerUpType.GHOST_BALL]: "○",
+  [PowerUpType.SPEED_UP]: "↑",
+  [PowerUpType.STICKY]: "≡",
+  [PowerUpType.SHIELD]: "○",
 }
 
 // Updated themes for different levels to be more finance/crypto related
@@ -72,79 +70,57 @@ export const PERFORMANCE_METRICS = {
   PORTFOLIO_BALANCE: "Portfolio Balance",
 }
 
-// Define power-up types
+// Define power-up types using our PowerUpType enum
 export const POWER_UP_TYPES = [
-  'extraLife',
-  'paddleGrow',
-  'paddleShrink',
-  'multiBall',
-  'speedUp',
-  'sticky',
-  'laser',
-  'shield',
-  'slowBall',
-  'fastBall',
-  'scoreMultiplier',
-  'ghostBall'
+  PowerUpType.EXTRA_LIFE,
+  PowerUpType.PADDLE_GROW,
+  PowerUpType.PADDLE_SHRINK,
+  PowerUpType.MULTI_BALL,
+  PowerUpType.SPEED_UP,
+  PowerUpType.STICKY,
+  PowerUpType.LASER,
+  PowerUpType.SHIELD,
+  PowerUpType.SCORE_MULTIPLIER
 ];
 
 // Define power-up sprites
 export const POWER_UP_SPRITES = {
-  extraLife: 'powerup_extraLife',
-  paddleGrow: 'powerup_paddleGrow',
-  paddleShrink: 'powerup_paddleShrink',
-  multiBall: 'powerup_multiBall',
-  speedUp: 'powerup_speedUp',
-  sticky: 'powerup_sticky',
-  laser: 'powerup_laser',
-  shield: 'powerup_shield',
-  slowBall: 'powerup_slowBall',
-  fastBall: 'powerup_fastBall',
-  scoreMultiplier: 'powerup_scoreMultiplier',
-  ghostBall: 'powerup_ghostBall'
+  [PowerUpType.EXTRA_LIFE]: 'powerup_extraLife',
+  [PowerUpType.PADDLE_GROW]: 'powerup_paddleGrow',
+  [PowerUpType.PADDLE_SHRINK]: 'powerup_paddleShrink',
+  [PowerUpType.MULTI_BALL]: 'powerup_multiBall',
+  [PowerUpType.SPEED_UP]: 'powerup_speedUp',
+  [PowerUpType.STICKY]: 'powerup_sticky',
+  [PowerUpType.LASER]: 'powerup_laser',
+  [PowerUpType.SHIELD]: 'powerup_shield',
+  [PowerUpType.SCORE_MULTIPLIER]: 'powerup_scoreMultiplier'
 };
 
 // Define power-up effects
 export const POWER_UP_EFFECTS = {
-  extraLife: (game) => game.addLife(),
-  paddleGrow: (game) => {
+  [PowerUpType.EXTRA_LIFE]: (game) => game.addLife(),
+  [PowerUpType.PADDLE_GROW]: (game) => {
     game.paddle.setScale(1.5, 1);
-    game.setPowerUpTimer('paddleGrow', 10000); // 10 seconds
+    game.setPowerUpTimer(PowerUpType.PADDLE_GROW, 10000); // 10 seconds
   },
-  paddleShrink: (game) => {
+  [PowerUpType.PADDLE_SHRINK]: (game) => {
     game.paddle.setScale(0.5, 1);
-    game.setPowerUpTimer('paddleShrink', 10000); // 10 seconds
+    game.setPowerUpTimer(PowerUpType.PADDLE_SHRINK, 10000); // 10 seconds
   },
-  multiBall: (game) => game.addMultiBall(),
-  speedUp: (game) => {
+  [PowerUpType.MULTI_BALL]: (game) => game.addMultiBall(),
+  [PowerUpType.SPEED_UP]: (game) => {
     game.ball.setVelocity(game.ball.body.velocity.x * 1.5, game.ball.body.velocity.y * 1.5);
-    game.setPowerUpTimer('speedUp', 10000); // 10 seconds
+    game.setPowerUpTimer(PowerUpType.SPEED_UP, 10000); // 10 seconds
   },
-  sticky: (game) => {
+  [PowerUpType.STICKY]: (game) => {
     game.paddle.setSticky(true);
-    game.setPowerUpTimer('sticky', 10000); // 10 seconds
+    game.setPowerUpTimer(PowerUpType.STICKY, 10000); // 10 seconds
   },
-  laser: (game) => game.enableLaser(),
-  shield: (game) => game.addShield(),
-  slowBall: (game) => {
-    // Handle multiple balls if they exist
-    const balls = Array.isArray(game.balls) ? game.balls : [game.ball];
-    balls.forEach(ball => {
-      ball.setVelocity(ball.body.velocity.x * 0.5, ball.body.velocity.y * 0.5);
-    });
-    game.setPowerUpTimer('slowBall', 10000); // 10 seconds
-  },
-  fastBall: (game) => {
-    game.ball.setVelocity(game.ball.body.velocity.x * 2, game.ball.body.velocity.y * 2);
-    game.setPowerUpTimer('fastBall', 10000); // 10 seconds
-  },
-  scoreMultiplier: (game) => {
+  [PowerUpType.LASER]: (game) => game.enableLaser(),
+  [PowerUpType.SHIELD]: (game) => game.addShield(),
+  [PowerUpType.SCORE_MULTIPLIER]: (game) => {
     game.scoreMultiplier = 2;
-    game.setPowerUpTimer('scoreMultiplier', 10000); // 10 seconds
-  },
-  ghostBall: (game) => {
-    game.ball.setAlpha(0.5);
-    game.setPowerUpTimer('ghostBall', 10000); // 10 seconds
+    game.setPowerUpTimer(PowerUpType.SCORE_MULTIPLIER, 10000); // 10 seconds
   }
 };
 

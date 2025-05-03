@@ -16,7 +16,8 @@ interface StickyPaddle extends Phaser.GameObjects.Sprite {
   setSticky?: (isSticky: boolean) => void;
 }
 export class PowerUp extends Phaser.Physics.Arcade.Sprite {
-  type: PowerUpType;
+  // Use declare to avoid overwriting the base property
+  declare type: PowerUpType;
   duration?: number; // In ms, for timed power-ups
 
   constructor(scene: Phaser.Scene, x: number, y: number, type: PowerUpType) {

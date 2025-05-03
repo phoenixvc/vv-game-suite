@@ -72,6 +72,7 @@ interface GameContextType {
   collectPowerUp: (powerUp: PowerUp) => void
   applyPowerUpEffect: (powerUp: PowerUp) => void
   removePowerUpEffect: (powerUp: PowerUp) => void
+  getAngleFactor: () => number // Added getAngleFactor method
 }
 
 const defaultGameState: GameState = {
@@ -224,6 +225,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     // Vault defense logic
   }
 
+
   const spawnPowerUp = (x: number, y: number, type: string) => {
     const newPowerUp: PowerUp = { x, y, type, duration: 10000 }; // Example duration
     powerUpsRef.current.push(newPowerUp);
@@ -264,6 +266,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getAngleFactor = () => {
+    return gameState.angleFactor;
+  }
+
+
   // TODO: Avoid Inline Functions in Context Value 
   // If you use useMemo, ensure all functions used in the context value are either stable (useCallback) or defined outside the render.
   const contextValue = useMemo(() => ({
@@ -302,6 +309,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     collectPowerUp,
     applyPowerUpEffect,
     removePowerUpEffect,
+    getAngleFactor
   }), [
     gameState,
     walletConnected,

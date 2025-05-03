@@ -1,5 +1,7 @@
 import { Ball } from '../objects/Ball';
 import { useGameContext } from '../contexts/GameContext';
+import { useContext } from 'react';
+import { MarketDataContext } from '../context/MarketDataContext';
 
 class BreakoutScene extends Phaser.Scene {
 	private paddle!: Phaser.Physics.Arcade.Sprite;
@@ -13,6 +15,7 @@ class BreakoutScene extends Phaser.Scene {
 	private edge: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
 	private angleFactor: number = 5; // Default value, will be updated from context
 	private powerUps!: Phaser.Physics.Arcade.Group; // Group to hold power-ups
+	private marketData: any; // Placeholder for market data
   
 	constructor() {
 	  super({ key: 'Breakout', active: true });
@@ -20,12 +23,12 @@ class BreakoutScene extends Phaser.Scene {
   
 	preload() {
 	  this.load.setBaseURL('/assets/games/breakout/');
-	  this.load.image('ball', 'ball.png');
-	  this.load.image('paddle', 'paddle.png');
-	  this.load.image('paddle-vertical', 'paddle-vertical.png');
-	  this.load.image('brick', 'brick.png');
-	  this.load.image('powerup_extraLife', 'powerup_extraLife.png');
-	  this.load.image('powerup_paddleGrow', 'powerup_paddleGrow.png');
+	  this.load.image('ball', 'ball.svg');
+	  this.load.image('paddle', 'paddle.svg');
+	  this.load.image('paddle-vertical', 'paddle-vertical.svg');
+	  this.load.image('brick', 'brick.svg');
+	  this.load.image('powerup_extraLife', 'powerup_extraLife.svg');
+	  this.load.image('powerup_paddleGrow', 'powerup_paddleGrow.svg');
 	  // Load other power-up images here
 	}
   
@@ -72,6 +75,10 @@ class BreakoutScene extends Phaser.Scene {
 		classType: Phaser.Physics.Arcade.Image,
 		runChildUpdate: true
 	  });
+
+	// Fetch market data from context
+	const { marketData } = useContext(MarketDataContext);
+	this.marketData = marketData;
   
 	}
   
@@ -93,6 +100,9 @@ class BreakoutScene extends Phaser.Scene {
 
 	  // Check for power-up collection
 	  this.physics.overlap(this.paddle, this.powerUps, this.collectPowerUp, null, this);
+
+	  // Display market data overlay
+	  this.displayMarketDataOverlay();
 	}
 	
 	 ballLeaveScreen() {
@@ -270,6 +280,17 @@ class BreakoutScene extends Phaser.Scene {
 		const type = powerUp.texture.key.replace('powerup_', '');
 		collectPowerUp({ type, duration: 10000 }); // Example duration
 		powerUp.destroy();
+	  }
+
+	  private displayMarketDataOverlay() {
+		if (this.marketData) {
+		  const overlayText = `Price: ${this.marketData.price}, Volume: ${this.marketData.volume}, Trend: ${this.marketData.trend}`;
+		  this.add.text(20, 60, overlayText, {
+			fontSize: '18px',
+			color: '#FFFFFF',
+			fontFamily: 'Arial'
+		  }).setScrollFactor(0);
+		}
 	  }
   }
   

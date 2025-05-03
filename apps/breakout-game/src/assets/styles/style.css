@@ -11,35 +11,35 @@ main {
 }
 
 .power-up.extraLife {
-    background-image: url('/assets/powerups/extraLife.png');
+    background-image: url('/assets/powerups/extraLife.svg');
 }
 
 .power-up.paddleGrow {
-    background-image: url('/assets/powerups/paddleGrow.png');
+    background-image: url('/assets/powerups/paddleGrow.svg');
 }
 
 .power-up.paddleShrink {
-    background-image: url('/assets/powerups/paddleShrink.png');
+    background-image: url('/assets/powerups/paddleShrink.svg');
 }
 
 .power-up.multiBall {
-    background-image: url('/assets/powerups/multiBall.png');
+    background-image: url('/assets/powerups/multiBall.svg');
 }
 
 .power-up.speedUp {
-    background-image: url('/assets/powerups/speedUp.png');
+    background-image: url('/assets/powerups/speedUp.svg');
 }
 
 .power-up.sticky {
-    background-image: url('/assets/powerups/sticky.png');
+    background-image: url('/assets/powerups/sticky.svg');
 }
 
 .power-up.laser {
-    background-image: url('/assets/powerups/laser.png');
+    background-image: url('/assets/powerups/laser.svg');
 }
 
 .power-up.shield {
-    background-image: url('/assets/powerups/shield.png');
+    background-image: url('/assets/powerups/shield.svg');
 }
 
 @keyframes powerUpCollection {

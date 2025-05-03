@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import config from './config/Config'
 import './Assets/styles/style.css'
 import { GameProvider } from './contexts/GameContext';
+import { MarketDataProvider } from './context/MarketDataContext';
 
 export default function Game() {
 
@@ -13,10 +14,12 @@ export default function Game() {
     setGame(game)
   }, [])
   return (
-    <GameProvider>
-      <main>
-        <div id="game" />
-      </main>
-    </GameProvider>
+    <MarketDataProvider>
+      <GameProvider>
+        <main>
+          <div id="game" />
+        </main>
+      </GameProvider>
+    </MarketDataProvider>
   )
 }

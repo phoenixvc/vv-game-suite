@@ -1,5 +1,5 @@
 import { MarketSignal } from '../managers/BrickManager';
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';  // Changed from "import Phaser from 'phaser'"
 
 /**
  * Simulates market data for the game

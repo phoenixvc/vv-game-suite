@@ -85,7 +85,7 @@ class CollisionManager {
     }
     
     // Check if all bricks are destroyed
-    if (this.scene.brickManager.getBricks().countActive() === 0) {
+    if (this.scene.getBrickManager().getBricks().countActive() === 0) {
       this.scene.events.emit('levelComplete');
     }
   }
@@ -160,7 +160,7 @@ class CollisionManager {
     bodyA?: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody,
     bodyB?: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody
   ): void {
-    this.scene.powerUpManager.collectPowerUp(paddle, powerUp);
+    this.scene.getPowerUpManager().collectPowerUp(paddle, powerUp);
   }
 }
 

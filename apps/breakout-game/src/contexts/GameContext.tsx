@@ -6,8 +6,7 @@ import type React from "react"
 
 import { createContext, useContext, useState, useRef, type ReactNode } from "react"
 import type { Ball, Paddle, Pixel, PowerUp, PointLossIndicator } from "@/types/game-types"
-import { LEVEL_THEMES } from "@/utils/constants"
-import { MarketDataContext } from '../context/MarketDataContext';
+import { LEVEL_THEMES } from "@/utils/constants";
 
 interface GameState {
   score: number
@@ -35,7 +34,6 @@ interface GameState {
   educationalProgress: Record<string, boolean>
   performanceMetrics: Record<string, number>
   angleFactor: number // Added angleFactor property
-  marketData: any // Added marketData property
 }
 
 interface GameContextType {
@@ -103,7 +101,6 @@ const defaultGameState: GameState = {
   educationalProgress: {},
   performanceMetrics: {},
   angleFactor: 5, // Initialized angleFactor
-  marketData: null // Initialized marketData
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined)
@@ -140,17 +137,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     gameStateRef.current = gameState
   }, [gameState])
-
-  // Fetch market data from context
-  const { marketData } = useContext(MarketDataContext);
-
-  // Update game state with market data
-  useEffect(() => {
-    setGameState((prev) => ({
-      ...prev,
-      marketData
-    }));
-  }, [marketData]);
 
   const getCurrentLevelTheme = () => {
     const levelIndex = (gameState.level - 1) % LEVEL_THEMES.length

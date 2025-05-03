@@ -1,7 +1,4 @@
 import { Ball } from '../objects/Ball';
-import { useGameContext } from '../contexts/GameContext';
-import { useContext } from 'react';
-import { MarketDataContext } from '../context/MarketDataContext';
 
 class BreakoutScene extends Phaser.Scene {
 	private paddle!: Phaser.Physics.Arcade.Sprite;
@@ -16,6 +13,7 @@ class BreakoutScene extends Phaser.Scene {
 	private angleFactor: number = 5; // Default value, will be updated from context
 	private powerUps!: Phaser.Physics.Arcade.Group; // Group to hold power-ups
 	private marketData: any; // Placeholder for market data
+	private marketOverlayText!: Phaser.GameObjects.Text; // Placeholder for market overlay text
   
 	constructor(angleFactor: number) {
 	  super({ key: 'Breakout', active: true });
@@ -77,9 +75,15 @@ class BreakoutScene extends Phaser.Scene {
 		runChildUpdate: true
 	  });
 
-	// Fetch market data from context
-	const { marketData } = useContext(MarketDataContext);
-	this.marketData = marketData;
+	// Fetch market data from registry
+	this.marketData = this.registry.get('marketData');
+
+	// Create market overlay text
+	this.marketOverlayText = this.add.text(20, 60, '', {
+		fontSize: '18px',
+		color: '#FFFFFF',
+		fontFamily: 'Arial'
+	  }).setScrollFactor(0);
   
 	}
   
@@ -283,11 +287,7 @@ class BreakoutScene extends Phaser.Scene {
 	  private displayMarketDataOverlay() {
 		if (this.marketData) {
 		  const overlayText = `Price: ${this.marketData.price}, Volume: ${this.marketData.volume}, Trend: ${this.marketData.trend}`;
-		  this.add.text(20, 60, overlayText, {
-			fontSize: '18px',
-			color: '#FFFFFF',
-			fontFamily: 'Arial'
-		  }).setScrollFactor(0);
+		  this.marketOverlayText.setText(overlayText);
 		}
 	  }
   }

@@ -4,6 +4,8 @@ import config from './config/Config'
 import './Assets/styles/style.css'
 import { MarketDataProvider } from './context/MarketDataContext';
 import { GameProvider, useGameContext } from './contexts/GameContext';
+import { HighScoreProvider } from './contexts/HighScoreContext';
+import { SettingsProvider } from './contexts/SettingsContext';
 
 export default function Game() {
   const { getAngleFactor } = useGameContext();
@@ -20,6 +22,8 @@ export default function Game() {
           this.registry.set('angleFactor', angleFactor);
           const marketData = this.registry.get('marketData');
           this.registry.set('marketData', marketData);
+          const levelTheme = this.registry.get('levelTheme');
+          this.registry.set('levelTheme', levelTheme);
         }
       }
     });
@@ -28,9 +32,13 @@ export default function Game() {
   return (
     <MarketDataProvider>
       <GameProvider>
-        <main>
-          <div id="game" />
-        </main>
+        <HighScoreProvider>
+          <SettingsProvider>
+            <main>
+              <div id="game" />
+            </main>
+          </SettingsProvider>
+        </HighScoreProvider>
       </GameProvider>
     </MarketDataProvider>
   )

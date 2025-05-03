@@ -15,6 +15,8 @@ class BreakoutScene extends Phaser.Scene {
 	private powerUps!: Phaser.Physics.Arcade.Group; // Group to hold power-ups
 	private marketData: any; // Placeholder for market data
 	private marketOverlayText!: Phaser.GameObjects.Text; // Placeholder for market overlay text
+	private levelThemeText!: Phaser.GameObjects.Text; // Placeholder for level theme text
+	private paddle2!: Phaser.Physics.Arcade.Sprite; // Second paddle for multiplayer mode
   
 	constructor(angleFactor: number) {
 	  super({ key: 'Breakout', active: true });
@@ -44,10 +46,12 @@ class BreakoutScene extends Phaser.Scene {
 	  this.ball = new Ball(this, 400, 500, 'ball');
 	  
 	  this.paddle = this.createPaddle(this.edge);
+	  this.paddle2 = this.createPaddle('top'); // Create second paddle for multiplayer mode
 	  
 	  // Collision setup
 	  this.physics.add.collider(this.ball, this.bricks, this.hitBrick, null, this);
 	  this.physics.add.collider(this.ball, this.paddle, this.hitPaddle, null, this);
+	  this.physics.add.collider(this.ball, this.paddle2, this.hitPaddle, null, this); // Add collision for second paddle
 	  
 	  // Input handling
 	  this.input.keyboard?.createCursorKeys();
@@ -85,12 +89,20 @@ class BreakoutScene extends Phaser.Scene {
 		color: '#FFFFFF',
 		fontFamily: 'Arial'
 	  }).setScrollFactor(0);
+
+	// Create level theme text
+	this.levelThemeText = this.add.text(this.scale.width / 2, 20, '', {
+		fontSize: '24px',
+		color: '#FFFFFF',
+		fontFamily: 'Arial'
+	  }).setOrigin(0.5).setScrollFactor(0);
   
 	}
   
 	update() {
 	  // Paddle movement
 	  this.controlPaddle(this.edge);
+	  this.controlPaddle('top'); // Control second paddle
 	  
 	  // Ball reset logic
 	  if (this.ball.y > this.scale.height) {
@@ -106,9 +118,13 @@ class BreakoutScene extends Phaser.Scene {
 
 	  // Check for power-up collection
 	  this.physics.overlap(this.paddle, this.powerUps, this.collectPowerUp, null, this);
+	  this.physics.overlap(this.paddle2, this.powerUps, this.collectPowerUp, null, this); // Check for power-up collection for second paddle
 
 	  // Display market data overlay
 	  this.displayMarketDataOverlay();
+
+	  // Display level theme
+	  this.displayLevelTheme();
 	}
 	
 	 ballLeaveScreen() {
@@ -244,8 +260,18 @@ class BreakoutScene extends Phaser.Scene {
 	  
 	  private controlPaddle(edge: 'top' | 'bottom' | 'left' | 'right') {
 		const cursors = this.input.keyboard?.createCursorKeys();
+		const wasdKeys = this.input.keyboard?.addKeys('W,A,S,D'); // Add WASD keys for second paddle
 		switch (edge) {
 		  case 'top':
+			if (wasdKeys?.A.isDown) {
+			  this.paddle2.setVelocityX(-300);
+			} else if (wasdKeys?.D.isDown) {
+			  this.paddle2.setVelocityX(300);
+			} else {
+			  this.paddle2.setVelocityX(0);
+			}
+			this.paddle2.y = this.paddle2.height / 2;
+			break;
 		  case 'bottom':
 			if (cursors?.left.isDown) {
 			  this.paddle.setVelocityX(-300);
@@ -254,7 +280,7 @@ class BreakoutScene extends Phaser.Scene {
 			} else {
 			  this.paddle.setVelocityX(0);
 			}
-			this.paddle.y = (edge === 'bottom') ? this.scale.height - this.paddle.height / 2 : this.paddle.height / 2;
+			this.paddle.y = this.scale.height - this.paddle.height / 2;
 			break;
 		  case 'left':
 		  case 'right':
@@ -289,6 +315,11 @@ class BreakoutScene extends Phaser.Scene {
 		  const overlayText = `Price: ${this.marketData.price}, Volume: ${this.marketData.volume}, Trend: ${this.marketData.trend}`;
 		  this.marketOverlayText.setText(overlayText);
 		}
+	  }
+
+	  private displayLevelTheme() {
+		const levelTheme = this.registry.get('levelTheme');
+		this.levelThemeText.setText(`Level Theme: ${levelTheme}`);
 	  }
   }
   

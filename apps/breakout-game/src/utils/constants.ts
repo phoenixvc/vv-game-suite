@@ -81,7 +81,11 @@ export const POWER_UP_TYPES = [
   'speedUp',
   'sticky',
   'laser',
-  'shield'
+  'shield',
+  'slowBall',
+  'fastBall',
+  'scoreMultiplier',
+  'ghostBall'
 ];
 
 // Define power-up sprites
@@ -93,7 +97,11 @@ export const POWER_UP_SPRITES = {
   speedUp: 'powerup_speedUp',
   sticky: 'powerup_sticky',
   laser: 'powerup_laser',
-  shield: 'powerup_shield'
+  shield: 'powerup_shield',
+  slowBall: 'powerup_slowBall',
+  fastBall: 'powerup_fastBall',
+  scoreMultiplier: 'powerup_scoreMultiplier',
+  ghostBall: 'powerup_ghostBall'
 };
 
 // Define power-up effects
@@ -117,7 +125,23 @@ export const POWER_UP_EFFECTS = {
     game.setPowerUpTimer('sticky', 10000); // 10 seconds
   },
   laser: (game) => game.enableLaser(),
-  shield: (game) => game.addShield()
+  shield: (game) => game.addShield(),
+  slowBall: (game) => {
+    game.ball.setVelocity(game.ball.body.velocity.x * 0.5, game.ball.body.velocity.y * 0.5);
+    game.setPowerUpTimer('slowBall', 10000); // 10 seconds
+  },
+  fastBall: (game) => {
+    game.ball.setVelocity(game.ball.body.velocity.x * 2, game.ball.body.velocity.y * 2);
+    game.setPowerUpTimer('fastBall', 10000); // 10 seconds
+  },
+  scoreMultiplier: (game) => {
+    game.scoreMultiplier = 2;
+    game.setPowerUpTimer('scoreMultiplier', 10000); // 10 seconds
+  },
+  ghostBall: (game) => {
+    game.ball.setAlpha(0.5);
+    game.setPowerUpTimer('ghostBall', 10000); // 10 seconds
+  }
 };
 
 // New constants for market data types

@@ -11,6 +11,7 @@ interface HighScoreContextType {
   highScores: HighScore[]
   setHighScores: React.Dispatch<React.SetStateAction<HighScore[]>>
   addHighScore: (name: string, score: number) => void
+  getTopScores: (count: number) => HighScore[] // Added method to get top scores
 }
 
 const defaultHighScores: HighScore[] = [
@@ -44,8 +45,17 @@ export function HighScoreProvider({ children }: { children: ReactNode }) {
     })
   }
 
+  /**
+   * Gets the top scores from the high score list.
+   * @param count - The number of top scores to retrieve.
+   * @returns An array of the top scores.
+   */
+  const getTopScores = (count: number) => {
+    return highScores.slice(0, count)
+  }
+
   return (
-    <HighScoreContext.Provider value={{ highScores, setHighScores, addHighScore }}>
+    <HighScoreContext.Provider value={{ highScores, setHighScores, addHighScore, getTopScores }}>
       {children}
     </HighScoreContext.Provider>
   )

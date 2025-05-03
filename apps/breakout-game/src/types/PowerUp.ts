@@ -6,7 +6,9 @@ export enum PowerUpType {
   SPEED_UP = 'speedUp',
   STICKY = 'sticky',
   LASER = 'laser',
-  SHIELD = 'shield'
+  SHIELD = 'shield',
+  PADDLE_SIZE_DECREASE = "PADDLE_SIZE_DECREASE",
+  SCORE_MULTIPLIER = "SCORE_MULTIPLIER"
 }
 
 export class PowerUp extends Phaser.Physics.Arcade.Sprite {

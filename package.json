@@ -1,0 +1,53 @@
+{
+  "name": "vv-game-suite-monorepo",
+  "version": "1.0.0",
+  "description": "Monorepo for VV Game Suite applications",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "postinstall": "npx turbo link",
+    "dev": "npx turbo run dev",
+    "build": "npx turbo run build",
+    "test": "npx turbo run test",
+    "lint": "npx turbo run lint",
+    "clean": "npx turbo run clean"
+  },
+  "keywords": [
+    "phaser",
+    "game",
+    "monorepo",
+    "typescript",
+    "react"
+  ],
+  "author": "Phoenix VC",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.0",
+    "typescript": "^4.6.4",
+    "prettier": "^2.8.0",
+    "eslint": "^8.40.0",
+    "eslint-config-prettier": "^8.8.0",
+    "jest": "^27.0.6",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^18.6.1"
+  },
+  "engines": {
+    "node": ">=16.15.0"
+  },
+  "packageManager": "npm@8.5.5",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/phoenixvc/vv-game-suite.git"
+  },
+  "bugs": {
+    "url": "https://github.com/phoenixvc/vv-game-suite/issues"
+  },
+  "homepage": "https://github.com/phoenixvc/vv-game-suite/blob/main/README.md"
+}

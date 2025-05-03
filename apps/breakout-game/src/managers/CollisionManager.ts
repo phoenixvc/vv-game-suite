@@ -1,7 +1,7 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 import BreakoutScene from '../scenes/BreakoutScene';
 
-export class CollisionManager {
+class CollisionManager {
   private scene: BreakoutScene;
   
   constructor(scene: BreakoutScene) {
@@ -16,41 +16,14 @@ export class CollisionManager {
    * @param powerUps The power-ups group
    */
   setupCollisions(
-    ball: Phaser.Physics.Arcade.Sprite,
-    bricks: Phaser.Physics.Arcade.StaticGroup,
-    paddles: Phaser.Physics.Arcade.Sprite[],
-    powerUps: Phaser.Physics.Arcade.Group
+    ball: Phaser.Physics.Matter.Sprite,
+    bricks: Phaser.GameObjects.Group,
+    paddles: Phaser.Physics.Matter.Sprite[],
+    powerUps: Phaser.GameObjects.Group
   ): void {
-    // Ball and bricks collision
-    this.scene.physics.add.collider(
-      ball, 
-      bricks, 
-      this.handleBallBrickCollision as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback, 
-      undefined, 
-      this
-    );
-    
-    // Ball and paddles collision
-    paddles.forEach(paddle => {
-      this.scene.physics.add.collider(
-        ball, 
-        paddle, 
-        this.handleBallPaddleCollision as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback, 
-        undefined, 
-        this
-      );
-    });
-    
-    // Paddle and power-ups overlap
-    paddles.forEach(paddle => {
-      this.scene.physics.add.overlap(
-        paddle, 
-        powerUps, 
-        this.collectPowerUp as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback, 
-        undefined, 
-        this
-      );
-    });
+    // Matter.js collision handling is done in the scene's setupCollisionHandlers method
+    // This method is kept for compatibility with the original code structure
+    console.log('Matter.js collisions are set up in the scene');
   }
   
   /**
@@ -158,7 +131,7 @@ export class CollisionManager {
       // Apply appropriate physics based on edge
       if (edge === 'bottom' || edge === 'top') {
         const diff = ballX - paddleX;
-        ballBody.velocity.x = diff * this.scene.angleFactor;
+        ballBody.velocity.x = diff * this.scene.getAngleFactor();
         
         if (edge === 'top') {
           ballBody.velocity.y = Math.abs(ballBody.velocity.y);
@@ -167,7 +140,7 @@ export class CollisionManager {
   }
       } else {
         const diff = ballY - paddleY;
-        ballBody.velocity.y = diff * this.scene.angleFactor;
+        ballBody.velocity.y = diff * this.scene.getAngleFactor();
         
         if (edge === 'left') {
           ballBody.velocity.x = Math.abs(ballBody.velocity.x);
@@ -190,3 +163,5 @@ export class CollisionManager {
     this.scene.powerUpManager.collectPowerUp(paddle, powerUp);
   }
 }
+
+export default CollisionManager;

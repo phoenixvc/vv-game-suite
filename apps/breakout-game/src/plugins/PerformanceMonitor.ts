@@ -1,75 +1,103 @@
 export class AdaptiveRenderer {
   private scene: Phaser.Scene;
-  private targetFPS: number;
-  private isLowQuality: boolean = false;
-  private originalMinFPS: number;
-  private originalTargetFPS: number;
-
+  private lastFpsCheck: number = 0;
+  private fpsCheckInterval: number = 1000; // Check every second
+  private fpsThreshold: number = 50; // Threshold for quality adjustment
+  private qualityLevel: number = 2; // Medium quality by default (1=low, 2=medium, 3=high)
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
-    this.targetFPS = 60;
-    // Store the original FPS settings
-    this.originalMinFPS = scene.game.loop.minFps;
-    this.originalTargetFPS = scene.game.loop.targetFps;
-
-    scene.game.events.on('poststep', () => {
-      const currentFPS = scene.game.loop.actualFps;
-      this.adjustQuality(currentFPS);
+    
+    // Set up automatic performance monitoring
+    this.scene.events.on('update', this.monitorPerformance, this);
+    
+    // Clean up when scene shuts down
+    this.scene.events.once('shutdown', this.destroy, this);
+  }
+  
+  /**
+   * Automatically monitors performance and adjusts quality as needed
+   * This is called automatically on each update
+   */
+  private monitorPerformance(): void {
+    const currentTime = this.scene.time.now;
+    
+    // Only check FPS periodically to avoid overhead
+    if (currentTime - this.lastFpsCheck > this.fpsCheckInterval) {
+      this.lastFpsCheck = currentTime;
+      this.adjustQuality(this.scene.game.loop.actualFps);
+    }
+  }
+  
+  /**
+   * Adjusts the game quality based on current FPS
+   * @param currentFPS - The current frames per second
+   */
+  private adjustQuality(currentFPS: number): void {
+    // If FPS is too low, reduce quality
+    if (currentFPS < this.fpsThreshold && this.qualityLevel > 1) {
+      this.qualityLevel--;
+      this.applyQualitySettings();
+    } 
+    // If FPS is good and we're not at max quality, increase quality
+    else if (currentFPS > this.fpsThreshold + 10 && this.qualityLevel < 3) {
+      this.qualityLevel++;
+      this.applyQualitySettings();
+    }
+  }
+  
+  /**
+   * Applies quality settings based on current quality level
+   */
+  private applyQualitySettings(): void {
+    switch (this.qualityLevel) {
+      case 1: // Low quality
+        this.scene.scale.setZoom(1);
+        this.scene.cameras.main.setRoundPixels(true);
+        this.disableParticles();
+        break;
+      case 2: // Medium quality
+        this.scene.scale.setZoom(window.devicePixelRatio > 1 ? 1.5 : 1);
+        this.scene.cameras.main.setRoundPixels(false);
+        break;
+      case 3: // High quality
+        this.scene.scale.setZoom(window.devicePixelRatio);
+        this.scene.cameras.main.setRoundPixels(false);
+        break;
+    }
+    
+    // Log quality change
+    console.log(`Quality adjusted to level ${this.qualityLevel} (FPS: ${this.scene.game.loop.actualFps})`);
+  }
+  
+  /**
+   * Disables particle effects for low-end devices
+   */
+  private disableParticles(): void {
+    // Find and disable any particle emitters
+    const particles = this.scene.children.getChildren().filter(
+      child => child instanceof Phaser.GameObjects.Particles.ParticleEmitter
+    );
+    
+    particles.forEach(emitter => {
+      (emitter as Phaser.GameObjects.Particles.ParticleEmitter).stop();
     });
   }
-
-  private adjustQuality(currentFPS: number) {
-    // Only change quality settings when there's a significant change in performance
-    // to avoid constantly toggling settings
-    if (currentFPS < 45 && !this.isLowQuality) {
-      this.isLowQuality = true;
-      
-      // Apply to all textures in the game - use proper Phaser texture filtering
-      try {
-        const textureManager = this.scene.textures;
-        const textureKeys = textureManager.getTextureKeys();
-        textureKeys.forEach(key => {
-          // Skip __DEFAULT and __MISSING which are special textures
-          if (key !== '__DEFAULT' && key !== '__MISSING') {
-            const texture = textureManager.get(key);
-            // Use type assertion to access setFilter method
-            (texture as any).setFilter && (texture as any).setFilter(0); // 0 = NEAREST
-          }
-        });
-      } catch (e) {
-        console.warn('Could not adjust texture filtering:', e);
-      }
-      
-      // Reduce the target frame rate - use only minFps and targetFps
-      this.scene.game.loop.minFps = 30;
-      this.scene.game.loop.targetFps = 30;
-      
-      console.log('Switched to low quality mode');
-    } 
-    else if (currentFPS > 55 && this.isLowQuality) {
-      this.isLowQuality = false;
-      
-      // Restore texture filtering
-      try {
-        const textureManager = this.scene.textures;
-        const textureKeys = textureManager.getTextureKeys();
-        textureKeys.forEach(key => {
-          // Skip __DEFAULT and __MISSING which are special textures
-          if (key !== '__DEFAULT' && key !== '__MISSING') {
-            const texture = textureManager.get(key);
-            // Use type assertion to access setFilter method
-            (texture as any).setFilter && (texture as any).setFilter(1); // 1 = LINEAR
-          }
-        });
-      } catch (e) {
-        console.warn('Could not adjust texture filtering:', e);
-      }
-      
-      // Restore the original frame rate settings
-      this.scene.game.loop.minFps = this.originalMinFPS;
-      this.scene.game.loop.targetFps = this.originalTargetFPS;
-      
-      console.log('Switched to high quality mode');
+  
+  /**
+   * Clean up when the scene is destroyed
+   */
+  public destroy(): void {
+    this.scene.events.off('update', this.monitorPerformance, this);
+  }
+  
+  /**
+   * Public method to manually set quality level
+   * @param level - Quality level (1=low, 2=medium, 3=high)
+   */
+  public setQualityLevel(level: number): void {
+    if (level >= 1 && level <= 3) {
+      this.qualityLevel = level;
+      this.applyQualitySettings();
     }
   }
 }

@@ -1,29 +1,57 @@
-import React, { useState } from 'react';
-import { SettingsProvider } from './contexts/SettingsContext';
+import React, { useEffect, useRef, useState } from 'react';
+import { SettingsProvider, useSettingsContext } from './contexts/SettingsContext';
 import PaddleController from './components/PaddleController';
 import SettingsMenu from './components/SettingsMenu';
 import Score from './components/Score';
+import config from './config/Config';
+import * as Phaser from 'phaser';
+
+// Create a component that initializes the game with settings
+const GameInitializer: React.FC = () => {
+  const gameRef = useRef<Phaser.Game | null>(null);
+  const { getActivePaddles, controls } = useSettingsContext();
+  
+  useEffect(() => {
+    // Only create the game once
+    if (!gameRef.current) {
+      // Create a new game instance
+      gameRef.current = new Phaser.Game({
+        ...config,
+        callbacks: {
+          preBoot: (game) => {
+            // Store settings in a global game registry that scenes can access
+            game.registry.set('activePaddles', getActivePaddles());
+            game.registry.set('controlType', controls);
+          }
+        }
+      });
+    }
+    
+    // Update game settings when they change
+    if (gameRef.current) {
+      gameRef.current.registry.set('activePaddles', getActivePaddles());
+      gameRef.current.registry.set('controlType', controls);
+    }
+    
+    // Clean up on unmount
+    return () => {
+      if (gameRef.current) {
+        gameRef.current.destroy(true);
+        gameRef.current = null;
+      }
+    };
+  }, [getActivePaddles, controls]);
+
+  return <div id="game" />;
+};
 
 const Game: React.FC = () => {
-  const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   
-  // Game dimensions
-  const gameWidth = 800;
-  const gameHeight = 600;
-  
-  // Paddle properties
-  const paddleWidth = 100;
-  const paddleHeight = 20;
-  const paddleSpeed = 10;
-  const paddleColor = '#4a90e2';
-  const angleFactor = 5;
   return (
     <SettingsProvider>
       <div className="game-wrapper" style={{ position: 'relative' }}>
         <div className="game-header" style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
-          <Score score={score} highScore={highScore} />
           <button 
             onClick={() => setIsSettingsOpen(true)}
             style={{
@@ -39,16 +67,8 @@ const Game: React.FC = () => {
           </button>
         </div>
         
-        <PaddleController
-          width={paddleWidth}
-          height={paddleHeight}
-          color={paddleColor}
-          speed={paddleSpeed}
-          gameWidth={gameWidth}
-          gameHeight={gameHeight}
-          angleFactor={angleFactor}
-          player={1}
-        />
+        <GameInitializer />
+        
         <SettingsMenu 
           isOpen={isSettingsOpen} 
           onClose={() => setIsSettingsOpen(false)} 
@@ -57,5 +77,4 @@ const Game: React.FC = () => {
     </SettingsProvider>
   );
 };
-
 export default Game;

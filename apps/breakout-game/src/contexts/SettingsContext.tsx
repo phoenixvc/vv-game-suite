@@ -1,7 +1,13 @@
-"use client"
-
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
+// Define game modes
+export type GameMode = "singlePlayer" | "multiPlayer"
+
+// Define which paddles are active in each game mode
+export const paddleConfigurations = {
+  singlePlayer: ["bottom"],
+  multiPlayer: ["top", "bottom", "left", "right"]
+}
 interface SettingsContextType {
   soundOn: boolean
   setSoundOn: React.Dispatch<React.SetStateAction<boolean>>
@@ -9,9 +15,13 @@ interface SettingsContextType {
   setControls: React.Dispatch<React.SetStateAction<'keyboard' | 'mouse'>>
   backgroundMusicOn: boolean
   setBackgroundMusicOn: React.Dispatch<React.SetStateAction<boolean>>
+  gameMode: GameMode
+  setGameMode: React.Dispatch<React.SetStateAction<GameMode>>
   toggleSound: () => void
   toggleBackgroundMusic: () => void
   toggleControlMode: () => void
+  toggleGameMode: () => void
+  getActivePaddles: () => string[]
 }
 
 // Define the settings type to avoid 'any'
@@ -19,13 +29,15 @@ interface GameSettings {
   soundOn: boolean;
   controls: 'keyboard' | 'mouse';
   backgroundMusicOn: boolean;
+  gameMode: GameMode;
 }
 
 // Default settings
 const defaultSettings: GameSettings = {
   soundOn: true,
   controls: 'keyboard',
-  backgroundMusicOn: true
+  backgroundMusicOn: true,
+  gameMode: 'singlePlayer'  // Default to single player
 };
 
 // Load settings from localStorage if available
@@ -60,7 +72,7 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<GameSettings>(() => loadSettings());
-  const { soundOn, controls, backgroundMusicOn } = settings;
+  const { soundOn, controls, backgroundMusicOn, gameMode } = settings;
   
   // Save settings whenever they change
   useEffect(() => {
@@ -88,16 +100,34 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const setGameMode = (value: React.SetStateAction<GameMode>) => {
+    setSettings((prev: GameSettings) => ({
+      ...prev,
+      gameMode: typeof value === 'function' ? value(prev.gameMode) : value
+    }));
+  };
+
   const toggleSound = () => {
     setSoundOn((prev: boolean) => !prev);
   };
-
+  
   const toggleBackgroundMusic = () => {
     setBackgroundMusicOn((prev: boolean) => !prev);
   };
   
   const toggleControlMode = () => {
     setControls((prev: 'keyboard' | 'mouse') => prev === 'keyboard' ? 'mouse' : 'keyboard');
+  };
+  
+  const toggleGameMode = () => {
+    setGameMode((prev: GameMode) => prev === 'singlePlayer' ? 'multiPlayer' : 'singlePlayer');
+  };
+  
+  /**
+   * Returns an array of active paddle positions based on the current game mode.
+   */
+  const getActivePaddles = () => {
+    return paddleConfigurations[gameMode];
   };
   return (
     <SettingsContext.Provider 
@@ -107,10 +137,14 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         controls, 
         setControls, 
         backgroundMusicOn, 
-        setBackgroundMusicOn, 
+        setBackgroundMusicOn,
+        gameMode,
+        setGameMode,
         toggleSound, 
         toggleBackgroundMusic,
-        toggleControlMode
+        toggleControlMode,
+        toggleGameMode,
+        getActivePaddles
       }}
     >
       {children}

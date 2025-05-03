@@ -1,5 +1,5 @@
 import React from 'react';
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 
 // Base interface for paddle props
 export interface BasePaddleProps {

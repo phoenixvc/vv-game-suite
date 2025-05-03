@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 
 // Define a custom interface for the collision event data
 interface MatterCollisionEvent {

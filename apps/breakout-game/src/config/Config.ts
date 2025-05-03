@@ -33,9 +33,9 @@ const config: Phaser.Types.Core.GameConfig = {
       keyboard: true
     },
     physics: {
-      default: 'arcade',
-      arcade: {
-        gravity: { y: 0, x: 0 }, // Fix: Add x property to gravity
+      default: 'matter',
+      matter: {
+        gravity: { y: 0, x: 0 },
         debug: false
       }
     },

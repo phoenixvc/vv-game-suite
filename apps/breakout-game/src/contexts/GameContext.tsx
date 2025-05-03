@@ -1,5 +1,3 @@
-"use client"
-
 import React, { createContext, useRef, useState, useContext, useMemo, useEffect } from 'react'
 import { Ball } from '../types/Ball'
 import { PowerUp, PowerUpType } from '../types/PowerUp'

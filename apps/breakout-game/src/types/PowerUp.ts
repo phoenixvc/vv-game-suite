@@ -1,3 +1,5 @@
+import * as Phaser from 'phaser';
+
 export enum PowerUpType {
   EXTRA_LIFE = 'extraLife',
   PADDLE_GROW = 'paddleGrow',

@@ -39,34 +39,84 @@ export class MultiBallPowerUp implements PowerUpHandler {
         this.multiBalls.push(ball);
         
         // Add the same collision handlers as the main ball
-        scene.physics.add.collider(ball, scene['paddle'], 
-          (obj1, obj2) => {
-            const ballObj = obj1 as Phaser.Physics.Arcade.Sprite;
-            const paddleObj = obj2 as Phaser.Physics.Arcade.Sprite;
-            scene['hitPaddle'].call(scene, ballObj, paddleObj);
+        scene.physics.add.collider(
+          ball, 
+          scene['paddle'], 
+          (
+            object1: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody | Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile,
+            object2: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody | Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile
+          ) => {
+            // Handle different types of objects properly
+            let ballObj: Phaser.Physics.Arcade.Sprite;
+            let paddleObj: Phaser.Physics.Arcade.Sprite;
+            
+            if ('gameObject' in object1) {
+              ballObj = object1.gameObject as Phaser.Physics.Arcade.Sprite;
+            } else if (object1 instanceof Phaser.GameObjects.GameObject) {
+              ballObj = object1 as Phaser.Physics.Arcade.Sprite;
+            } else {
+              return; // Can't handle this type
+            }
+            
+            if ('gameObject' in object2) {
+              paddleObj = object2.gameObject as Phaser.Physics.Arcade.Sprite;
+            } else if (object2 instanceof Phaser.GameObjects.GameObject) {
+              paddleObj = object2 as Phaser.Physics.Arcade.Sprite;
+            } else {
+              return; // Can't handle this type
+  }
+            
+            if (typeof scene['hitPaddle'] === 'function') {
+              scene['hitPaddle'].call(scene, ballObj, paddleObj);
+            }
           }, 
           undefined, 
           scene
         );
         
         // Add collision with bricks
-        scene.physics.add.collider(ball, scene['bricks'], 
-          (obj1, obj2) => {
-            const ballObj = obj1 as Phaser.Physics.Arcade.Sprite;
-            const brickObj = obj2 as Phaser.GameObjects.GameObject;
-            scene['hitBrick'].call(scene, ballObj, brickObj);
+        scene.physics.add.collider(
+          ball, 
+          scene['bricks'], 
+          (
+            object1: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody | Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile,
+            object2: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody | Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile
+          ) => {
+            // Handle different types of objects properly
+            let ballObj: Phaser.Physics.Arcade.Sprite;
+            let brickObj: Phaser.GameObjects.GameObject;
+            
+            if ('gameObject' in object1) {
+              ballObj = object1.gameObject as Phaser.Physics.Arcade.Sprite;
+            } else if (object1 instanceof Phaser.GameObjects.GameObject) {
+              ballObj = object1 as Phaser.Physics.Arcade.Sprite;
+            } else {
+              return; // Can't handle this type
+  }
+            
+            if ('gameObject' in object2) {
+              brickObj = object2.gameObject as Phaser.GameObjects.GameObject;
+            } else if (object2 instanceof Phaser.GameObjects.GameObject) {
+              brickObj = object2 as Phaser.GameObjects.GameObject;
+            } else {
+              return; // Can't handle this type
+}
+    
+            if (typeof scene['hitBrick'] === 'function') {
+              scene['hitBrick'].call(scene, ballObj, brickObj);
+}
           }, 
           undefined, 
           scene
         );
       } catch (error) {
         console.error('Error creating multi-ball:', error);
+      }
   }
-    }
-  
+    
     // Add a visual feedback
     scene.cameras.main.flash(500, 255, 255, 0); // Flash yellow
-  }
+}
   
   remove(scene: BreakoutScene): void {
     // Clean up multi balls
@@ -74,11 +124,11 @@ export class MultiBallPowerUp implements PowerUpHandler {
       try {
         if (ball) {
           ball.destroy();
-      }
+        }
       } catch (error) {
         console.error('Error destroying multi-ball:', error);
-  }
+      }
     });
     this.multiBalls = [];
-}
+  }
 }

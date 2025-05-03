@@ -1,45 +1,61 @@
-import 'phaser'
-import { useState, useEffect } from 'react'
-import config from './config/Config'
-import './Assets/styles/style.css'
-import { MarketDataProvider } from './context/MarketDataContext';
-import { GameProvider, useGameContext } from './contexts/GameContext';
-import { HighScoreProvider } from './contexts/HighScoreContext';
+import React, { useState } from 'react';
 import { SettingsProvider } from './contexts/SettingsContext';
+import PaddleController from './components/PaddleController';
+import SettingsMenu from './components/SettingsMenu';
+import Score from './components/Score';
 
-export default function Game() {
-  const { getAngleFactor } = useGameContext();
-  const angleFactor = getAngleFactor();
-
-  const [game, setGame] = useState<Phaser.Game>({} as Phaser.Game)
-
-  useEffect(() => {
-    const game: Phaser.Game = new Phaser.Game({
-      ...config,
-      scene: {
-        ...config.scene,
-        create: function () {
-          this.registry.set('angleFactor', angleFactor);
-          const marketData = this.registry.get('marketData');
-          this.registry.set('marketData', marketData);
-          const levelTheme = this.registry.get('levelTheme');
-          this.registry.set('levelTheme', levelTheme);
-        }
-      }
-    });
-    setGame(game)
-  }, [angleFactor])
+const Game: React.FC = () => {
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  
+  // Game dimensions
+  const gameWidth = 800;
+  const gameHeight = 600;
+  
+  // Paddle properties
+  const paddleWidth = 100;
+  const paddleHeight = 20;
+  const paddleSpeed = 10;
+  const paddleColor = '#4a90e2';
+  const angleFactor = 5;
   return (
-    <MarketDataProvider>
-      <GameProvider>
-        <HighScoreProvider>
-          <SettingsProvider>
-            <main>
-              <div id="game" />
-            </main>
-          </SettingsProvider>
-        </HighScoreProvider>
-      </GameProvider>
-    </MarketDataProvider>
-  )
-}
+    <SettingsProvider>
+      <div className="game-wrapper" style={{ position: 'relative' }}>
+        <div className="game-header" style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
+          <Score score={score} highScore={highScore} />
+          <button 
+            onClick={() => setIsSettingsOpen(true)}
+            style={{
+              backgroundColor: '#4a90e2',
+              color: 'white',
+              border: 'none',
+              padding: '5px 10px',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Settings
+          </button>
+        </div>
+        
+        <PaddleController
+          width={paddleWidth}
+          height={paddleHeight}
+          color={paddleColor}
+          speed={paddleSpeed}
+          gameWidth={gameWidth}
+          gameHeight={gameHeight}
+          angleFactor={angleFactor}
+          player={1}
+        />
+        <SettingsMenu 
+          isOpen={isSettingsOpen} 
+          onClose={() => setIsSettingsOpen(false)} 
+        />
+      </div>
+    </SettingsProvider>
+  );
+};
+
+export default Game;

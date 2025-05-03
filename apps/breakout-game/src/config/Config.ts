@@ -1,9 +1,21 @@
 import 'phaser';
-import { GameScene } from '../scenes/BreakoutScene';
+import BreakoutScene from '../scenes/BreakoutScene';
 import SignalHuntScene from '../scenes/SignalHuntScene';
 import VaultDefenseScene from '../scenes/VaultDefenseScene';
-import StrategyScene from '../scenes/StrategyScene';
 
+// Create a simple placeholder for StrategyScene until it's implemented
+class StrategyScene extends Phaser.Scene {
+  constructor() {
+    super({ key: 'StrategyScene' });
+  }
+  
+  create() {
+    this.add.text(400, 300, 'Strategy Scene', {
+      fontSize: '32px',
+      color: '#fff'
+    }).setOrigin(0.5);
+  }
+}
 const config: Phaser.Types.Core.GameConfig = {
     title: "New Game",
     version: '1.0',
@@ -12,7 +24,7 @@ const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     parent: 'game', // needs a div as id="game"
     scene: [
-      GameScene,
+      BreakoutScene,
       SignalHuntScene,
       VaultDefenseScene,
       StrategyScene
@@ -23,7 +35,7 @@ const config: Phaser.Types.Core.GameConfig = {
     physics: {
       default: 'arcade',
       arcade: {
-        gravity: { y: 0 },
+        gravity: { y: 0, x: 0 }, // Fix: Add x property to gravity
         debug: false
       }
     },

@@ -1,8 +1,8 @@
-import { PowerUpType } from '../types/PowerUp';
-import BreakoutScene from '../scenes/BreakoutScene';
 import { PowerUp, PowerUpConfig } from '../objects/PowerUp';
 import { PowerUpFactory } from '../powerups/PowerUpFactory';
 import { ShieldPowerUp } from '../powerups/ShieldPowerUp';
+import BreakoutScene from '../scenes/BreakoutScene';
+import { PowerUpType } from '../types/PowerUp';
 
 export class PowerUpManager {
   private scene: BreakoutScene;
@@ -112,7 +112,7 @@ export class PowerUpManager {
     this.powerUpTimers.set(timerKey, timer);
       }
   
-  public getPowerUps(): Phaser.GameObjects.Group {
+  public getPowerUpsGroup(): Phaser.GameObjects.Group {
     return this.powerUps;
   }
   

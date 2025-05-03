@@ -11,6 +11,10 @@ export enum PowerUpType {
   SCORE_MULTIPLIER = "SCORE_MULTIPLIER"
 }
 
+// Define an interface for paddles with sticky property
+interface StickyPaddle extends Phaser.GameObjects.Sprite {
+  setSticky?: (isSticky: boolean) => void;
+}
 export class PowerUp extends Phaser.Physics.Arcade.Sprite {
   type: PowerUpType;
   duration?: number; // In ms, for timed power-ups
@@ -53,15 +57,27 @@ export class PowerUp extends Phaser.Physics.Arcade.Sprite {
         break;
       case PowerUpType.SPEED_UP:
         if ('ball' in game && game.ball instanceof Phaser.Physics.Arcade.Sprite) {
-          game.ball.setVelocity(game.ball.body.velocity.x * 1.5, game.ball.body.velocity.y * 1.5);
+          // Safe access to velocity properties with null checks
+          const ballBody = game.ball.body;
+          if (ballBody && ballBody.velocity) {
+            const velocityX = ballBody.velocity.x || 0;
+            const velocityY = ballBody.velocity.y || 0;
+            game.ball.setVelocity(velocityX * 1.5, velocityY * 1.5);
+          }
         }
         if ('setPowerUpTimer' in game && typeof game.setPowerUpTimer === 'function') {
           game.setPowerUpTimer(this, 10000); // 10 seconds
         }
         break;
       case PowerUpType.STICKY:
-        if ('paddle' in game && game.paddle instanceof Phaser.GameObjects.Sprite) {
-          game.paddle.setSticky(true);
+        if ('paddle' in game) {
+          // Cast to our interface that includes the setSticky method
+          const paddle = game.paddle as StickyPaddle;
+          if (paddle && typeof paddle.setSticky === 'function') {
+            paddle.setSticky(true);
+          } else {
+            console.warn('Paddle does not have setSticky method');
+          }
         }
         if ('setPowerUpTimer' in game && typeof game.setPowerUpTimer === 'function') {
           game.setPowerUpTimer(this, 10000); // 10 seconds
@@ -97,12 +113,22 @@ export class PowerUp extends Phaser.Physics.Arcade.Sprite {
         break;
       case PowerUpType.SPEED_UP:
         if ('ball' in game && game.ball instanceof Phaser.Physics.Arcade.Sprite) {
-          game.ball.setVelocity(game.ball.body.velocity.x / 1.5, game.ball.body.velocity.y / 1.5);
+          // Safe access to velocity properties with null checks
+          const ballBody = game.ball.body;
+          if (ballBody && ballBody.velocity) {
+            const velocityX = ballBody.velocity.x || 0;
+            const velocityY = ballBody.velocity.y || 0;
+            game.ball.setVelocity(velocityX / 1.5, velocityY / 1.5);
+          }
         }
         break;
       case PowerUpType.STICKY:
-        if ('paddle' in game && game.paddle instanceof Phaser.GameObjects.Sprite) {
-          game.paddle.setSticky(false);
+        if ('paddle' in game) {
+          // Cast to our interface that includes the setSticky method
+          const paddle = game.paddle as StickyPaddle;
+          if (paddle && typeof paddle.setSticky === 'function') {
+            paddle.setSticky(false);
+          }
         }
         break;
       // Add other power-up expiration logic here

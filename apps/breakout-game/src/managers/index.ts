@@ -1,4 +1,5 @@
-export * from './PowerUpManager';
-export * from './PaddleController';
-export * from './BrickManager';
-export * from './UIManager';
+export { BrickManager } from './BrickManager';
+export { PaddleController } from './PaddleController';
+export { PowerUpManager } from './PowerUpManager';
+export { UIManager } from './UIManager';
+export { CollisionManager } from './CollisionManager';

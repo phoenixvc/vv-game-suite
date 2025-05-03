@@ -33,7 +33,9 @@
   
   "remoteUser": "vscode",
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers-extra/features/poetry:2": {},
+    "ghcr.io/devcontainers-extra/features/ruff:1": {}
   },
   
   "postCreateCommand": "mkdir -p .devcontainer/scripts && echo '#!/bin/bash\necho \"Setting up Monica authentication...\"\nif [ -n \"$GITHUB_TOKEN\" ]; then\n  echo \"GitHub token found, configuring...\"\n  gh auth setup-git\nelse\n  echo \"No GitHub token found. Please authenticate manually.\"\nfi' > .devcontainer/scripts/setup-monica-auth.sh && chmod +x .devcontainer/scripts/setup-monica-auth.sh && .devcontainer/scripts/setup-monica-auth.sh",

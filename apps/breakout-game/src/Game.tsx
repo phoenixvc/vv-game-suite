@@ -2,7 +2,8 @@ import 'phaser'
 import { useState, useEffect } from 'react'
 import config from './config/Config'
 import './Assets/styles/style.css'
-import { GameProvider, useGameContext } from './contexts/GameContext';
+import { GameProvider } from './contexts/GameContext';
+import { MarketDataProvider } from './context/MarketDataContext';
 
 export default function Game() {
   const { getAngleFactor } = useGameContext();
@@ -23,10 +24,12 @@ export default function Game() {
     setGame(game)
   }, [angleFactor])
   return (
-    <GameProvider>
-      <main>
-        <div id="game" />
-      </main>
-    </GameProvider>
+    <MarketDataProvider>
+      <GameProvider>
+        <main>
+          <div id="game" />
+        </main>
+      </GameProvider>
+    </MarketDataProvider>
   )
 }

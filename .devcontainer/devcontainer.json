@@ -1,7 +1,7 @@
 {
   "name": "VV Game Suite",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-  "forwardPorts": [8000, 7071],
+  "forwardPorts": [8000, 7071, 3000, 5000],
   
   "customizations": {
     "vscode": {
@@ -15,19 +15,47 @@
         "redhat.vscode-yaml",
         "github.copilot",
         "github.copilot-chat",
-        "github.monica"
+        "github.monica",
+        "dbaeumer.vscode-eslint",
+        "ms-vscode.powershell",
+        "ms-vscode.azure-account",
+        "ms-mssql.mssql",
+        "ms-azuretools.vscode-docker",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker",
+        "editorconfig.editorconfig",
+        "ritwickdey.liveserver"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python",
         "python.linting.enabled": true,
         "python.linting.pylintEnabled": true,
-        "python.formatting.provider": "black",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": true
+        },
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
         "github.monica.enabled": true,
         "github.monica.features.codeEditing": true,
         "github.monica.features.pullRequests": true,
         "github.monica.authentication.method": "github",
-        "github.monica.authentication.tokenStorage": "secureStorage"
+        "github.monica.authentication.tokenStorage": "secureStorage",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "bash",
+            "icon": "terminal-bash"
+          }
+        }
       }
+    },
+    "codespaces": {
+      "openFiles": [
+        "README.md",
+        ".devcontainer/devcontainer.json"
+      ]
     }
   },
   
@@ -35,16 +63,65 @@
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers-extra/features/poetry:2": {},
-    "ghcr.io/devcontainers-extra/features/ruff:1": {}
+    "ghcr.io/devcontainers-extra/features/ruff:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.10",
+      "installTools": true
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/dotnet:1": {
+      "version": "7.0"
+    },
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {}
   },
   
-  "postCreateCommand": "mkdir -p .devcontainer/scripts && echo '#!/bin/bash\necho \"Setting up Monica authentication...\"\nif [ -n \"$GITHUB_TOKEN\" ]; then\n  echo \"GitHub token found, configuring...\"\n  gh auth setup-git\nelse\n  echo \"No GitHub token found. Please authenticate manually.\"\nfi' > .devcontainer/scripts/setup-monica-auth.sh && chmod +x .devcontainer/scripts/setup-monica-auth.sh && .devcontainer/scripts/setup-monica-auth.sh",
+  "postCreateCommand": "bash -c 'mkdir -p .devcontainer/scripts && echo \"#!/bin/bash\necho \\\"Setting up development environment...\\\"\n\n# Setup Monica authentication\nif [ -n \\\"$GITHUB_TOKEN\\\" ]; then\n  echo \\\"GitHub token found, configuring...\\\"\n  gh auth setup-git\nelse\n  echo \\\"No GitHub token found. Please authenticate manually.\\\"\nfi\n\n# Install additional Python packages\npip install --user pytest black isort pylint\n\n# Install global npm packages\nnpm install -g typescript eslint prettier\n\n# Setup git config\ngit config --global pull.rebase true\ngit config --global core.editor \"code --wait\"\n\necho \\\"Environment setup complete!\\\"\" > .devcontainer/scripts/setup-environment.sh && chmod +x .devcontainer/scripts/setup-environment.sh && .devcontainer/scripts/setup-environment.sh'",
   
   "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.config/gh,target=/home/vscode/.config/gh,type=bind,consistency=cached"
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.config/gh,target=/home/vscode/.config/gh,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
   ],
   
   "remoteEnv": {
-    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
+    "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin"
+  },
+  
+  "containerEnv": {
+    "PYTHONUNBUFFERED": "1",
+    "NODE_ENV": "development"
+  },
+  
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  
+  "waitFor": "onCreateCommand",
+  
+  "updateContentCommand": "bash -c 'if [ -f \"package.json\" ]; then npm install; fi && if [ -f \"requirements.txt\" ]; then pip install -r requirements.txt; fi'",
+  
+  "portsAttributes": {
+    "8000": {
+      "label": "Web App",
+      "onAutoForward": "notify"
+    },
+    "7071": {
+      "label": "Azure Functions",
+      "onAutoForward": "notify"
+    },
+    "3000": {
+      "label": "Frontend",
+      "onAutoForward": "notify"
+    },
+    "5000": {
+      "label": "API",
+      "onAutoForward": "notify"
+    }
   }
 }

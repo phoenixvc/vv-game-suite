@@ -8,7 +8,7 @@ class SignalHuntScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('signal_brick', 'path/to/signal_brick.png');
+    this.load.image('signal_brick', 'path/to/signal_brick.svg');
   }
 
   create() {

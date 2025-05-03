@@ -6,13 +6,23 @@ import { GameProvider } from './contexts/GameContext';
 import { MarketDataProvider } from './context/MarketDataContext';
 
 export default function Game() {
+  const { getAngleFactor } = useGameContext();
+  const angleFactor = getAngleFactor();
 
   const [game, setGame] = useState<Phaser.Game>({} as Phaser.Game)
 
   useEffect(() => {
-    const game: Phaser.Game = new Phaser.Game(config)
+    const game: Phaser.Game = new Phaser.Game({
+      ...config,
+      scene: {
+        ...config.scene,
+        create: function () {
+          this.registry.set('angleFactor', angleFactor);
+        }
+      }
+    });
     setGame(game)
-  }, [])
+  }, [angleFactor])
   return (
     <MarketDataProvider>
       <GameProvider>

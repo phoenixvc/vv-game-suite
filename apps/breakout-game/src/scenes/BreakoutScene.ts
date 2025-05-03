@@ -17,8 +17,9 @@ class BreakoutScene extends Phaser.Scene {
 	private powerUps!: Phaser.Physics.Arcade.Group; // Group to hold power-ups
 	private marketData: any; // Placeholder for market data
   
-	constructor() {
+	constructor(angleFactor: number) {
 	  super({ key: 'Breakout', active: true });
+	  this.angleFactor = angleFactor;
 	}
   
 	preload() {
@@ -171,9 +172,6 @@ class BreakoutScene extends Phaser.Scene {
 	  
   
 	private hitPaddle(ball: Phaser.GameObjects.GameObject, paddle: Phaser.GameObjects.GameObject) {
-		const { gameState } = useGameContext();
-		this.angleFactor = gameState.angleFactor;
-
 		if (this.edge === 'bottom' || this.edge === 'top') {
 			const diff = ball.x - paddle.x;
 			ball.body.velocity.x = diff * this.angleFactor;

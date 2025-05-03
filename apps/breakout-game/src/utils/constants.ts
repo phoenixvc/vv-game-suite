@@ -127,7 +127,11 @@ export const POWER_UP_EFFECTS = {
   laser: (game) => game.enableLaser(),
   shield: (game) => game.addShield(),
   slowBall: (game) => {
-    game.ball.setVelocity(game.ball.body.velocity.x * 0.5, game.ball.body.velocity.y * 0.5);
+    // Handle multiple balls if they exist
+    const balls = Array.isArray(game.balls) ? game.balls : [game.ball];
+    balls.forEach(ball => {
+      ball.setVelocity(ball.body.velocity.x * 0.5, ball.body.velocity.y * 0.5);
+    });
     game.setPowerUpTimer('slowBall', 10000); // 10 seconds
   },
   fastBall: (game) => {

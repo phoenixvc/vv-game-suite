@@ -1,9 +1,9 @@
+import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import * as Phaser from 'phaser';
+import AIPaddleController from './AIPaddleController';
 import BasePaddleController from './BasePaddleController';
 import KeyboardPaddleController from './KeyboardPaddleController';
 import MousePaddleController from './MousePaddleController';
-import AIPaddleController from './AIPaddleController';
-import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 
 /**
  * Factory class for creating appropriate paddle controllers
@@ -105,6 +105,27 @@ class PaddleController {
   }
   
   /**
+   * Enable control of the paddle
+   */
+  enableControl(): void {
+    this.controller.enableControl();
+  }
+  
+  /**
+   * Disable control of the paddle
+   */
+  disableControl(): void {
+    this.controller.disableControl();
+  }
+  
+  /**
+   * Check if control is enabled
+   */
+  isControlEnabled(): boolean {
+    return this.controller.isControlEnabled();
+  }
+  
+  /**
    * Set paddle stickiness
    */
   setSticky(isSticky: boolean): void {
@@ -149,6 +170,7 @@ class PaddleController {
     const scene = (this.controller as any).scene;
     const paddle = this.controller.getPaddle();
     const orientation = (this.controller as any).orientation || 'horizontal';
+    const wasEnabled = this.controller.isControlEnabled();
     
     // Clean up the old controller
     this.controller.cleanup();
@@ -172,6 +194,11 @@ class PaddleController {
         const paddleId = paddle?.getData('id') || 'default';
         this.controller = new KeyboardPaddleController(scene, paddle, orientation, paddleId);
         break;
+    }
+    
+    // Restore enabled state if it was enabled before
+    if (wasEnabled) {
+      this.controller.enableControl();
     }
   }
 }

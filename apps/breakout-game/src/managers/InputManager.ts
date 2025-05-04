@@ -1,5 +1,6 @@
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import * as Phaser from 'phaser';
+import MatterJS from 'matter-js';
 
 // Define control types
 export enum ControlType {
@@ -7,6 +8,13 @@ export enum ControlType {
   TOUCH = 'touch',
   MOUSE = 'mouse',
   GAMEPAD = 'gamepad'
+}
+
+// Define game states
+export enum GameState {
+  READY = 'ready',    // Initial state, waiting for first click
+  STARTED = 'started', // Game started, paddle control enabled, but ball not launched
+  PLAYING = 'playing'  // Ball launched, full gameplay
 }
 
 class InputManager {
@@ -25,46 +33,123 @@ class InputManager {
     this.controlType = storedControlType ? storedControlType : ControlType.KEYBOARD;
     
     // Initialize input handlers
-    this.initializeInputHandlers();
+    this.initialize();
   }
   
   /**
-   * Initialize input handlers based on control type
+   * Initialize input handlers and game state
    */
-  private initializeInputHandlers(): void {
-    // Always set up pointer down for starting the game
-    this.scene.input.on('pointerdown', this.handlePointerDown, this);
+  public initialize(): void {
+    console.log('Initializing input manager...');
     
-    // Set up touch controls if enabled
-    if (this.controlType === ControlType.TOUCH || this.controlType === ControlType.MOUSE) {
-      this.scene.input.on('pointermove', this.handlePointerMove, this);
-    }
+    // Set initial game state
+    this.scene.registry.set('gameState', GameState.READY);
+    
+    // Set up keyboard controls
+    this.setupKeyboardControls();
+    
+    // Set up mouse/touch controls
+    this.setupPointerControls();
     
     // Set up gamepad detection
     if (this.scene.input.gamepad) {
       this.scene.input.gamepad.once('connected', this.handleGamepadConnected, this);
     }
+    
+    console.log('Input manager initialized');
   }
   
   /**
-   * Handle pointer down events
+   * Set up keyboard controls
    */
-  private handlePointerDown(pointer: Phaser.Input.Pointer): void {
-    // Start the game if not started
-    if (typeof this.scene.startGame === 'function' && !this.scene['ballLaunched']) {
-      this.scene.startGame();
-    }
-    
-    // If using touch/mouse controls, update control type
-    if (pointer.wasTouch) {
-      this.touchActive = true;
-      if (this.controlType !== ControlType.TOUCH) {
-        this.setControlType(ControlType.TOUCH);
+  private setupKeyboardControls(): void {
+    // Add keyboard event listeners if needed
+    // This is a placeholder for keyboard control setup
+  }
+  
+  /**
+   * Set up pointer (mouse/touch) controls
+   */
+  private setupPointerControls(): void {
+    // Handle pointer down events for game state progression
+    this.scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      const gameState = this.scene.registry.get('gameState') || GameState.READY;
+      
+      if (gameState === GameState.READY) {
+        // First click: Start the game (enable paddle control)
+        console.log('First click: Starting game (enabling paddle control)');
+        this.scene.registry.set('gameState', GameState.STARTED);
+        
+        // Enable paddle control
+        this.enablePaddleControl();
+        
+        // Emit event that game is started (but ball not launched yet)
+        const eventManager = this.scene.getEventManager();
+        if (eventManager) {
+          eventManager.emit('gameControlsEnabled');
+        }
+      } 
+      else if (gameState === GameState.STARTED) {
+        // Second click: Launch the ball
+        console.log('Second click: Launching ball');
+        this.scene.registry.set('gameState', GameState.PLAYING);
+        
+        // Start the game (launch ball)
+        if (typeof this.scene.startGame === 'function') {
+          this.scene.startGame();
+        }
       }
-    } else {
-      this.mouseActive = true;
-      if (this.controlType !== ControlType.MOUSE) {
-        this.setControlType(ControlType.MOUSE);
+      
+      // Update control type based on input device
+      if (pointer.wasTouch) {
+        this.touchActive = true;
+        if (this.controlType !== ControlType.TOUCH) {
+          this.setControlType(ControlType.TOUCH);
+        }
+      } else {
+        this.mouseActive = true;
+        if (this.controlType !== ControlType.MOUSE) {
+          this.setControlType(ControlType.MOUSE);
+        }
+      }
+    });
+    
+    // Handle pointer move events for paddle control
+    this.scene.input.on('pointermove', this.handlePointerMove, this);
+  }
+  
+  /**
+   * Enable paddle control
+   */
+  private enablePaddleControl(): void {
+    console.log('Enabling paddle control');
+    
+    // Get all paddle controllers
+    const paddleControllers = this.scene.getAllPaddleControllers ? 
+      this.scene.getAllPaddleControllers() : {};
+    
+    // Enable each controller
+    Object.values(paddleControllers).forEach(controller => {
+      if (controller && typeof controller.enableControl === 'function') {
+        controller.enableControl();
+      }
+    });
+    
+    // If no getAllPaddleControllers method, try to enable through paddle manager
+    const paddleManager = this.scene.getPaddleManager ? this.scene.getPaddleManager() : null;
+    if (paddleManager) {
+      // Call enableControl method on paddle manager
+      if (typeof paddleManager.enableControl === 'function') {
+        paddleManager.enableControl();
+      } else {
+        // Fallback: enable individual paddle controllers through their data
+        const paddles = paddleManager.getPaddles ? paddleManager.getPaddles() : [];
+        paddles.forEach(paddle => {
+          const controller = paddle.getData('controller');
+          if (controller && typeof controller.enableControl === 'function') {
+            controller.enableControl();
+          }
+        });
       }
     }
   }
@@ -73,13 +158,17 @@ class InputManager {
    * Handle pointer move events for touch/mouse controls
    */
   private handlePointerMove(pointer: Phaser.Input.Pointer): void {
-    // Only handle if using touch or mouse controls
-    if (this.controlType !== ControlType.TOUCH && this.controlType !== ControlType.MOUSE) {
+    // Only handle if using touch or mouse controls and game is started
+    const gameState = this.scene.registry.get('gameState');
+    if ((this.controlType !== ControlType.TOUCH && this.controlType !== ControlType.MOUSE) || 
+        gameState === GameState.READY) {
       return;
     }
     
-    // Update paddle position based on pointer
-    const paddles = this.scene['paddles'];
+    // Get paddles through paddle manager if available
+    const paddleManager = this.scene.getPaddleManager ? this.scene.getPaddleManager() : null;
+    const paddles = paddleManager ? paddleManager.getPaddles() : this.scene['paddles'];
+    
     if (!paddles || paddles.length === 0) return;
     
     // Focus on bottom paddle for now
@@ -93,7 +182,7 @@ class InputManager {
       );
       
       // Update paddle position
-      this.scene.matter.body.setPosition(bottomPaddle.body as MatterJS.BodyType, {
+      this.scene.matter.body.setPosition(bottomPaddle.body as any, {
         x: newX,
         y: bottomPaddle.y
       });
@@ -112,7 +201,10 @@ class InputManager {
     
     // Emit gamepad connected event
     if (this.scene.getEventManager) {
-      this.scene.getEventManager().emit('gamepadConnected', { pad });
+      const eventManager = this.scene.getEventManager();
+      if (eventManager) {
+        eventManager.emit('gamepadConnected', { pad });
+      }
     }
   }
   
@@ -132,7 +224,22 @@ class InputManager {
   private handleGamepadInput(): void {
     if (!this.gamepad) return;
     
-    const paddles = this.scene['paddles'];
+    const gameState = this.scene.registry.get('gameState');
+    if (gameState === GameState.READY) {
+      // If in READY state, A button starts the game (enables controls)
+      // Check if A button (index 0) is pressed
+      if (this.gamepad.buttons[0] && this.gamepad.buttons[0].pressed) {
+        console.log('Gamepad A button: Starting game (enabling paddle control)');
+        this.scene.registry.set('gameState', GameState.STARTED);
+        this.enablePaddleControl();
+      }
+      return;
+    }
+    
+    // Get paddles through paddle manager if available
+    const paddleManager = this.scene.getPaddleManager ? this.scene.getPaddleManager() : null;
+    const paddles = paddleManager ? paddleManager.getPaddles() : this.scene['paddles'];
+    
     if (!paddles || paddles.length === 0) return;
     
     // Get bottom paddle
@@ -155,15 +262,21 @@ class InputManager {
       );
       
       // Update paddle position
-      this.scene.matter.body.setPosition(bottomPaddle.body as MatterJS.BodyType, {
+      this.scene.matter.body.setPosition(bottomPaddle.body as any, {
         x: newX,
         y: bottomPaddle.y
       });
     }
     
-    // Check A button for launching the ball
-    if (this.gamepad.A && !this.scene['ballLaunched'] && typeof this.scene.startGame === 'function') {
-      this.scene.startGame();
+    // Check A button for launching the ball (only in STARTED state)
+    if (gameState === GameState.STARTED && 
+        this.gamepad.buttons[0] && this.gamepad.buttons[0].pressed) {
+      console.log('Gamepad A button: Launching ball');
+      this.scene.registry.set('gameState', GameState.PLAYING);
+      
+      if (typeof this.scene.startGame === 'function') {
+        this.scene.startGame();
+      }
     }
   }
   
@@ -176,7 +289,10 @@ class InputManager {
     
     // Emit control type changed event
     if (this.scene.getEventManager) {
-      this.scene.getEventManager().emit('controlTypeChanged', { type });
+      const eventManager = this.scene.getEventManager();
+      if (eventManager) {
+        eventManager.emit('controlTypeChanged', { type });
+      }
     }
   }
   
@@ -188,10 +304,17 @@ class InputManager {
   }
   
   /**
+   * Get the current game state
+   */
+  public getGameState(): GameState {
+    return this.scene.registry.get('gameState') || GameState.READY;
+  }
+  
+  /**
    * Clean up event listeners when scene is shut down
    */
   public cleanup(): void {
-    this.scene.input.off('pointerdown', this.handlePointerDown, this);
+    this.scene.input.off('pointerdown');
     this.scene.input.off('pointermove', this.handlePointerMove, this);
     
     if (this.scene.input.gamepad) {

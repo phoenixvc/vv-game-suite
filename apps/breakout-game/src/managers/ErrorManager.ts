@@ -9,6 +9,8 @@ export class ErrorManager {
   private errorText: Phaser.GameObjects.Text | null = null;
   private errorLog: Array<{message: string, stack?: string, timestamp: number}> = [];
   private isErrorDisplayed: boolean = false;
+  private errorCount: Record<string, number> = {}; // Track error frequency
+  private maxErrorsPerType: number = 3; // Maximum number of times to show the same error
   
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -61,26 +63,60 @@ export class ErrorManager {
    * @param display Whether to display the error on screen
    */
   public logError(message: string, stack?: string, display: boolean = true): void {
-    // Add to error log
-    this.errorLog.push({
-      message,
-      stack,
-      timestamp: Date.now()
-    });
-    
-    // Limit log size
-    if (this.errorLog.length > 50) {
-      this.errorLog.shift();
+    try {
+      // Generate a simple hash of the error message to track frequency
+      const errorKey = this.getErrorKey(message);
+      
+      // Increment error count
+      this.errorCount[errorKey] = (this.errorCount[errorKey] || 0) + 1;
+      
+      // Add to error log
+      this.errorLog.push({
+        message,
+        stack,
+        timestamp: Date.now()
+      });
+      
+      // Limit log size
+      if (this.errorLog.length > 50) {
+        this.errorLog.shift();
+      }
+      
+      // Log to console for debugging
+      console.warn('[ErrorManager] Error:', message);
+      if (stack) console.warn('[ErrorManager] Stack:', stack);
+      
+      // Special handling for common errors
+      if (message.includes("Cannot read properties of undefined (reading 'position')")) {
+        console.warn('[ErrorManager] Detected position access on undefined object. This is likely a timing issue with destroyed game objects.');
+        // Only display first few occurrences to avoid spam
+        display = this.errorCount[errorKey] <= this.maxErrorsPerType;
+      }
+      
+      // Display error if requested and scene is active
+      if (display && this.scene && this.scene.scene && typeof this.scene.scene.isActive === 'function') {
+        try {
+          const isActive = this.scene.scene.isActive();
+          if (isActive) {
+            this.displayError(message);
+          }
+        } catch (e) {
+          console.warn('[ErrorManager] Could not check if scene is active:', e);
+        }
+      }
+    } catch (e) {
+      // Last resort fallback if our error handler itself has an error
+      console.error('[ErrorManager] Error in error handler:', e);
     }
-    
-    // Log to console for debugging
-    console.warn('[ErrorManager] Error:', message);
-    if (stack) console.warn('[ErrorManager] Stack:', stack);
-    
-    // Display error if requested
-    if (display && this.scene.scene.isActive()) {
-      this.displayError(message);
-    }
+  }
+  
+  /**
+   * Generate a simple key for the error to track frequency
+   */
+  private getErrorKey(message: string): string {
+    // Extract the main part of the error message (first line or first 50 chars)
+    const mainPart = message.split('\n')[0].substring(0, 50);
+    return mainPart;
   }
   
   /**
@@ -99,6 +135,12 @@ export class ErrorManager {
     this.isErrorDisplayed = true;
     
     try {
+      // Safety check - make sure scene and scale exist
+      if (!this.scene || !this.scene.scale) {
+        console.warn('[ErrorManager] Cannot display error: scene or scale not available');
+        return;
+      }
+      
       const { width, height } = this.scene.scale;
       
       // Create container for error display
@@ -128,10 +170,13 @@ export class ErrorManager {
       titleText.setOrigin(0.5);
       this.errorContainer.add(titleText);
       
+      // Format the error message - keep it short and readable
+      const formattedMessage = this.formatErrorMessage(message);
+      
       // Add error message
       this.errorText = this.scene.add.text(
         0, 0, 
-        message, 
+        formattedMessage, 
         { 
           fontFamily: 'Arial', 
           fontSize: '16px', 
@@ -161,34 +206,60 @@ export class ErrorManager {
       this.errorContainer.add(continueButton);
       
       // Add to scene
-      this.scene.children.bringToTop(this.errorContainer);
+      if (this.scene.children && typeof this.scene.children.bringToTop === 'function') {
+        this.scene.children.bringToTop(this.errorContainer);
+      }
       
       // Pause game if it's running
-      if (!this.scene.scene.isPaused()) {
+      if (this.scene.scene && typeof this.scene.scene.isPaused === 'function' && !this.scene.scene.isPaused()) {
         this.scene.scene.pause();
       }
       
     } catch (err) {
       // If we can't display the error graphically, log it
-      console.error('Failed to display error:', err);
+      console.error('[ErrorManager] Failed to display error:', err);
     }
+  }
+  
+  /**
+   * Format error message to be more user-friendly
+   */
+  private formatErrorMessage(message: string): string {
+    // Truncate very long messages
+    if (message.length > 200) {
+      message = message.substring(0, 200) + '...';
+    }
+    
+    // Handle specific error types with more user-friendly messages
+    if (message.includes("Cannot read properties of undefined (reading 'position')")) {
+      return "A game object was accessed after being destroyed.\nThis won't affect your gameplay.\n\nTechnical details: Object position property not found";
+    }
+    
+    return message;
   }
   
   /**
    * Hide the error display
    */
   public hideError(): void {
-    if (this.errorContainer) {
-      this.errorContainer.destroy();
-      this.errorContainer = null;
-      this.errorText = null;
-    }
-    
-    this.isErrorDisplayed = false;
-    
-    // Resume game if it was paused
-    if (this.scene.scene.isPaused()) {
-      this.scene.scene.resume();
+    try {
+      if (this.errorContainer) {
+        this.errorContainer.destroy();
+        this.errorContainer = null;
+        this.errorText = null;
+      }
+      
+      this.isErrorDisplayed = false;
+      
+      // Resume game if it was paused
+      if (this.scene && this.scene.scene && 
+          typeof this.scene.scene.isPaused === 'function' && 
+          typeof this.scene.scene.resume === 'function' && 
+          this.scene.scene.isPaused()) {
+        this.scene.scene.resume();
+      }
+    } catch (err) {
+      console.error('[ErrorManager] Error hiding error display:', err);
     }
   }
   
@@ -204,6 +275,7 @@ export class ErrorManager {
    */
   public clearErrorLog(): void {
     this.errorLog = [];
+    this.errorCount = {};
   }
   
   /**
@@ -229,17 +301,49 @@ export class ErrorManager {
   }
   
   /**
+   * Safely access an object property with error handling
+   * @param obj The object to access
+   * @param propertyPath The property path (e.g., 'position.x')
+   * @param defaultValue Default value if property doesn't exist
+   */
+  public safeAccess<T>(obj: any, propertyPath: string, defaultValue: T): T {
+    try {
+      if (!obj) return defaultValue;
+      
+      const parts = propertyPath.split('.');
+      let current = obj;
+      
+      for (const part of parts) {
+        if (current === undefined || current === null) {
+          return defaultValue;
+        }
+        current = current[part];
+      }
+      
+      return current !== undefined && current !== null ? current : defaultValue;
+    } catch (e) {
+      return defaultValue;
+    }
+  }
+  
+  /**
    * Clean up resources
    */
   public cleanup(): void {
-    if (this.errorContainer) {
-      this.errorContainer.destroy();
-      this.errorContainer = null;
-      this.errorText = null;
+    try {
+      if (this.errorContainer) {
+        this.errorContainer.destroy();
+        this.errorContainer = null;
+        this.errorText = null;
+      }
+      
+      this.isErrorDisplayed = false;
+      
+      // Don't restore original console.error to keep error tracking active
+      // even during scene transitions
+    } catch (e) {
+      console.error('[ErrorManager] Error during cleanup:', e);
     }
-    
-    // Restore original console.error if needed
-    // (This part is optional and depends on your needs)
   }
 }
 

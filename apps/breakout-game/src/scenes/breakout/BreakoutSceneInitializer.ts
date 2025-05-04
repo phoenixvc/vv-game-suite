@@ -1,9 +1,10 @@
+import PaddleController from '@/controllers/paddle/PaddleController';
 import { CollisionManager } from '@/managers';
-import BallManager from '../../managers/BallManager';
+import BallManager from '../../managers/Ball/BallManager';
 import BrickManager from '../../managers/BrickManager';
 import InputManager from '../../managers/InputManager';
 import LevelManager from '../../managers/LevelManager';
-import PaddleController from '../../managers/PaddleManager';
+import PaddleManager from '../../managers/PaddleManager'; // Import PaddleManager
 import ParticleManager from '../../managers/ParticleManager';
 import PhysicsManager from '../../managers/PhysicsManager';
 import PowerUpManager from '../../managers/PowerUpManager';
@@ -22,16 +23,28 @@ class BreakoutSceneInitializer {
     this.scene = scene;
   }
   
-  /**
-   * Initialize all managers and game objects
-   */
-  public initialize(): void {
+/**
+ * Initialize all managers and game objects
+ */
+public initialize(): void {
+  console.log('Initializing BreakoutScene...');
+  
+  try {
     // Initialize managers in the correct order (dependency-based)
     this.initializePhysicsManager();
     this.initializeCollisionManager();
     this.initializeParticleManager();
-    this.initializeBallManager();
+    
+    // Initialize paddle manager before ball manager
     this.initializePaddleManager();
+    
+    // Create paddles immediately
+    this.createPaddles();
+    
+    // Now initialize ball manager
+    this.initializeBallManager();
+    
+    // Initialize remaining managers
     this.initializeBrickManager();
     this.initializePowerUpManager();
     this.initializeScoreManager();
@@ -42,7 +55,82 @@ class BreakoutSceneInitializer {
     
     // Set up event listeners
     this.setupEventListeners();
+    
+    // Initialize gameplay (this will reset the ball position)
+    this.initializeGameplay();
+    
+    console.log('BreakoutScene initialization complete');
+  } catch (error) {
+    console.error('Error initializing scene:', error);
   }
+}
+
+/**
+ * Create paddles
+ */
+private createPaddles(): void {
+  console.log('Creating paddles from initializer...');
+  
+  // Get paddle manager
+  const paddleManager = this.scene.getPaddleManager();
+  if (!paddleManager) {
+    console.error('Paddle manager not available');
+    return;
+  }
+  
+  // Set active paddles in registry
+  const activePaddles = ['bottom', 'top'];
+  this.scene.registry.set('activePaddles', activePaddles);
+  
+  // Create paddles
+  paddleManager.createPaddles();
+  
+  // Verify paddles were created
+  const paddles = paddleManager.getPaddles();
+  console.log(`Created ${paddles.length} paddles`);
+}
+
+/**
+ * Initialize gameplay
+ */
+private initializeGameplay(): void {
+  console.log('Initializing gameplay from initializer...');
+  
+  // Use the gameplay component to initialize the gameplay
+  if (this.scene.getGameplay() && typeof this.scene.getGameplay().initializeGameplay === 'function') {
+    this.scene.getGameplay().initializeGameplay();
+    return;
+  }
+  
+  // Fall back to manual initialization if gameplay component is not available
+  
+  // Get ball manager
+  const ballManager = this.scene.getBallManager();
+  if (!ballManager) {
+    console.error('Ball manager not available');
+    return;
+  }
+  
+  // Get paddle manager
+  const paddleManager = this.scene.getPaddleManager();
+  if (!paddleManager) {
+    console.error('Paddle manager not available');
+    return;
+  }
+  
+  // Reset ball position to paddle
+  const paddles = paddleManager.getPaddles();
+  if (paddles.length > 0) {
+    console.log('Resetting ball to paddle from initializer');
+    ballManager.resetBall(paddles);
+    
+    // Verify ball is attached
+    const isAttached = ballManager.isBallAttachedToPaddle();
+    console.log('Ball attached to paddle:', isAttached);
+  } else {
+    console.error('No paddles available to reset ball position');
+  }
+}
   
   /**
    * Initialize physics manager
@@ -82,9 +170,33 @@ class BreakoutSceneInitializer {
    * Initialize paddle manager
    */
   private initializePaddleManager(): void {
-    // Create default paddle
-    const paddleController = new PaddleController(this.scene);
-    this.scene.addPaddleController('default', paddleController);
+    console.log('Initializing paddle manager...');
+    
+    try {
+      // Create a PaddleManager instance
+      const paddleManager = new PaddleManager(this.scene);
+      
+      // Store it directly on the scene for access
+      // This is important - we need to set it on the scene directly
+      (this.scene as any).paddleManager = paddleManager;
+      
+      // Connect it to the paddleSystem using the setPaddleManager method
+      const paddleSystem = (this.scene as any).paddleSystem;
+      if (paddleSystem && typeof paddleSystem.setPaddleManager === 'function') {
+        paddleSystem.setPaddleManager(paddleManager);
+        console.log('Connected paddle manager to paddle system');
+      } else {
+        console.warn('Could not connect paddle manager to paddle system');
+      }
+      
+      // Create default paddle controller
+      const paddleController = new PaddleController(this.scene, 'default', 'horizontal');
+      this.scene.addPaddleController('default', paddleController);
+      
+      console.log('Paddle manager initialized');
+    } catch (error) {
+      console.error('Error initializing paddle manager:', error);
+    }
   }
   
   /**

@@ -177,17 +177,16 @@ class BreakoutSceneParticleEffects {
     // Try to get the paddle controller for this ID
     const paddleController = this.scene.getPaddleControllerById(paddleId);
     if (paddleController) {
-      // Get the first paddle from the array returned by getPaddles()
-      const paddles = paddleController.getPaddles();
-      return paddles && paddles.length > 0 ? paddles[0] : undefined;
+      // Try getPaddle first (single paddle)
+      if (paddleController.getPaddle && typeof paddleController.getPaddle === 'function') {
+        return paddleController.getPaddle();
+      }
     }
     
-    // If we can't find a specific controller, try the default one
-    const defaultController = this.scene.getPaddleManager();
-    if (defaultController) {
-      // Get the first paddle from the array returned by getPaddles()
-      const paddles = defaultController.getPaddles();
-      return paddles && paddles.length > 0 ? paddles[0] : undefined;
+    // If we can't find a specific controller, try the paddle manager
+    const paddleManager = this.scene.getPaddleManager();
+    if (paddleManager) {
+      return paddleManager.getPaddleByEdge(paddleId);
     }
     
     return undefined;
@@ -198,26 +197,18 @@ class BreakoutSceneParticleEffects {
    * @returns Array of paddle sprites
    */
   private getAllPaddles(): Phaser.Physics.Matter.Sprite[] {
-    // Get all paddle controllers
-    const paddleControllers = this.scene.getAllPaddleControllers();
-    
     // Use scene's getAllPaddles method if available
     if (this.scene.getAllPaddles && typeof this.scene.getAllPaddles === 'function') {
       return this.scene.getAllPaddles();
     }
     
-    // Otherwise collect paddles from each controller
-    const paddles: Phaser.Physics.Matter.Sprite[] = [];
-    Object.values(paddleControllers).forEach(controller => {
-      if (controller && controller.getPaddles && typeof controller.getPaddles === 'function') {
-        const controllerPaddles = controller.getPaddles();
-        if (controllerPaddles && controllerPaddles.length > 0) {
-          paddles.push(...controllerPaddles);
-        }
-      }
-    });
+    // Otherwise get paddles from the paddle manager
+    const paddleManager = this.scene.getPaddleManager();
+    if (paddleManager) {
+      return paddleManager.getPaddles();
+    }
     
-    return paddles;
+    return [];
   }
 }
 

@@ -1,20 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="256" height="64" viewBox="0 0 256 64">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="384" height="64" viewBox="0 0 384 64" xmlns="http://www.w3.org/2000/svg">
   <!-- Frame 1: Small explosion -->
   <circle cx="32" cy="32" r="10" fill="#FF8800" />
-  <circle cx="32" cy="32" r="6" fill="#FFCC00" />
+  <circle cx="32" cy="32" r="6" fill="#FFAA00" />
+  <circle cx="32" cy="32" r="3" fill="#FFFFFF" />
   
   <!-- Frame 2: Medium explosion -->
   <circle cx="96" cy="32" r="20" fill="#FF4400" />
-  <circle cx="96" cy="32" r="12" fill="#FF8800" />
-  <circle cx="96" cy="32" r="5" fill="#FFCC00" />
+  <circle cx="96" cy="32" r="14" fill="#FF8800" />
+  <circle cx="96" cy="32" r="8" fill="#FFAA00" />
+  <circle cx="96" cy="32" r="4" fill="#FFFFFF" />
   
   <!-- Frame 3: Large explosion -->
   <circle cx="160" cy="32" r="30" fill="#FF0000" />
-  <circle cx="160" cy="32" r="20" fill="#FF4400" />
-  <circle cx="160" cy="32" r="10" fill="#FF8800" />
+  <circle cx="160" cy="32" r="22" fill="#FF4400" />
+  <circle cx="160" cy="32" r="15" fill="#FF8800" />
+  <circle cx="160" cy="32" r="8" fill="#FFAA00" />
+  <circle cx="160" cy="32" r="4" fill="#FFFFFF" />
   
-  <!-- Frame 4: Fading explosion -->
-  <circle cx="224" cy="32" r="25" fill="#880000" opacity="0.8" />
-  <circle cx="224" cy="32" r="15" fill="#FF0000" opacity="0.6" />
-  <circle cx="224" cy="32" r="5" fill="#FF4400" opacity="0.4" />
+  <!-- Frame 4: Peak explosion -->
+  <circle cx="224" cy="32" r="32" fill="#FF0000" opacity="0.9" />
+  <circle cx="224" cy="32" r="24" fill="#FF4400" opacity="0.9" />
+  <circle cx="224" cy="32" r="16" fill="#FF8800" opacity="0.9" />
+  <circle cx="224" cy="32" r="8" fill="#FFAA00" opacity="0.9" />
+  
+  <!-- Frame 5: Fading explosion -->
+  <circle cx="288" cy="32" r="30" fill="#FF0000" opacity="0.7" />
+  <circle cx="288" cy="32" r="22" fill="#FF4400" opacity="0.7" />
+  <circle cx="288" cy="32" r="14" fill="#FF8800" opacity="0.7" />
+  
+  <!-- Frame 6: Final fade -->
+  <circle cx="352" cy="32" r="25" fill="#FF0000" opacity="0.4" />
+  <circle cx="352" cy="32" r="15" fill="#FF4400" opacity="0.4" />
 </svg>

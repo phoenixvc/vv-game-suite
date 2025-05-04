@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="96" viewBox="0 0 400 96" xmlns="http://www.w3.org/2000/svg">
+  <!-- Row 1: Different colored bricks -->
+  <!-- Brick 1: Red -->
+  <rect x="0" y="0" width="80" height="30" rx="2" ry="2" fill="#FF0000" />
+  <rect x="2" y="2" width="76" height="10" rx="1" ry="1" fill="#FF5555" opacity="0.7" />
+  
+  <!-- Brick 2: Orange -->
+  <rect x="80" y="0" width="80" height="30" rx="2" ry="2" fill="#FF8800" />
+  <rect x="82" y="2" width="76" height="10" rx="1" ry="1" fill="#FFAA55" opacity="0.7" />
+  
+  <!-- Brick 3: Yellow -->
+  <rect x="160" y="0" width="80" height="30" rx="2" ry="2" fill="#FFFF00" />
+  <rect x="162" y="2" width="76" height="10" rx="1" ry="1" fill="#FFFF88" opacity="0.7" />
+  
+  <!-- Brick 4: Green -->
+  <rect x="240" y="0" width="80" height="30" rx="2" ry="2" fill="#00FF00" />
+  <rect x="242" y="2" width="76" height="10" rx="1" ry="1" fill="#88FF88" opacity="0.7" />
+  
+  <!-- Brick 5: Blue -->
+  <rect x="320" y="0" width="80" height="30" rx="2" ry="2" fill="#0088FF" />
+  <rect x="322" y="2" width="76" height="10" rx="1" ry="1" fill="#55AAFF" opacity="0.7" />
+  
+  <!-- Row 2: Special bricks -->
+  <!-- Brick 6: Purple (Hard) -->
+  <rect x="0" y="32" width="80" height="30" rx="2" ry="2" fill="#8800FF" />
+  <rect x="2" y="34" width="76" height="10" rx="1" ry="1" fill="#AA55FF" opacity="0.7" />
+  <rect x="10" y="42" width="60" height="10" rx="1" ry="1" fill="#8800FF" stroke="#FFFFFF" stroke-width="1" />
+  
+  <!-- Brick 7: Silver (Multi-hit) -->
+  <rect x="80" y="32" width="80" height="30" rx="2" ry="2" fill="#AAAAAA" />
+  <rect x="82" y="34" width="76" height="10" rx="1" ry="1" fill="#CCCCCC" opacity="0.7" />
+  <rect x="85" y="44" width="10" height="10" rx="5" ry="5" fill="#FFFFFF" opacity="0.8" />
+  <rect x="100" y="44" width="10" height="10" rx="5" ry="5" fill="#FFFFFF" opacity="0.8" />
+  <rect x="115" y="44" width="10" height="10" rx="5" ry="5" fill="#FFFFFF" opacity="0.8" />
+  
+  <!-- Brick 8: Gold (Unbreakable) -->
+  <rect x="160" y="32" width="80" height="30" rx="2" ry="2" fill="#FFCC00" />
+  <rect x="162" y="34" width="76" height="10" rx="1" ry="1" fill="#FFEE88" opacity="0.7" />
+  <path d="M170,47 L180,42 L190,47 L200,42 L210,47 L220,42 L230,47" fill="none" stroke="#FFEE88" stroke-width="2" />
+  
+  <!-- Brick 9: Explosive -->
+  <rect x="240" y="32" width="80" height="30" rx="2" ry="2" fill="#FF4400" />
+  <rect x="242" y="34" width="76" height="10" rx="1" ry="1" fill="#FF8844" opacity="0.7" />
+  <circle cx="280" cy="47" r="8" fill="#FFFF00" />
+  <path d="M280,39 L280,43 M276,47 L284,47" stroke="#FF0000" stroke-width="2" />
+  
+  <!-- Brick 10: Power-up -->
+  <rect x="320" y="32" width="80" height="30" rx="2" ry="2" fill="#00FFFF" />
+  <rect x="322" y="34" width="76" height="10" rx="1" ry="1" fill="#88FFFF" opacity="0.7" />
+  <text x="360" y="53" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">?</text>
+  
+  <!-- Row 3: More variations -->
+  <!-- Brick 11: Pink -->
+  <rect x="0" y="64" width="80" height="30" rx="2" ry="2" fill="#FF00FF" />
+  <rect x="2" y="66" width="76" height="10" rx="1" ry="1" fill="#FF88FF" opacity="0.7" />
+  
+  <!-- Brick 12: Cyan -->
+  <rect x="80" y="64" width="80" height="30" rx="2" ry="2" fill="#00FFFF" />
+  <rect x="82" y="66" width="76" height="10" rx="1" ry="1" fill="#88FFFF" opacity="0.7" />
+  
+  <!-- Brick 13: Dark Blue -->
+  <rect x="160" y="64" width="80" height="30" rx="2" ry="2" fill="#0000FF" />
+  <rect x="162" y="66" width="76" height="10" rx="1" ry="1" fill="#8888FF" opacity="0.7" />
+  
+  <!-- Brick 14: Brown -->
+  <rect x="240" y="64" width="80" height="30" rx="2" ry="2" fill="#884400" />
+  <rect x="242" y="66" width="76" height="10" rx="1" ry="1" fill="#AA6622" opacity="0.7" />
+  
+  <!-- Brick 15: White -->
+  <rect x="320" y="64" width="80" height="30" rx="2" ry="2" fill="#FFFFFF" />
+  <rect x="322" y="66" width="76" height="10" rx="1" ry="1" fill="#EEEEEE" opacity="0.7" />
+</svg>

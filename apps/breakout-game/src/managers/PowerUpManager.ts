@@ -18,47 +18,80 @@ const powerUpTypes: PowerUpType[] = [
 
 class PowerUpManager {
   private scene: BreakoutScene;
-  private powerUps: Phaser.GameObjects.Group;
+  private powerUps: PowerUp[] = [];
   
   // Store timers in a map instead of on the scene object
   private powerUpTimers: Map<string, Phaser.Time.TimerEvent> = new Map();
 
   constructor(scene: BreakoutScene) {
     this.scene = scene;
-    
-    // Create power-ups group
-    this.powerUps = scene.add.group({
-      classType: PowerUp,
-      runChildUpdate: true
-    });
   }
   
   public createPowerUp(x: number, y: number): void {
-    const type = powerUpTypes[Phaser.Math.Between(0, powerUpTypes.length - 1)];
+    try {
+      // Get a random power-up type
+      const type = powerUpTypes[Phaser.Math.Between(0, powerUpTypes.length - 1)];
+      
+      const powerUpConfig: PowerUpConfig = {
+        x,
+        y,
+        type,
+        duration: 10000, // 10 seconds
+        velocity: { y: 2 } // Use smaller values for Matter.js
+      };
     
-    const powerUpConfig: PowerUpConfig = {
-      x,
-      y,
-      type,
-      duration: 10000, // 10 seconds
-      velocity: { y: 150 }
-    };
-  
-    const powerUp = new PowerUp(this.scene, powerUpConfig);
-    this.powerUps.add(powerUp);
-    
-    // Set collision properties for Matter.js
-    const physicsManager = this.scene.getPhysicsManager();
-    if (physicsManager && powerUp.body) {
-      powerUp.setCollisionCategory(physicsManager.powerUpCategory);
-      powerUp.setCollidesWith([physicsManager.paddleCategory]);
+      // Create the power-up with Matter.js physics
+      const powerUp = new PowerUp(this.scene, powerUpConfig);
+      this.powerUps.push(powerUp);
+      
+      // Set collision properties for Matter.js
+      const physicsManager = this.scene.getPhysicsManager();
+      if (physicsManager) {
+        powerUp.setCollisionCategory(physicsManager.powerUpCategory);
+        powerUp.setCollidesWith([physicsManager.paddleCategory]);
+        
+        // Set a label for collision detection
+        powerUp.setBody({
+          type: 'circle',
+          radius: powerUp.width / 2
+        }, {
+          label: 'powerUp',
+          isSensor: true // Make it a sensor so it doesn't affect physics
+        });
+      }
+      
+      // Add to scene's update list
+      this.scene.events.on('update', () => this.checkOutOfBounds());
+      
+      console.log(`Created power-up of type ${type} at (${x}, ${y})`);
+    } catch (error) {
+      console.error('Error creating power-up:', error);
     }
   }
   
   /**
+   * Check if any power-ups are out of bounds and remove them
+   */
+  private checkOutOfBounds(): void {
+    const { height } = this.scene.scale;
+    
+    // Filter out power-ups that are below the screen
+    this.powerUps = this.powerUps.filter(powerUp => {
+      if (powerUp.y > height + 50) {
+        if (powerUp.body) {
+          this.scene.matter.world.remove(powerUp.body);
+        }
+        powerUp.destroy();
+        return false;
+      }
+      return true;
+    });
+  }
+  
+  /**
    * Handle power-up collection
- */
-  public collectPowerUp(paddle: Phaser.Physics.Matter.Sprite, powerUp: Phaser.Physics.Matter.Sprite): void {
+   */
+  public collectPowerUp(paddle: Phaser.Physics.Matter.Sprite, powerUp: Phaser.Physics.Matter.Image): void {
     if (!powerUp || !powerUp.getData) return;
     
     // Get power-up type
@@ -109,14 +142,19 @@ class PowerUpManager {
         type: powerUpType,
         duration: 10000, // Default duration
         x: powerUp.x,
-        y: powerUp.y
+        y: powerUp.y,
+        paddleId: paddle.getData('id')
       });
-}
+    }
     
     // Remove power-up from the game
     if (powerUp.body) {
-      this.scene.matter.world.remove(powerUp.body as MatterJS.BodyType);
-}
+      this.scene.matter.world.remove(powerUp.body);
+    }
+    
+    // Remove from our array
+    this.powerUps = this.powerUps.filter(p => p !== powerUp);
+    
     powerUp.destroy();
   }
 
@@ -156,7 +194,7 @@ class PowerUpManager {
     this.powerUpTimers.set(timerKey, timer);
   }
   
-  public getPowerUpsGroup(): Phaser.GameObjects.Group {
+  public getPowerUps(): PowerUp[] {
     return this.powerUps;
   }
   
@@ -248,8 +286,17 @@ class PowerUpManager {
       }
     });
     
-    // Clean up the power-ups group
-    this.powerUps.clear(true, true);
+    // Clean up all power-ups
+    this.powerUps.forEach(powerUp => {
+      if (powerUp.body) {
+        this.scene.matter.world.remove(powerUp.body);
+      }
+      powerUp.destroy();
+    });
+    this.powerUps = [];
+    
+    // Remove update listener
+    this.scene.events.off('update');
   }
 }
 

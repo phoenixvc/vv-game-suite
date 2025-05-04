@@ -1,12 +1,11 @@
 import { CollisionManager } from '@/managers';
 import * as Phaser from 'phaser';
 import { DEFAULT_MARKET_DATA, GAME_STATE } from '../../constants/GameConstants';
-import BallManager from '../../managers/BallManager';
+import BallManager from '../../managers/Ball/BallManager';
 import BrickManager from '../../managers/BrickManager';
 import ErrorManager from '../../managers/ErrorManager';
 import InputManager from '../../managers/InputManager';
 import LevelManager from '../../managers/LevelManager';
-import PaddleController from '../../managers/PaddleManager';
 import ParticleManager from '../../managers/ParticleManager';
 import PhysicsManager from '../../managers/PhysicsManager';
 import PowerUpManager from '../../managers/PowerUpManager';
@@ -14,14 +13,17 @@ import ScoreManager from '../../managers/ScoreManager';
 import UIManager from '../../managers/UIManager';
 import { AdaptiveRenderer } from '../../plugins/PerformanceMonitor';
 import { MarketSim } from '../../simulations/MarketSim';
+import DebugUtils from '../../utils/DebugUtils';
 import BaseScene from '../BaseScene';
+import BreakoutAssetLoader from './BreakoutAssetLoader';
 import { BreakoutSceneGameplay } from './BreakoutSceneGameplay';
 import BreakoutSceneInitializer from './BreakoutSceneInitializer';
 import { BreakoutSceneManagers } from './BreakoutSceneManagers';
 import { BreakoutScenePaddles } from './BreakoutScenePaddles';
 import BreakoutSceneParticleEffects from './BreakoutSceneParticleEffects';
-import BreakoutAssetLoader from './BreakoutAssetLoader';
-
+// Import the correct PaddleController
+import PaddleManager from '@/managers/PaddleManager';
+import PaddleController from '../../controllers/paddle/PaddleController';
 
 /**
  * Main Breakout game scene
@@ -48,7 +50,7 @@ class BreakoutScene extends BaseScene {
   private inputManager!: InputManager;
   private physicsManager!: PhysicsManager;
   private particleManager!: ParticleManager;
-  private paddleControllers: Record<string, PaddleController> = {};
+  private paddleControllers: Record<string, PaddleController> = {}; // Updated type
   private marketSim!: MarketSim;
   private adaptiveRenderer!: AdaptiveRenderer;
   private errorManager!: ErrorManager; // Added error manager
@@ -83,6 +85,8 @@ class BreakoutScene extends BaseScene {
   public setParticleManager: (manager: ParticleManager) => void;
   public getPhysicsManager: () => PhysicsManager;
   public setPhysicsManager: (manager: PhysicsManager) => void;
+  public getGameplay: () => BreakoutSceneGameplay;
+  public setGameplay: (gameplay: BreakoutSceneGameplay) => void;
   public getSoundManager: () => any;
   public getAngleFactor: () => number;
   public setAngleFactor: (value: number) => void;
@@ -91,12 +95,32 @@ class BreakoutScene extends BaseScene {
   public getMarketData: () => any;
   public getErrorManager: () => ErrorManager; // Added getter for error manager
   
-  // Paddle system methods
+  // Paddle system methods - updated types to use PaddleController
   public addPaddleController: (id: string, controller: PaddleController) => void;
   public getPaddleControllerById: (id: string) => PaddleController | undefined;
   public getAllPaddleControllers: () => Record<string, PaddleController>;
   public getAllPaddles: () => Phaser.Physics.Matter.Sprite[];
-  public getPaddleManager: () => PaddleController | undefined;
+  
+  /**
+   * Get the paddle system
+   */
+  public getPaddleSystem(): BreakoutScenePaddles {
+    return this.paddleSystem;
+  }
+
+  /**
+   * Get the paddle manager
+   */
+  public getPaddleManager(): PaddleManager | undefined {
+    // First try to get it from the paddleSystem
+    if (this.paddleSystem && typeof this.paddleSystem.getPaddleManager === 'function') {
+      return this.paddleSystem.getPaddleManager();
+    }
+    
+    // Fall back to the direct property if it exists
+    return (this as any).paddleManager;
+  }
+
   public createPaddles: () => void;
   
   // Gameplay methods
@@ -179,10 +203,31 @@ class BreakoutScene extends BaseScene {
   preload(): void {
     try {
       // Asset loading is now handled in a separate file
-      new BreakoutAssetLoader(this).loadAssets();
+      const assetLoader = new BreakoutAssetLoader(this);
+      assetLoader.loadAssets();
+      
+      // Add a safety timeout in case the assetsLoaded event never fires
+      this.time.delayedCall(10000, () => {
+        console.warn('Safety timeout reached, forcing scene to continue');
+        if (!this.scene.isActive('BreakoutScene')) {
+          this.scene.start('BreakoutScene');
+        }
+      });
+      
+      // Make sure we're listening for the assetsLoaded event
+      this.events.once('assetsLoaded', () => {
+        console.log('Assets loaded event received, proceeding with scene creation');
+        // If we're still in the preload phase, move to create
+        if (this.scene.isActive('BreakoutScene')) {
+          // The scene will automatically proceed to create after preload
+          console.log('Scene will proceed to create phase');
+        }
+      });
+      
     } catch (error) {
       console.error('Error in BreakoutScene.preload:', error);
-      // We can't use errorManager yet as it's not initialized
+      // Force scene to continue even if there's an error
+      this.scene.start('BreakoutScene');
     }
   }
   
@@ -205,6 +250,12 @@ class BreakoutScene extends BaseScene {
       
       // Wrap critical methods with error boundaries
       this.wrapCriticalMethods();
+      
+      // Debug game state
+      this.time.delayedCall(1000, () => {
+        console.log('Running debug check...');
+        DebugUtils.logGameState(this);
+      });
     } catch (error) {
       console.error('Error in BreakoutScene.create:', error);
       this.showFatalError(error instanceof Error ? error.message : String(error));
@@ -263,15 +314,21 @@ class BreakoutScene extends BaseScene {
     });
   }
   
-  // Original update method (will be wrapped by wrapCriticalMethods)
+  // Modify the update method to check game state before updating controllers
   update(time: number, delta: number): void {
     // Update common managers from base class
     this.updateCommonManagers(time, delta);
     
+    // Get game state
+    const gameStarted = this.ballManager ? this.ballManager.isBallLaunched() : false;
+    
     // Update all managers that need per-frame updates
     if (this.paddleControllers) {
       Object.values(this.paddleControllers).forEach(controller => {
-        controller.update();
+        // Only update paddle controllers if game has started or if they're AI controlled
+        if (gameStarted || controller.getPaddle()?.getData('isAI')) {
+          controller.update();
+        }
       });
     }
     

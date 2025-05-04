@@ -1,7 +1,7 @@
+import PaddleController from '@/controllers/paddle/PaddleController';
+import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import * as Phaser from 'phaser';
 import { LAYOUT } from '../constants/GameConstants';
-import PaddleController from './PaddleController';
-import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 
 /**
  * Manages the creation and coordination of all paddles in the game
@@ -74,11 +74,10 @@ class PaddleManager {
     // Create controller with correct parameters
     const controller = new PaddleController(
       this.scene, 
-      edge, 
-      orientation // Use orientation instead of speed
+      paddle,
+      orientation
     );
     
-    controller.setPaddle(paddle);
     this.paddleControllers[edge] = controller;
     
     return paddle;
@@ -249,13 +248,44 @@ class PaddleManager {
   }
   
   /**
+   * Enable control for all paddle controllers
+   * Called by InputManager when game state changes
+   */
+  enableControl(): void {
+    Object.values(this.paddleControllers).forEach(controller => {
+      if (controller && typeof controller.enableControl === 'function') {
+        controller.enableControl();
+      }
+    });
+    
+    // Emit event that paddle controls are enabled
+    const eventManager = this.scene.getEventManager();
+    if (eventManager) {
+      eventManager.emit('paddleControlEnabled');
+    }
+  }
+  
+  /**
    * Update method called every frame
    */
   update(): void {
     // Update all paddle controllers
     Object.values(this.paddleControllers).forEach(controller => {
-      controller.update();
+      // Make sure the controller is valid before calling update
+      if (controller && typeof controller.update === 'function') {
+        try {
+          controller.update();
+        } catch (error) {
+          console.error('Error updating paddle controller:', error);
+        }
+      }
     });
+    
+    // Debug output if paddles aren't moving
+    if (this.paddles.length > 0 && this.scene.input.activePointer.isDown) {
+      const paddle = this.paddles[0];
+      console.log(`Paddle position: ${paddle.x}, ${paddle.y}`);
+    }
   }
   
   /**

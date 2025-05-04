@@ -1,4 +1,6 @@
-import BallManager from '../managers/BallManager';
+import GameObjectManager from '@/managers/GameObjectManager';
+import BreakoutScene from '@/scenes/breakout/BreakoutScene';
+import BallManager from '../managers/Ball/BallManager';
 import BrickManager from '../managers/BrickManager';
 import CollisionManager from '../managers/CollisionHandlers/CollisionManager';
 import EventManager from '../managers/EventManager';
@@ -12,11 +14,9 @@ import PowerUpManager from '../managers/PowerUpManager';
 import ScoreManager from '../managers/ScoreManager';
 import TimeManager from '../managers/TimeManager';
 import UIManager from '../managers/UIManager';
-import ErrorManager from '../managers/ErrorManager';
 import { AdaptiveRenderer } from '../plugins/PerformanceMonitor';
 import { MarketSim } from '../simulations/MarketSim';
 import wrapManagerWithErrorHandling from '../utils/wrapWithErrorHandling';
-import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 
 class BreakoutInitializer {
   private scene: BreakoutScene;
@@ -29,6 +29,8 @@ class BreakoutInitializer {
    * Initialize all game components
    */
   public initialize(): void {
+    console.log('Starting scene initialization');
+    
     try {
       // Initialize managers in the correct order
       this.initializeManagers();
@@ -39,59 +41,106 @@ class BreakoutInitializer {
       // Set up game objects and systems
       const physicsManager = this.scene.getPhysicsManager();
       if (physicsManager) {
+        console.log('Initializing physics');
         physicsManager.initializePhysics();
       }
       
       // Initialize game state
       const gameStateManager = this.scene['gameStateManager'] as GameStateManager;
       if (gameStateManager) {
+        console.log('Initializing game state');
         gameStateManager.initialize();
       }
     
       // Create game objects
-      const paddleManager = this.scene.getPaddleManager();
-      if (paddleManager && typeof paddleManager.createPaddles === 'function') {
-        paddleManager.createPaddles();
-    }
+      console.log('Creating game objects');
+      this.createGameObjects();
     
-      const ballManager = this.scene.getBallManager();
-      if (ballManager) {
-        ballManager.createBall();
-      }
-      
       // Set up collision handlers
       const collisionManager = this.scene.getCollisionManager();
       if (collisionManager) {
+        console.log('Setting up collision handlers');
         collisionManager.setupCollisionHandlers();
       }
+      
       // Set up event listeners
       const eventManager = this.scene.getEventManager();
       if (eventManager && typeof eventManager.setupEventListeners === 'function') {
+        console.log('Setting up event listeners');
         eventManager.setupEventListeners();
       }
       
       // Update UI
       const uiManager = this.scene.getUIManager();
       if (uiManager && typeof uiManager.updateInitialUI === 'function') {
+        console.log('Updating initial UI');
         uiManager.updateInitialUI();
-    }
+      }
     
       // Initialize the level
       const levelManager = this.scene.getLevelManager();
       if (levelManager && typeof levelManager.initLevel === 'function') {
+        console.log('Initializing level');
         levelManager.initLevel();
-  }
+      }
       
       // Initialize performance monitoring
       this.initializePerformanceMonitoring();
+      
+      console.log('Scene initialization complete');
+      
     } catch (error) {
       console.error('Error initializing game:', error);
-      // Show error using scene's method if available
       if (this.scene.showFatalError) {
+        console.error('Error in scene initialization:', error);
         this.scene.showFatalError(
           error instanceof Error ? error.message : 'Failed to initialize game'
         );
-}
+      }
+    }
+  }
+
+  /**
+   * Create game objects in the correct order
+   */
+  private createGameObjects(): void {
+    try {
+      // Create paddles first
+      const paddleManager = this.scene.getPaddleManager();
+      if (paddleManager && typeof paddleManager.createPaddles === 'function') {
+        console.log('Creating paddles');
+        paddleManager.createPaddles();
+      }
+      
+      // Create balls
+      const ballManager = this.scene.getBallManager();
+      if (ballManager) {
+        console.log('Creating balls');
+        ballManager.createBall();
+        
+        // Reset ball to paddle
+        const paddles = paddleManager?.getPaddles() || [];
+        if (paddles.length > 0) {
+          console.log('Attaching ball to paddle');
+          ballManager.resetBall(paddles);
+          
+          // Verify ball is attached
+          const isAttached = ballManager.isBallAttachedToPaddle();
+          console.log('Ball attached to paddle:', isAttached);
+        }
+      }
+      
+      // Create game object container if we have a GameObjectManager
+      const gameObjectManager = this.scene['gameObjectManager'] as GameObjectManager;
+      if (gameObjectManager && typeof gameObjectManager.createInitialObjects === 'function') {
+        console.log('Creating additional game objects');
+        gameObjectManager.createInitialObjects();
+      }
+      
+      console.log('All game objects created successfully');
+    } catch (error) {
+      console.error('Error creating game objects:', error);
+      throw error; // Re-throw to be caught by the initialize method
     }
   }
 
@@ -130,6 +179,9 @@ class BreakoutInitializer {
     this.scene['brickManager'] = new BrickManager(this.scene);
     this.scene['ballManager'] = new BallManager(this.scene);
     this.scene['powerUpManager'] = new PowerUpManager(this.scene);
+    
+    // Add GameObjectManager to manage general game objects
+    this.scene['gameObjectManager'] = new GameObjectManager(this.scene);
     
     // Game systems that depend on other managers
     this.scene['collisionManager'] = new CollisionManager(this.scene);

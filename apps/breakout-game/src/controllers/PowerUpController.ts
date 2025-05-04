@@ -1,6 +1,5 @@
-import * as Phaser from 'phaser';
-import { TIME } from '../constants/GameConstants';
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
+import * as Phaser from 'phaser';
 
 /**
  * Controls individual power-up behavior
@@ -243,7 +242,7 @@ class PowerUpController {
         };
         
         // Create new ball with position and velocity
-        ballManager.createBall({
+        ballManager.createBallWithOptions({
           x,
           y,
           velocity
@@ -251,8 +250,8 @@ class PowerUpController {
       } else {
         // If no active ball, create from center
         ballManager.createBall();
+      }
     }
-  }
   }
   
   /**
@@ -344,7 +343,7 @@ class PowerUpController {
       // Fallback to direct scene property
       if (typeof this.scene['lives'] === 'number') {
         this.scene['lives']++;
-        // Update UI - Fix: Pass an object with lives property instead of just a number
+        // Update UI - Fix: Pass an object with lives property
         const uiManager = this.scene.getUIManager();
         if (uiManager) {
           uiManager.updateLives({ lives: this.scene['lives'] });
@@ -369,14 +368,14 @@ class PowerUpController {
       type: this.type,
       paddle: paddle
     });
-    }
+  }
     
   /**
    * Get power-up type
    */
   getType(): string {
     return this.type;
-    }
+  }
     
   /**
    * Destroy the power-up
@@ -388,12 +387,12 @@ class PowerUpController {
     // Stop animations
     if (this.animationTween) {
       this.animationTween.stop();
-  }
+    }
     
     // Remove from physics world
     if (this.powerUp.body) {
-      this.scene.matter.world.remove(this.powerUp.body as MatterJS.BodyType);
-}
+      this.scene.matter.world.remove(this.powerUp.body as any);
+    }
 
     // Destroy the sprite
     this.powerUp.destroy();

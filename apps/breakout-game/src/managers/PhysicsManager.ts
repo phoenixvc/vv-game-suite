@@ -1,9 +1,8 @@
+import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import * as Phaser from 'phaser';
 import { PHYSICS } from '../constants/GameConstants';
-import MatterJS from 'matter-js';
-import { CollisionHandlerInterface } from './CollisionHandlers/CollisionHandlerInterface';
 import { BallCollisionHandler } from './CollisionHandlers/BallCollisionHandler';
-import BreakoutScene from '@/scenes/breakout/BreakoutScene';
+import { CollisionHandlerInterface } from './CollisionHandlers/CollisionHandlerInterface';
 
 /**
  * Manages physics configuration and interactions in the game
@@ -102,6 +101,71 @@ class PhysicsManager {
     this.setupCollisionCallbacks();
   }
   
+  /**
+   * Set what a game object collides with
+   * @param gameObject The game object to configure
+   * @param types Array of object types to collide with
+   */
+  public setCollidesWith(
+    gameObject: Phaser.Physics.Matter.Sprite | Phaser.Physics.Matter.Image,
+    types: Array<'ball' | 'paddle' | 'brick' | 'wall' | 'powerUp' | 'laser' | 'shield'>
+  ): void {
+    if (!gameObject.body) return;
+    
+    // Calculate combined collision mask from all specified types
+    let combinedMask = 0;
+    
+    types.forEach(type => {
+      const collisionGroup = this.collisionGroups[type];
+      if (collisionGroup) {
+        combinedMask |= collisionGroup.category;
+      }
+    });
+    
+    // Set the collision mask using Phaser's method if available
+    if (typeof gameObject.setCollidesWith === 'function') {
+      gameObject.setCollidesWith(combinedMask);
+    } else {
+      // Direct Matter.js approach if the Phaser method doesn't exist
+      try {
+        // Use type assertion to access Matter.js specific properties
+        const matterBody = gameObject.body as any;
+        
+        if (Array.isArray(matterBody)) {
+          // Handle compound bodies
+          matterBody.forEach(body => {
+            if (body && typeof body === 'object' && body.collisionFilter) {
+              body.collisionFilter.mask = combinedMask;
+            }
+          });
+        } else if (matterBody && typeof matterBody === 'object') {
+          // Handle single body - use type assertion to bypass TypeScript checks
+          if (matterBody.collisionFilter) {
+            matterBody.collisionFilter.mask = combinedMask;
+          } else if (matterBody.parts && Array.isArray(matterBody.parts)) {
+            // Try to set on all parts if the body is a compound
+            matterBody.parts.forEach((part: any) => {
+              if (part && typeof part === 'object' && part.collisionFilter) {
+                part.collisionFilter.mask = combinedMask;
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error setting collision mask:', error);
+      }
+    }
+  }
+
+/**
+ * Get the collision category for a specific type
+ * @param type The type to get the category for
+ * @returns The collision category number
+ */
+public getCollisionCategory(type: 'ball' | 'paddle' | 'brick' | 'wall' | 'powerUp' | 'laser' | 'shield'): number {
+  const collisionGroup = this.collisionGroups[type];
+  return collisionGroup ? collisionGroup.category : 0x0001; // Default category if not found
+}
   /**
    * Apply collision category and mask to a game object
    * @param gameObject The game object to configure

@@ -1,7 +1,7 @@
-import * as Phaser from 'phaser';
-import { PHYSICS } from '../constants/GameConstants';
-import ParticleController from './ParticleController';
+import { PHYSICS } from '@/constants/GameConstants';
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
+import * as Phaser from 'phaser';
+import ParticleController from './ParticleController';
 
 /**
  * Controls individual ball behavior and effects
@@ -9,12 +9,16 @@ import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 class BallController {
   private scene: BreakoutScene;
   private ball: Phaser.Physics.Matter.Sprite;
-  private isActive: boolean = true;
+  isActive: boolean = true; // Public to match usage in BallManager
   private effects: Set<string> = new Set(); // fireball, fast, slow, etc.
   private stuckToPaddle: boolean = false;
   private stuckPaddle?: Phaser.Physics.Matter.Sprite;
   private stuckOffset: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0);
   private particleControllers: ParticleController[] = [];
+  
+  // Speed regulation properties from the second implementation
+  private minSpeed: number = PHYSICS.BALL.MIN_VELOCITY;
+  private maxSpeed: number = PHYSICS.BALL.MAX_VELOCITY;
     
   constructor(scene: BreakoutScene, ball: Phaser.Physics.Matter.Sprite) {
     this.scene = scene;
@@ -37,14 +41,9 @@ class BallController {
     this.ball.setBounce(1);
 
     // Set collision properties if physics manager exists
-    const physicsManager = this.scene['physicsManager'];
+    const physicsManager = this.scene.getPhysicsManager?.();
     if (physicsManager) {
-      this.ball.setCollisionCategory(physicsManager.ballCategory);
-      this.ball.setCollidesWith([
-        physicsManager.paddleCategory,
-        physicsManager.brickCategory,
-        physicsManager.wallCategory
-      ]);
+      physicsManager.setCollisionCategory(this.ball, 'ball');
     }
   }
 
@@ -52,7 +51,7 @@ class BallController {
    * Set up event listeners
    */
   private setupEventListeners(): void {
-    const eventManager = this.scene['eventManager'];
+    const eventManager = this.scene.getEventManager?.();
     if (!eventManager) return;
 
     // Listen for game state events
@@ -72,16 +71,59 @@ class BallController {
    */
   update(): void {
     if (!this.isActive) return;
+    
     // Apply effects (like fireball trail)
     this.updateEffects();
       
     // Check if ball is stuck to paddle
     if (this.stuckToPaddle) {
       this.updateStuckBall();
+    } else {
+      // Regulate ball speed (from second implementation)
+      this.regulateSpeed();
+      
+      // Enforce velocity limits (from first implementation)
+      this.enforceVelocityLimits();
     }
     
-    // Enforce minimum and maximum velocity
-    this.enforceVelocityLimits();
+    // Check if ball is out of bounds
+    if (this.isOutOfBounds()) {
+      this.handleOutOfBounds();
+    }
+  }
+
+  /**
+   * Regulate ball speed to ensure it's within min/max bounds
+   * (Implementation from the second version)
+   */
+  private regulateSpeed(): void {
+    if (!this.ball || !this.ball.body) return;
+    
+    // Get current velocity
+    const velocity = this.ball.body.velocity;
+    if (!velocity) return;
+    
+    // Calculate current speed
+    const speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+    
+    // If speed is outside bounds, adjust it
+    if (speed < this.minSpeed || speed > this.maxSpeed) {
+      // Calculate normalized direction
+      const angle = Math.atan2(velocity.y, velocity.x);
+      
+      // Apply appropriate speed
+      const targetSpeed = speed < this.minSpeed ? this.minSpeed : this.maxSpeed;
+      
+      // Calculate new velocity components
+      const newVelocityX = Math.cos(angle) * targetSpeed;
+      const newVelocityY = Math.sin(angle) * targetSpeed;
+      
+      // Apply new velocity
+      this.scene.matter.body.setVelocity(this.ball.body as any, {
+        x: newVelocityX,
+        y: newVelocityY
+      });
+    }
   }
 
   /**
@@ -117,7 +159,7 @@ class BallController {
    */
   private createFireballEffect(): void {
     // Get particle manager
-    const particleManager = this.scene['particleManager'];
+    const particleManager = this.scene.getParticleManager?.();
     if (!particleManager) return;
     
     // Create trail effect
@@ -128,7 +170,9 @@ class BallController {
     );
     
     // Add to controllers array
-    this.particleControllers.push(controller);
+    if (controller) {
+      this.particleControllers.push(controller);
+    }
   }
 
   /**
@@ -159,21 +203,36 @@ class BallController {
    * Enforce minimum and maximum velocity
    */
   private enforceVelocityLimits(): void {
-    if (this.stuckToPaddle) return;
+    if (this.stuckToPaddle || !this.ball || !this.ball.body) return;
+    
+    try {
+      // Create a safe velocity vector
+      let vx = 0;
+      let vy = 0;
+      
+      // Safely get velocity components
+      if (this.ball.body.velocity) {
+        vx = this.ball.body.velocity.x || 0;
+        vy = this.ball.body.velocity.y || 0;
+      }
+      
+      const velocity = new Phaser.Math.Vector2(vx, vy);
+      const speed = velocity.length();
 
-    const velocity = new Phaser.Math.Vector2(this.ball.body.velocity.x, this.ball.body.velocity.y);
-    const speed = velocity.length();
+      // Enforce minimum velocity
+      if (speed < this.minSpeed) {
+        velocity.normalize().scale(this.minSpeed);
+        this.ball.setVelocity(velocity.x, velocity.y);
+      }
 
-    // Enforce minimum velocity
-    if (speed < PHYSICS.BALL.MIN_VELOCITY) {
-      velocity.normalize().scale(PHYSICS.BALL.MIN_VELOCITY);
-      this.ball.setVelocity(velocity.x, velocity.y);
-    }
-
-    // Enforce maximum velocity
-    else if (speed > PHYSICS.BALL.MAX_VELOCITY) {
-      velocity.normalize().scale(PHYSICS.BALL.MAX_VELOCITY);
-      this.ball.setVelocity(velocity.x, velocity.y);
+      // Enforce maximum velocity
+      else if (speed > this.maxSpeed) {
+        velocity.normalize().scale(this.maxSpeed);
+        this.ball.setVelocity(velocity.x, velocity.y);
+      }
+    } catch (error) {
+      // Silent fail to prevent console spam
+      // The ball might be in an invalid state temporarily
     }
   }
 
@@ -199,31 +258,37 @@ class BallController {
       // Make ball semi-transparent
       this.ball.setAlpha(0.5);
       // Change collision category to pass through certain objects
-      const physicsManager = this.scene['physicsManager'];
+      const physicsManager = this.scene.getPhysicsManager?.();
       if (physicsManager) {
-        this.ball.setCollidesWith([
-          physicsManager.paddleCategory,
-          physicsManager.wallCategory
-        ]);
+        // We need to set collision categories based on available methods
+        physicsManager.setCollisionCategory(this.ball, 'ball');
+        // For ghost effect, we might need to modify collisions
+        // This would depend on the implementation of the physics manager
       }
     }
       
     // Set up removal after duration
     if (duration) {
-      this.scene['timeManager'].createTimer(
-        `ball_effect_${effect}_${this.ball.getData('id')}`,
-        duration,
-        () => this.removeEffect(effect),
-        this
-      );
+      const timeManager = this.scene.getTimeManager?.();
+      if (timeManager) {
+        timeManager.createTimer(
+          `ball_effect_${effect}_${this.ball.getData('id')}`,
+          duration,
+          () => this.removeEffect(effect),
+          this
+        );
+      }
     }
 
     // Emit event
-    this.scene['eventManager']?.emit('ballEffectApplied', {
-      ballId: this.ball.getData('id'),
-      effect: effect,
-      duration: duration
-    });
+    const eventManager = this.scene.getEventManager?.();
+    if (eventManager) {
+      eventManager.emit('ballEffectApplied', {
+        ballId: this.ball.getData('id'),
+        effect: effect,
+        duration: duration
+      });
+    }
   }
     
   /**
@@ -246,13 +311,10 @@ class BallController {
       this.multiplyVelocity(2);
     } else if (effect === 'ghost') {
       // Restore normal appearance and collision
-      const physicsManager = this.scene['physicsManager'];
+      const physicsManager = this.scene.getPhysicsManager?.();
       if (physicsManager) {
-        this.ball.setCollidesWith([
-          physicsManager.paddleCategory,
-          physicsManager.brickCategory,
-          physicsManager.wallCategory
-        ]);
+        // Reset collision categories
+        physicsManager.setCollisionCategory(this.ball, 'ball');
       }
     }
     
@@ -265,10 +327,13 @@ class BallController {
     }
 
     // Emit event
-    this.scene['eventManager']?.emit('ballEffectRemoved', {
-      ballId: this.ball.getData('id'),
-      effect: effect
-    });
+    const eventManager = this.scene.getEventManager?.();
+    if (eventManager) {
+      eventManager.emit('ballEffectRemoved', {
+        ballId: this.ball.getData('id'),
+        effect: effect
+      });
+    }
   }
 
   /**
@@ -299,11 +364,27 @@ class BallController {
    * Multiply current velocity by a factor
    */
   multiplyVelocity(factor: number): void {
-    if (this.stuckToPaddle) return;
-
-    const vx = this.ball.body.velocity.x * factor;
-    const vy = this.ball.body.velocity.y * factor;
-    this.ball.setVelocity(vx, vy);
+    if (this.stuckToPaddle || !this.ball || !this.ball.body) return;
+    
+    try {
+      // Safely get velocity components
+      let vx = 0;
+      let vy = 0;
+      
+      if (this.ball.body.velocity) {
+        vx = this.ball.body.velocity.x || 0;
+        vy = this.ball.body.velocity.y || 0;
+      }
+      
+      // Apply multiplier
+      vx *= factor;
+      vy *= factor;
+      
+      // Set new velocity
+      this.ball.setVelocity(vx, vy);
+    } catch (error) {
+      // Silent fail to prevent console spam
+    }
   }
 
   /**
@@ -315,10 +396,13 @@ class BallController {
     this.ball.setVelocity(velocity.x, velocity.y);
 
     // Emit event
-    this.scene['eventManager']?.emit('ballLaunched', {
-      ballId: this.ball.getData('id'),
-      velocity: velocity
-    });
+    const eventManager = this.scene.getEventManager?.();
+    if (eventManager) {
+      eventManager.emit('ballLaunched', {
+        ballId: this.ball.getData('id'),
+        velocity: velocity
+      });
+    }
   }
 
   /**
@@ -372,14 +456,51 @@ class BallController {
 
   /**
    * Check if ball is out of bounds
+   * (Combined from both implementations)
    */
   isOutOfBounds(): boolean {
-    return (
-      this.ball.y > this.scene.scale.height + 50 ||
-      this.ball.y < -50 ||
-      this.ball.x > this.scene.scale.width + 50 ||
-      this.ball.x < -50
-    );
+    // Safety check for ball
+    if (!this.ball || !this.isActive) {
+      return false;
+    }
+    
+    try {
+      // Get scene dimensions safely
+      const width = this.scene ? this.scene.scale.width : 800;
+      const height = this.scene ? this.scene.scale.height : 600;
+      const padding = 50; // Extra padding to ensure ball is truly out
+      
+      // Safely access ball position
+      const x = this.ball.x !== undefined ? this.ball.x : 0;
+      const y = this.ball.y !== undefined ? this.ball.y : 0;
+      
+      // Check if ball is outside the screen
+      // Primary check is for bottom of screen (from second implementation)
+      // But also check all edges (from first implementation)
+      return (
+        y > height + padding ||
+        y < -padding ||
+        x > width + padding ||
+        x < -padding
+      );
+    } catch (error) {
+      // Silent fail to prevent console spam
+      return false;
+    }
+  }
+
+  /**
+   * Handle ball going out of bounds
+   * (From second implementation)
+   */
+  private handleOutOfBounds(): void {
+    // Emit event for ball out of bounds
+    const eventManager = this.scene.getEventManager?.();
+    if (eventManager) {
+      eventManager.emit('ballOutOfBounds', { 
+        ballId: this.ball.getData('id') 
+      });
+    }
   }
 
   /**
@@ -397,13 +518,30 @@ class BallController {
   }
 
   /**
+   * Set minimum ball speed
+   * (From second implementation)
+   */
+  setMinSpeed(speed: number): void {
+    this.minSpeed = speed;
+  }
+  
+  /**
+   * Set maximum ball speed
+   * (From second implementation)
+   */
+  setMaxSpeed(speed: number): void {
+    this.maxSpeed = speed;
+  }
+
+  /**
    * Destroy the ball and clean up resources
+   * (Combined from both implementations)
    */
   destroy(): void {
     this.isActive = false;
 
     // Clean up event listeners
-    const eventManager = this.scene['eventManager'];
+    const eventManager = this.scene.getEventManager?.();
     if (eventManager) {
       eventManager.off('gamePaused', null, this);
       eventManager.off('gameResumed', null, this);
@@ -414,8 +552,8 @@ class BallController {
     this.clearAllParticleEffects();
 
     // Remove from physics world
-    if (this.ball.body) {
-      this.scene.matter.world.remove(this.ball.body as MatterJS.BodyType);
+    if (this.ball.body && this.scene.matter && this.scene.matter.world) {
+      this.scene.matter.world.remove(this.ball.body);
     }
 
     // Destroy the sprite

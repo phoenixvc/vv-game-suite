@@ -1,18 +1,16 @@
-import * as Phaser from 'phaser';
-import BallManager from '../../managers/BallManager';
+import { CollisionManager } from '@/managers';
+import { GAME_STATE } from '../../constants/GameConstants';
+import BallManager from '../../managers/Ball/BallManager';
 import BrickManager from '../../managers/BrickManager';
 import InputManager from '../../managers/InputManager';
 import LevelManager from '../../managers/LevelManager';
-import PaddleController from '../../managers/PaddleManager';
 import ParticleManager from '../../managers/ParticleManager';
+import PhysicsManager from '../../managers/PhysicsManager';
 import PowerUpManager from '../../managers/PowerUpManager';
 import ScoreManager from '../../managers/ScoreManager';
-import PhysicsManager from '../../managers/PhysicsManager';
 import UIManager from '../../managers/UIManager';
 import { MarketSim } from '../../simulations/MarketSim';
-import { GAME_STATE } from '../../constants/GameConstants';
 import BreakoutScene from './BreakoutScene';
-import { CollisionManager } from '@/managers';
 
 /**
  * Handles all manager-related functionality for the BreakoutScene

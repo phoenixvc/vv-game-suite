@@ -1,10 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="panel-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#333333" />
-      <stop offset="100%" stop-color="#222222" />
+      <stop offset="0%" stop-color="#333333" opacity="0.9" />
+      <stop offset="100%" stop-color="#222222" opacity="0.9" />
     </linearGradient>
   </defs>
-  <rect width="400" height="300" rx="20" ry="20" fill="url(#panel-gradient)" fill-opacity="0.8" stroke="#888888" stroke-width="2" />
-  <rect x="10" y="10" width="380" height="40" rx="15" ry="15" fill="#444444" opacity="0.5" />
+  <rect width="400" height="300" rx="20" ry="20" fill="url(#panel-gradient)" stroke="#888888" stroke-width="2" />
+  <rect x="10" y="10" width="380" height="40" rx="10" ry="10" fill="#444444" opacity="0.5" />
 </svg>

@@ -80,7 +80,7 @@ export class PowerUp extends Phaser.Physics.Arcade.Image {
       case 'paddleGrow':
         this.setTint(0x3B82F6); // Blue
         break;
-      case PowerUpType.PADDLE_SIZE_DECREASE:
+      case PowerUpType.PADDLE_SHRINK:
       case 'paddleShrink':
         this.setTint(0xEF4444); // Red
         break;

@@ -4,6 +4,7 @@ export class AdaptiveRenderer {
   private fpsCheckInterval: number = 1000; // Check every second
   private fpsThreshold: number = 50; // Threshold for quality adjustment
   private qualityLevel: number = 2; // Medium quality by default (1=low, 2=medium, 3=high)
+  
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     
@@ -88,6 +89,14 @@ export class AdaptiveRenderer {
    */
   public destroy(): void {
     this.scene.events.off('update', this.monitorPerformance, this);
+  }
+  
+  /**
+   * Public cleanup method that calls destroy
+   * This provides compatibility with the manager cleanup pattern
+   */
+  public cleanup(): void {
+    this.destroy();
   }
   
   /**

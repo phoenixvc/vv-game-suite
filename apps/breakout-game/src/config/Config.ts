@@ -1,7 +1,7 @@
 import 'phaser';
-import BreakoutScene from '../scenes/BreakoutScene';
 import SignalHuntScene from '../scenes/SignalHuntScene';
 import VaultDefenseScene from '../scenes/VaultDefenseScene';
+import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 
 // Create a simple placeholder for StrategyScene until it's implemented
 class StrategyScene extends Phaser.Scene {

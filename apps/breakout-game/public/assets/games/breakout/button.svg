@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="50" viewBox="0 0 200 50">
+  <defs>
+    <linearGradient id="button-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#555555" />
+      <stop offset="100%" stop-color="#333333" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="50" rx="10" ry="10" fill="url(#button-gradient)" stroke="#888888" stroke-width="2" />
+  <rect x="5" y="5" width="190" height="20" rx="8" ry="8" fill="#666666" opacity="0.3" />
+</svg>

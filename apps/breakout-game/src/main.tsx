@@ -1,3 +1,4 @@
+import './phaser-init'; // Import this first to ensure Phaser is initialized
 import ReactDOM from 'react-dom/client'
 import Game from './Game'
 import './index.css'

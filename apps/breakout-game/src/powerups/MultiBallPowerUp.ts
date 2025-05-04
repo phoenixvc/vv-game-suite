@@ -1,4 +1,4 @@
-import BreakoutScene from '../scenes/BreakoutScene';
+import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import { PowerUpType } from '../types/PowerUp';
 import { PowerUpHandler } from './PowerUpHandler';
 

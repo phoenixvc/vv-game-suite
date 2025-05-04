@@ -1,4 +1,4 @@
-import { BrickManager } from '../managers/BrickManager';
+import * as Phaser from 'phaser';
 
 export interface BrickConfig {
   x: number;

@@ -121,7 +121,22 @@ class BreakoutScene extends BaseScene {
     return (this as any).paddleManager;
   }
 
-  public createPaddles: () => void;
+  // Implement our own createPaddles method instead of using the one from paddleSystem
+  public createPaddles(): void {
+    console.log('Creating paddles from BreakoutScene');
+    
+    try {
+      // Delegate to the paddle system but make sure we're using the right context
+      if (this.paddleSystem && typeof this.paddleSystem.createPaddles === 'function') {
+        // Call with the correct context
+        this.paddleSystem.createPaddles.call(this.paddleSystem);
+      } else {
+        console.error('paddleSystem.createPaddles is not available');
+      }
+    } catch (error) {
+      console.error('Error in BreakoutScene.createPaddles:', error);
+    }
+  }
   
   // Gameplay methods
   public createBricks: (signals: any[]) => void;
@@ -156,8 +171,8 @@ class BreakoutScene extends BaseScene {
     this.setInputManager = this.managers.setInputManager;
     this.getParticleManager = this.managers.getParticleManager;
     this.setParticleManager = this.managers.setParticleManager;
-    this.getPhysicsManager = this.managers.getPhysicsManager;
-    this.setPhysicsManager = this.managers.setPhysicsManager;
+    this.getPhysicsManager = this.managers.getPhysicsManager; // This line is correct but the function might not be working
+    this.setPhysicsManager = this.managers.setPhysicsManager; // This line is correct
     this.getSoundManager = this.managers.getSoundManager;
     this.getAngleFactor = this.managers.getAngleFactor;
     this.setAngleFactor = this.managers.setAngleFactor;
@@ -165,22 +180,34 @@ class BreakoutScene extends BaseScene {
     this.setMarketSim = this.managers.setMarketSim;
     this.getMarketData = this.managers.getMarketData;
     
+    // Add getGameplay and setGameplay assignments
+    this.getGameplay = () => this.gameplay;
+    this.setGameplay = (gameplay: BreakoutSceneGameplay) => { this.gameplay = gameplay; };
+    
     // Add error manager getter
     this.getErrorManager = () => this.errorManager;
     
-    // Assign paddle system methods
-    this.addPaddleController = this.paddleSystem.addPaddleController;
-    this.getPaddleControllerById = this.paddleSystem.getPaddleControllerById;
-    this.getAllPaddleControllers = this.paddleSystem.getAllPaddleControllers;
-    this.getAllPaddles = this.paddleSystem.getAllPaddles;
-    this.getPaddleManager = this.paddleSystem.getPaddleManager;
-    this.createPaddles = this.paddleSystem.createPaddles;
+    // Assign paddle system methods - bind to ensure correct 'this' context
+    this.addPaddleController = (id: string, controller: PaddleController) => 
+      this.paddleSystem.addPaddleController(id, controller);
+    this.getPaddleControllerById = (id: string) => 
+      this.paddleSystem.getPaddleControllerById(id);
+    this.getAllPaddleControllers = () => 
+      this.paddleSystem.getAllPaddleControllers();
+    this.getAllPaddles = () => 
+      this.paddleSystem.getAllPaddles();
     
-    // Assign gameplay methods
-    this.createBricks = this.gameplay.createBricks;
-    this.resetBall = this.gameplay.resetBall;
-    this.startGame = this.gameplay.startGame;
-    this.setPowerUpTimer = this.gameplay.setPowerUpTimer;
+    // Don't assign createPaddles from paddleSystem, we've implemented our own
+    
+    // Assign gameplay methods - bind to ensure correct 'this' context
+    this.createBricks = (signals: any[]) => 
+      this.gameplay.createBricks(signals);
+    this.resetBall = () => 
+      this.gameplay.resetBall();
+    this.startGame = () => 
+      this.gameplay.startGame();
+    this.setPowerUpTimer = (powerUp: any, duration: number) => 
+      this.gameplay.setPowerUpTimer(powerUp, duration);
   }
   
   init(data: any): void {
@@ -194,6 +221,15 @@ class BreakoutScene extends BaseScene {
       
       // Initialize common managers from base class
       this.initializeCommonManagers();
+      
+      // Initialize physics manager early since it's needed by other systems
+      this.physicsManager = new PhysicsManager(this);
+      
+      // Store the physics manager using the setter
+      this.setPhysicsManager(this.physicsManager);
+      
+      // Log to verify physics manager is available
+      console.log('Physics manager initialized in init:', !!this.physicsManager);
     } catch (error) {
       console.error('Error in BreakoutScene.init:', error);
       // We can't use errorManager yet as it's not initialized
@@ -239,6 +275,16 @@ class BreakoutScene extends BaseScene {
       // Create groups for game objects
       this.bricks = this.add.group();
       this.powerUps = this.add.group();
+      
+      // Ensure physics manager is initialized before other components
+      if (!this.physicsManager) {
+        console.log('Creating physics manager in create method');
+        this.physicsManager = new PhysicsManager(this);
+        this.setPhysicsManager(this.physicsManager);
+      }
+      
+      // Log game dimensions to verify they're available
+      console.log('Game dimensions:', this.scale.width, 'x', this.scale.height);
       
       // Initialize the game using the initializer
       this.initializer = new BreakoutSceneInitializer(this);
@@ -357,7 +403,8 @@ class BreakoutScene extends BaseScene {
   public showFatalError(message: string): void {
     // Create a simple error display for fatal errors
     // This is used when the error manager itself might not be available
-    const { width, height } = this.scale;
+    const width = this.scale?.width || 800;
+    const height = this.scale?.height || 600;
     
     // Add semi-transparent background
     const bg = this.add.rectangle(

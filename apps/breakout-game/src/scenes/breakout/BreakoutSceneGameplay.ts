@@ -6,38 +6,56 @@ import BreakoutScene from './BreakoutScene';
 export class BreakoutSceneGameplay {
   private scene: BreakoutScene;
   autoStart: boolean = false; // Default to false
+  private gameStarted: boolean = false; // Track if game has started
   
   constructor(scene: BreakoutScene) {
     this.scene = scene;
   }
   
-  /**
+    /**
    * Initialize the game scene
    */
-  public initializeGameplay(): void {
-    console.log('Initializing gameplay...');
-    
-    try {
-      // Create paddles first
-      this.createPaddles();
+    public initializeGameplay(): void {
+      console.log('Initializing gameplay...');
       
-      // Create and reset ball position
-      this.resetBallPosition();
-      
-      // Set up event listeners
-      this.setupEventListeners();
-      
-      // Start game if auto-start is enabled
-      if (this.autoStart) {
-        console.log('Auto-start enabled, starting game...');
-        this.startGame();
+      try {
+        // Create paddles first
+        this.createPaddles();
+        
+        // Ensure a ball is created before trying to reset its position
+        const ballManager = this.scene.getBallManager();
+        if (ballManager) {
+          // Check if there's already an active ball
+          if (!ballManager.getActiveBall()) {
+            // Create a new ball first
+            const paddleManager = this.scene.getPaddleManager();
+            if (paddleManager) {
+              const paddles = paddleManager.getPaddles();
+              if (paddles.length > 0) {
+                // Initialize a ball (this will create one if needed)
+                ballManager.ensureBallOnPaddle();
+              }
+            }
+          } else {
+            // If a ball already exists, just reset its position
+            this.resetBallPosition();
+          }
+        }
+        
+        // Set up event listeners
+        this.setupEventListeners();
+        
+        // Start game if auto-start is enabled
+        if (this.autoStart) {
+          console.log('Auto-start enabled, starting game...');
+          this.startGame();
+        }
+        
+        console.log('Gameplay initialization complete');
+      } catch (error) {
+        console.error('Error initializing gameplay:', error);
       }
-      
-      console.log('Gameplay initialization complete');
-    } catch (error) {
-      console.error('Error initializing gameplay:', error);
     }
-  }
 
   /**
    * Create game objects
@@ -83,6 +101,21 @@ export class BreakoutSceneGameplay {
       // Handle game over
     });
     
+    const inputManager = this.scene.getInputManager();
+    if (inputManager) {
+      // Check if game is not started yet
+      if (!this.gameStarted) {
+        // Listen for game state changes instead of direct action
+        const eventManager = this.scene.getEventManager();
+        if (eventManager) {
+          // Listen for the event that indicates the game should start
+          eventManager.on('gameControlsEnabled', () => {
+            this.startGame();
+          });
+        }
+      }
+    }
+    
     console.log('Event listeners set up');
   }
 
@@ -95,12 +128,6 @@ export class BreakoutSceneGameplay {
     // Use the scene's createPaddles method if available
     if (typeof this.scene.createPaddles === 'function') {
       this.scene.createPaddles();
-    }
-    
-    // Or use the paddle manager directly
-    const paddleManager = this.scene.getPaddleManager();
-    if (paddleManager && typeof paddleManager.createPaddles === 'function') {
-      paddleManager.createPaddles();
     }
     
     console.log('Paddles created');
@@ -132,6 +159,15 @@ export class BreakoutSceneGameplay {
     }
     
     console.log(`Found ${paddles.length} paddles, resetting ball position`);
+    
+    // Check if there's an active ball first
+    if (!ballManager.getActiveBall()) {
+      // No active ball, create one first
+      console.log('No active ball found, creating a new one');
+      ballManager.createBall();
+    }
+    
+    // Now reset the ball
     ballManager.resetBall(paddles);
     
     // Verify the ball was properly attached
@@ -145,15 +181,70 @@ export class BreakoutSceneGameplay {
         ballExists: !!ball, 
         isAttached: isAttached 
       });
+      
+      // Recovery attempt - try to create a new ball and attach it
+      if (!ball) {
+        console.log('Recovery attempt: Creating new ball');
+        const newBall = ballManager.createBall();
+        if (newBall) {
+          console.log('Recovery: New ball created, attempting to attach');
+          ballManager.resetBall(paddles);
+        }
+      }
     }
   }
 
   /**
    * Method needed for InputManager
-   * Starts the game by launching the ball
+   * Starts the game (but doesn't launch the ball)
    */
   public startGame = (): void => {
-    console.log('startGame called - launching ball');
+    console.log('startGame called - initializing game state');
+    
+    if (this.gameStarted) {
+      console.log('Game already started, ignoring');
+      return;
+    }
+    
+    this.gameStarted = true;
+    
+    // Make sure the ball is reset and attached to paddle
+    const ballManager = this.scene.getBallManager();
+    if (ballManager) {
+      const paddleManager = this.scene.getPaddleManager();
+      if (paddleManager) {
+        const paddles = paddleManager.getPaddles();
+        if (paddles.length > 0) {
+          ballManager.resetBall(paddles);
+        }
+      }
+    }
+    
+    // Emit game started event
+    const eventManager = this.scene.getEventManager();
+    if (eventManager) {
+      eventManager.emit('gameStarted');
+      console.log('gameStarted event emitted');
+      
+      // Update UI to show "Click to launch ball" message
+      const uiManager = this.scene.getUIManager();
+      if (uiManager) {
+        uiManager.showMessage('Click to launch ball', 2000);
+      }
+    }
+  }
+  
+  /**
+   * Launch the ball (separate from starting the game)
+   */
+  public launchBall = (): void => {
+    console.log('launchBall called');
+    
+    if (!this.gameStarted) {
+      console.log('Game not started yet, starting first');
+      this.startGame();
+      return;
+    }
     
     // Launch the ball using BallManager
     const ballManager = this.scene.getBallManager();
@@ -186,13 +277,11 @@ export class BreakoutSceneGameplay {
     const ball = ballManager.getBall();
     console.log('Ball launched, velocity:', ball?.body?.velocity);
     
-    // Emit game started event
+    // Emit ball launched event
     const eventManager = this.scene.getEventManager();
     if (eventManager) {
-      eventManager.emit('gameStarted');
-      console.log('gameStarted event emitted');
-    } else {
-      console.error('Event manager not found!');
+      eventManager.emit('ballLaunched');
+      console.log('ballLaunched event emitted');
     }
   }
 

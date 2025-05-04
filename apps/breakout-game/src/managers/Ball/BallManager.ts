@@ -1,4 +1,5 @@
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
+import { Body as MatterBody } from 'matter-js';
 import * as Phaser from 'phaser';
 import { PHYSICS } from '../../constants/GameConstants';
 import BallController from '../../controllers/BallController';
@@ -317,10 +318,17 @@ class BallManager {
     console.log('Resetting ball to paddle...');
     
     // Get the main ball
-    const ball = this.ballStateManager.getActiveBall();
+    let ball = this.ballStateManager.getActiveBall();
+    
+    // If no active ball exists, create one
     if (!ball) {
-      console.error('No active ball to reset');
-      return;
+      console.log('No active ball found, creating a new one');
+      ball = this.createBall();
+      
+      if (!ball) {
+        console.error('Failed to create a new ball');
+        return;
+      }
     }
     
     // Find the bottom paddle (or any paddle if bottom not found)
@@ -346,15 +354,22 @@ class BallManager {
       return;
     }
     
+    // Make sure the ball is active and visible
+    ball.setActive(true);
+    ball.setVisible(true);
+    ball.setAlpha(1);
+    
+    // Reset velocity to zero
+    if (ball.body) {
+      const matterBody = ball.body as MatterBody;
+      this.scene.matter.body.setVelocity(matterBody, { x: 0, y: 0 });
+    }
+    
     // Store the attached paddle in state manager
     this.ballStateManager.attachBallToPaddle(ball, bottomPaddle);
     
     // Position the ball on the paddle
     this.ballPositioner.updateBallPositionOnPaddle(ball, bottomPaddle);
-    
-    // Make sure the ball is visible
-    ball.setVisible(true);
-    ball.setAlpha(1);
     
     console.log(`Ball reset to paddle at position (${ball.x}, ${ball.y})`);
     console.log('Ball attached to paddle:', this.ballStateManager.isBallAttachedToPaddle());

@@ -157,15 +157,16 @@ class PhysicsManager {
     }
   }
 
-/**
- * Get the collision category for a specific type
- * @param type The type to get the category for
- * @returns The collision category number
- */
-public getCollisionCategory(type: 'ball' | 'paddle' | 'brick' | 'wall' | 'powerUp' | 'laser' | 'shield'): number {
-  const collisionGroup = this.collisionGroups[type];
-  return collisionGroup ? collisionGroup.category : 0x0001; // Default category if not found
-}
+  /**
+   * Get the collision category for a specific type
+   * @param type The type to get the category for
+   * @returns The collision category number
+   */
+  public getCollisionCategory(type: 'ball' | 'paddle' | 'brick' | 'wall' | 'powerUp' | 'laser' | 'shield'): number {
+    const collisionGroup = this.collisionGroups[type];
+    return collisionGroup ? collisionGroup.category : 0x0001; // Default category if not found
+  }
+  
   /**
    * Apply collision category and mask to a game object
    * @param gameObject The game object to configure
@@ -183,6 +184,68 @@ public getCollisionCategory(type: 'ball' | 'paddle' | 'brick' | 'wall' | 'powerU
     // Set the collision category and mask
     gameObject.setCollisionCategory(collisionGroup.category);
     gameObject.setCollidesWith(collisionGroup.mask);
+  }
+  
+  /**
+   * Set up collision properties specifically for a ball
+   * @param ball The ball sprite to configure
+   */
+  public setupCollisionForBall(ball: Phaser.Physics.Matter.Sprite): void {
+    if (!ball.body) return;
+    
+    try {
+      // Get the ball collision category and mask
+      const ballCollisionGroup = this.collisionGroups['ball'];
+      if (!ballCollisionGroup) return;
+      
+      // Access the Matter.js body directly
+      const matterBody = ball.body as any;
+      
+      // Set collision category
+      if (matterBody.collisionFilter) {
+        matterBody.collisionFilter.category = ballCollisionGroup.category;
+        matterBody.collisionFilter.mask = ballCollisionGroup.mask;
+      } else if (matterBody.parts && Array.isArray(matterBody.parts)) {
+        // Set on all parts if it's a compound body
+        matterBody.parts.forEach((part: any) => {
+          if (part && part.collisionFilter) {
+            part.collisionFilter.category = ballCollisionGroup.category;
+            part.collisionFilter.mask = ballCollisionGroup.mask;
+          }
+        });
+      }
+      
+      console.log('Ball collision properties set:', {
+        category: ballCollisionGroup.category,
+        mask: ballCollisionGroup.mask
+      });
+    } catch (error) {
+      console.error('Error setting ball collision properties:', error);
+    }
+  }
+  
+  /**
+   * Enable collision event callbacks for a game object
+   * @param gameObject The game object to enable collision events for
+   */
+  public enableCollisionEvents(gameObject: Phaser.Physics.Matter.Sprite | Phaser.Physics.Matter.Image): void {
+    if (!gameObject.body) return;
+    
+    // Set onCollide callback
+    this.scene.matter.world.on('collisionstart', (event: Phaser.Physics.Matter.Events.CollisionStartEvent) => {
+      const pairs = event.pairs;
+      
+      for (let i = 0; i < pairs.length; i++) {
+        const bodyA = pairs[i].bodyA;
+        const bodyB = pairs[i].bodyB;
+        
+        // Check if our game object is involved in this collision
+        if ((bodyA === gameObject.body || bodyB === gameObject.body)) {
+          // Log collision for debugging
+          console.log('Collision detected for:', gameObject.getData('type') || gameObject.name);
+        }
+      }
+    });
   }
   
   /**

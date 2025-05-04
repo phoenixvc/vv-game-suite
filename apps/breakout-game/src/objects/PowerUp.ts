@@ -36,6 +36,9 @@ export class PowerUp extends Phaser.Physics.Matter.Image {
       // Add to scene
       scene.add.existing(this);
       
+      // Set the origin to center (fixes the 0,0 origin issue)
+      this.setOrigin(0.5, 0.5);
+      
       // Store data in the game object
       this.setData('type', this.powerUpType);
       this.setData('duration', this.powerUpDuration);
@@ -48,6 +51,9 @@ export class PowerUp extends Phaser.Physics.Matter.Image {
       // Set velocity using Matter.js
       const velocity = config.velocity || { y: 2 };
       this.setVelocity(velocity.x || 0, velocity.y || 2);
+      
+      // Log the position and origin for debugging
+      console.log(`PowerUp created at (${this.x}, ${this.y}) with origin (${this.originX}, ${this.originY})`);
       
       // Add visual effects
       this.addVisualEffects();

@@ -104,24 +104,91 @@ export class BreakoutScenePaddles {
   }
   
   /**
-   * Create paddles for the game
+   * Create paddles for the game - MODIFIED TO AVOID DUPLICATION
    */
   public createPaddles(): void {
     console.log('Creating paddles for the game');
     
     try {
-      // Clear existing paddles
-      this.paddles = [];
+      // Get the paddle manager
+      const paddleManager = this.getPaddleManager();
       
-      // Get physics manager
-      const physicsManager = this.scene.getPhysicsManager();
-      if (!physicsManager) {
-        console.error('Physics manager not available');
+      // Check if paddles already exist
+      if (paddleManager && paddleManager.getPaddles().length > 0) {
+        console.log('Paddles already exist, skipping creation');
         return;
       }
       
-      // Get game dimensions
-      const { width, height } = this.scene.scale;
+      // If we have a paddle manager, delegate to it
+      if (paddleManager && typeof paddleManager.createPaddles === 'function') {
+        // Store active paddles in registry for the manager to use
+        const levelManager = this.scene.getLevelManager();
+        const currentLevel = levelManager ? levelManager.getCurrentLevel() : 1;
+        
+        // Determine which edges should have active paddles
+        const activePaddles = ['bottom'];
+        if (currentLevel >= 2) {
+          activePaddles.push('top');
+        }
+        if (currentLevel >= 3) {
+          activePaddles.push('left', 'right');
+        }
+        
+        // Store in registry for the manager to use
+        this.scene.registry.set('activePaddles', activePaddles);
+        
+        // Create paddles in the manager
+        paddleManager.createPaddles();
+        return;
+      }
+      
+      // If no paddle manager, create paddles directly (fallback)
+      this.createPaddlesDirectly();
+      
+    } catch (error) {
+      console.error('Error creating paddles:', error);
+    }
+  }
+  
+  /**
+   * Create paddles directly (fallback method)
+   */
+  private createPaddlesDirectly(): void {
+    try {
+      // Clear existing paddles
+      this.paddles = [];
+      
+      // Get physics manager - with safety check
+      let physicsManager;
+      try {
+        physicsManager = this.scene.getPhysicsManager();
+      } catch (error) {
+        console.warn('Could not get physics manager, will create paddles without physics categories');
+      }
+      
+      // Get game dimensions with safety check
+      let width = 800; // Default width
+      let height = 600; // Default height
+      
+      try {
+        if (this.scene && this.scene.scale) {
+          width = this.scene.scale.width || width;
+          height = this.scene.scale.height || height;
+        } else {
+          console.warn('Scene scale not available, using default dimensions');
+          
+          // Try to get dimensions from game config
+          if (this.scene.game && this.scene.game.config) {
+            const config = this.scene.game.config;
+            width = (config.width as number) || width;
+            height = (config.height as number) || height;
+          }
+        }
+      } catch (error) {
+        console.warn('Error getting game dimensions, using defaults:', error);
+      }
+      
+      console.log(`Using game dimensions: ${width}x${height}`);
       
       // Create bottom paddle (main player paddle)
       this.createPaddle({
@@ -130,26 +197,28 @@ export class BreakoutScenePaddles {
         y: height - 50,
         width: GAME_CONFIG.PADDLE.WIDTH,
         height: GAME_CONFIG.PADDLE.HEIGHT,
-        edge: 'top',
+        edge: 'bottom',
         isPlayer: true
       });
       
-      // Always create top paddle (as seen in the screenshot)
-      this.createPaddle({
-        id: 'top',
-        x: width / 2,
-        y: 50,
-        width: GAME_CONFIG.PADDLE.WIDTH,
-        height: GAME_CONFIG.PADDLE.HEIGHT,
-        edge: 'bottom',
-        isPlayer: false
-      });
-      
-      // Create other paddles based on level configuration
+      // Get level to determine which other paddles to create
       const levelManager = this.scene.getLevelManager();
       const currentLevel = levelManager ? levelManager.getCurrentLevel() : 1;
       
-      // Add side paddles for higher levels
+      // Add top paddle for level 2+
+      if (currentLevel >= 2) {
+        this.createPaddle({
+          id: 'top',
+          x: width / 2,
+          y: 50,
+          width: GAME_CONFIG.PADDLE.WIDTH,
+          height: GAME_CONFIG.PADDLE.HEIGHT,
+          edge: 'top',
+          isPlayer: false
+        });
+      }
+      
+      // Add side paddles for level 3+
       if (currentLevel >= 3) {
         // Left paddle
         this.createPaddle({
@@ -158,7 +227,7 @@ export class BreakoutScenePaddles {
           y: height / 2,
           width: GAME_CONFIG.PADDLE.HEIGHT, // Swapped for vertical paddle
           height: GAME_CONFIG.PADDLE.WIDTH * 1.5, // Swapped for vertical paddle
-          edge: 'right',
+          edge: 'left',
           isPlayer: false,
           orientation: 'vertical'
         });
@@ -170,7 +239,7 @@ export class BreakoutScenePaddles {
           y: height / 2,
           width: GAME_CONFIG.PADDLE.HEIGHT, // Swapped for vertical paddle
           height: GAME_CONFIG.PADDLE.WIDTH * 1.5, // Swapped for vertical paddle
-          edge: 'left',
+          edge: 'right',
           isPlayer: false,
           orientation: 'vertical'
         });
@@ -183,24 +252,8 @@ export class BreakoutScenePaddles {
       if (eventManager) {
         eventManager.emit('paddlesCreated', { paddles: this.paddles });
       }
-      
-      // Initialize the PaddleManager as well
-      const paddleManager = this.getPaddleManager();
-      if (paddleManager && typeof paddleManager.createPaddles === 'function') {
-        // Tell the manager which edges should have active paddles
-        const activePaddles = ['bottom', 'top'];
-        if (currentLevel >= 3) {
-          activePaddles.push('left', 'right');
-        }
-        
-        // Store in registry for the manager to use
-        this.scene.registry.set('activePaddles', activePaddles);
-        
-        // Create paddles in the manager
-        paddleManager.createPaddles();
-      }
     } catch (error) {
-      console.error('Error creating paddles:', error);
+      console.error('Error creating paddles directly:', error);
     }
   }
   
@@ -218,6 +271,12 @@ export class BreakoutScenePaddles {
     orientation?: string;
   }): void {
     try {
+      // Safety check for matter physics
+      if (!this.scene.matter || typeof this.scene.matter.add !== 'object') {
+        console.error(`Cannot create paddle ${options.id}: Matter physics not available`);
+        return;
+      }
+      
       // Create paddle sprite
       const paddle = this.scene.matter.add.sprite(
         options.x,
@@ -234,11 +293,17 @@ export class BreakoutScenePaddles {
       paddle.setData('edge', options.edge);
       paddle.setData('orientation', options.orientation || 'horizontal');
       
-      // Set collision properties
-      const physicsManager = this.scene.getPhysicsManager();
-      if (physicsManager) {
-        paddle.setCollisionCategory(physicsManager.paddleCategory);
-        paddle.setCollidesWith([physicsManager.ballCategory, physicsManager.powerUpCategory]);
+      // Set collision properties - with safety check
+      try {
+        const physicsManager = this.scene.getPhysicsManager();
+        if (physicsManager) {
+          paddle.setCollisionCategory(physicsManager.paddleCategory);
+          paddle.setCollidesWith([physicsManager.ballCategory, physicsManager.powerUpCategory]);
+        } else {
+          console.warn(`No physics manager available for paddle ${options.id}, skipping collision setup`);
+        }
+      } catch (error) {
+        console.warn(`Error setting up collisions for paddle ${options.id}:`, error);
       }
       
       // Create controller with the appropriate parameters

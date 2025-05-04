@@ -1,4 +1,5 @@
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
+import { Body as MatterBody } from 'matter-js';
 import * as Phaser from 'phaser';
 
 /**
@@ -43,17 +44,18 @@ class BallFactory {
     const radius = ball.width / 2;
     const circleBody = this.scene.matter.bodies.circle(x, y, radius, {
       restitution: 1,  // Perfect bounce
-      friction: 0,     // No friction
+      friction: 0.001, // Very slight friction to prevent sliding along surfaces
       frictionAir: 0,  // No air resistance
       density: 0.01,   // Low density for consistent physics
       label: 'ball',   // Label for collision detection
-      isSensor: false  // NOT a sensor - we want physical collisions
+      isSensor: false, // NOT a sensor - we want physical collisions
+      slop: 0          // Reduce slop to prevent passing through objects
     });
     
     // Replace the sprite's body with our custom circle body
     ball.setExistingBody(circleBody);
     
-    // Disable gravity for the ball - VERY IMPORTANT to prevent auto-falling
+    // Disable gravity for the ball
     ball.setIgnoreGravity(true);
     
     // Disable rotation
@@ -62,11 +64,44 @@ class BallFactory {
     // Set the ball's collision category and mask
     const physicsManager = this.scene.getPhysicsManager();
     if (physicsManager) {
-      // Use setCollisionCategory directly
-      physicsManager.setCollisionCategory(ball, 'ball');
+      // Check if the setupCollisionForBall method exists
+      if (typeof physicsManager.setupCollisionForBall === 'function') {
+        // Use the physics manager to set up collisions
+        physicsManager.setupCollisionForBall(ball);
+      } else {
+        // Fall back to existing methods
+        physicsManager.setCollisionCategory(ball, 'ball');
+        physicsManager.setCollidesWith(ball, ['paddle', 'brick', 'wall', 'powerUp']);
+      }
       
-      // Make sure ball collides with everything important
-      physicsManager.setCollidesWith(ball, ['paddle', 'brick', 'wall', 'powerUp']);
+      // Enable collision events for debugging
+      if (typeof physicsManager.enableCollisionEvents === 'function') {
+        physicsManager.enableCollisionEvents(ball);
+      }
+    } else {
+      // Fallback if physics manager is not available
+      // Define collision categories
+      const Category = {
+        DEFAULT: 0x0001,
+        BALL: 0x0002,
+        PADDLE: 0x0004,
+        BRICK: 0x0008,
+        WALL: 0x0010,
+        POWERUP: 0x0020
+      };
+      
+      // Set collision filter directly on the body
+      if (ball.body) {
+        // Cast the body to a Matter.js body to access collisionFilter
+        const matterBody = ball.body as MatterBody;
+        
+        // Set collision category
+        matterBody.collisionFilter.category = Category.BALL;
+        
+        // Set what the ball collides with
+        matterBody.collisionFilter.mask = 
+          Category.DEFAULT | Category.PADDLE | Category.BRICK | Category.WALL | Category.POWERUP;
+      }
     }
     
     // Set custom properties
@@ -76,7 +111,9 @@ class BallFactory {
     
     // Make sure the ball has no initial velocity
     if (ball.body) {
-      this.scene.matter.body.setVelocity(ball.body as any, { x: 0, y: 0 });
+      // Cast the body to the correct Matter.js type for setVelocity
+      const matterBody = ball.body as MatterBody;
+      this.scene.matter.body.setVelocity(matterBody, { x: 0, y: 0 });
     }
     
     // Log ball creation

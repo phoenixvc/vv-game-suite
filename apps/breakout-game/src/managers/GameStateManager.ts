@@ -34,7 +34,7 @@ class GameStateManager {
     // Update UI with initial lives
     const uiManager = this.scene.getUIManager();
     if (uiManager) {
-      uiManager.updateLives({ lives: this.lives });
+      uiManager.updateLives(this.lives);
     }
   }
   
@@ -44,7 +44,7 @@ class GameStateManager {
   public handleGameOver(data: any): void {
     const uiManager = this.scene.getUIManager();
     if (uiManager && typeof uiManager.showGameOver === 'function') {
-      uiManager.showGameOver();
+      uiManager.showGameOver(data);
     }
     
     this.scene.scene.pause();
@@ -63,7 +63,7 @@ class GameStateManager {
     
     const uiManager = this.scene.getUIManager();
     if (uiManager) {
-      uiManager.updateLives({ lives: this.lives });
+      uiManager.updateLives(this.lives);
     }
     
     if (this.lives <= 0) {
@@ -94,8 +94,8 @@ class GameStateManager {
     
     // Show life lost message
     const uiManager = this.scene.getUIManager();
-    if (uiManager && typeof uiManager.showLifeLostMessage === 'function') {
-      uiManager.showLifeLostMessage();
+    if (uiManager) {
+      uiManager.showMessage('Life Lost!', 1500); // Use the existing showMessage method
     }
   }
   
@@ -155,7 +155,7 @@ class GameStateManager {
     // Update UI
     const uiManager = this.scene.getUIManager();
     if (uiManager) {
-      uiManager.updateLives({ lives: this.lives });
+      uiManager.updateLives(this.lives);
     }
   }
   
@@ -168,7 +168,7 @@ class GameStateManager {
     // Update UI
     const uiManager = this.scene.getUIManager();
     if (uiManager) {
-      uiManager.updateLives({ lives: this.lives });
+      uiManager.updateLives(this.lives);
     }
     
     // Emit event

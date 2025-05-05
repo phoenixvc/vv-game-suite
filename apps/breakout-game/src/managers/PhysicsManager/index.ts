@@ -1,3 +1,4 @@
 // Re-export PhysicsManager from its actual location
-export * from '../Physics/index';
-export { default } from '../Physics/index';
+export * from '../Physics/PhysicsManager';
+export { default } from '../Physics/PhysicsManager';
+

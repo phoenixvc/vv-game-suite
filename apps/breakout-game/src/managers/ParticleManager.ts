@@ -2,60 +2,44 @@ import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import * as Phaser from 'phaser';
 import ParticleController from '../controllers/ParticleController';
 import ErrorManager from './ErrorManager';
+import { BounceEffectManager } from './particles/BounceEffectManager';
+import { BrickEffectManager } from './particles/BrickEffectManager';
+import { ExplosionEffectManager } from './particles/ExplosionEffectManager';
+import { PowerUpEffectManager } from './particles/PowerUpEffectManager';
+import { TrailEffectManager } from './particles/TrailEffectManager';
 
 /**
  * Manages particle effects in the game
+ * Restructured to use specialized effect managers
  */
 class ParticleManager {
+  updateParticleColors(particleColor: number) {
+    throw new Error('Method not implemented.');
+  }
   private scene: BreakoutScene;
   private phasorScene: Phaser.Scene;
   private particleControllers: ParticleController[] = [];
   private particleTextures: string[] = ['particle', 'square', 'circle'];
   private errorManager: ErrorManager;
   
-  // Default particle configurations
-  private static readonly DEFAULT_BLEND_MODE = Phaser.BlendModes.ADD;
-  private static readonly DEFAULT_SCREEN_BLEND_MODE = Phaser.BlendModes.SCREEN;
-  private static readonly DEFAULT_LIFESPAN = 600;
-  private static readonly DEFAULT_EXPLOSION_LIFESPAN = 500;
-  private static readonly DEFAULT_TRAIL_LIFESPAN = 300;
-  private static readonly DEFAULT_PARTICLES_LIFESPAN = 800;
-  private static readonly DEFAULT_POWERUP_LIFESPAN = 500;
-  private static readonly BRICK_HIT_LIFESPAN = 300;
-  private static readonly BRICK_DESTROY_LIFESPAN = 600;
-  
-  // Particle speed ranges
-  private static readonly POWERUP_SPEED = { min: 10, max: 30 };
-  private static readonly EXPLOSION_SPEED = { min: 50, max: 200 };
-  private static readonly TRAIL_SPEED = { min: 0, max: 10 };
-  private static readonly DEFAULT_SPEED = { min: 50, max: 150 };
-  private static readonly BRICK_HIT_SPEED = { min: 20, max: 80 };
-  
-  // Particle scale ranges
-  private static readonly DEFAULT_SCALE = { start: 0.5, end: 0 };
-  private static readonly SMALL_SCALE = { start: 0.2, end: 0 };
-  private static readonly MEDIUM_SCALE = { start: 0.4, end: 0 };
-  private static readonly BRICK_HIT_SCALE = { start: 0.3, end: 0 };
-  
-  // Particle alpha range
-  private static readonly DEFAULT_ALPHA = { start: 1, end: 0 };
-  
-  // Emission frequencies
-  private static readonly CONTINUOUS_EMISSION = 100;
-  private static readonly TRAIL_EMISSION = 50;
-  private static readonly ONE_TIME_BURST = -1;
-  
-  // Default angle range
-  private static readonly FULL_ANGLE_RANGE = { min: 0, max: 360 };
-  
-  // Default particle counts
-  private static readonly DEFAULT_PARTICLE_COUNT = 10;
-  private static readonly EXPLOSION_PARTICLE_COUNT = 20;
-  private static readonly BRICK_HIT_PARTICLE_COUNT = 5;
-  private static readonly BRICK_DESTROY_PARTICLE_COUNT = 15;
+  // Specialized effect managers
+  private bounceEffectManager: BounceEffectManager;
+  private brickEffectManager: BrickEffectManager;
+  private explosionEffectManager: ExplosionEffectManager;
+  private powerUpEffectManager: PowerUpEffectManager;
+  private trailEffectManager: TrailEffectManager;
   
   // Track active particles to avoid accessing destroyed objects
   private activeParticles: Set<Phaser.GameObjects.Particles.ParticleEmitter> = new Set();
+  
+  // Default particle configurations
+  static readonly DEFAULT_BLEND_MODE = Phaser.BlendModes.ADD;
+  static readonly DEFAULT_SCREEN_BLEND_MODE = Phaser.BlendModes.SCREEN;
+  static readonly DEFAULT_LIFESPAN = 600;
+  static readonly DEFAULT_ALPHA = { start: 1, end: 0 };
+  static readonly ONE_TIME_BURST = -1;
+  static readonly CONTINUOUS_EMISSION = 100;
+  static readonly FULL_ANGLE_RANGE = { min: 0, max: 360 };
   
   constructor(scene: BreakoutScene) {
     this.scene = scene;
@@ -66,9 +50,37 @@ class ParticleManager {
     if (!this.errorManager) {
       // Create our own instance if not available from scene
       this.errorManager = new ErrorManager(scene);
-    }
-    
+      }
+      
+    // Create particle textures
     this.createParticleTextures();
+    
+    // Initialize specialized effect managers
+    this.bounceEffectManager = new BounceEffectManager(this);
+    this.brickEffectManager = new BrickEffectManager(this);
+    this.explosionEffectManager = new ExplosionEffectManager(this);
+    this.powerUpEffectManager = new PowerUpEffectManager(this);
+    this.trailEffectManager = new TrailEffectManager(this);
+      }
+      
+  /**
+   * Get the scene
+   */
+  getScene(): BreakoutScene {
+    return this.scene;
+  }
+  /**
+   * Add a particle controller to be tracked
+   */
+  addParticleController(controller: ParticleController): void {
+    this.particleControllers.push(controller);
+  }
+    
+/**
+   * Add an emitter to be tracked
+ */
+  trackEmitter(emitter: Phaser.GameObjects.Particles.ParticleEmitter): void {
+      this.activeParticles.add(emitter);
   }
 
   /**
@@ -102,11 +114,11 @@ class ParticleManager {
         graphics.generateTexture('circle', 16, 16);
         graphics.destroy();
       }
-    } catch (e) {
+            } catch (e) {
       console.warn('[ParticleManager] Error creating particle textures:', e);
-    }
-  }
-  
+            }
+          }
+          
   /**
    * Create a particle emitter with specified texture and configuration
    * @param texture The texture key to use for particles
@@ -117,8 +129,8 @@ class ParticleManager {
     try {
       // Default config
       const defaultConfig = {
-        speed: ParticleManager.DEFAULT_SPEED,
-        scale: ParticleManager.DEFAULT_SCALE,
+        speed: { min: 50, max: 150 },
+        scale: { start: 0.5, end: 0 },
         alpha: ParticleManager.DEFAULT_ALPHA,
         lifespan: ParticleManager.DEFAULT_LIFESPAN,
         blendMode: ParticleManager.DEFAULT_BLEND_MODE
@@ -139,180 +151,19 @@ class ParticleManager {
       return null;
     }
   }
-  
-  /**
-   * Create an explosion effect
-   * @param x X position
-   * @param y Y position
-   * @param color Color of the explosion
-   * @param particleCount Number of particles
-   * @returns Controller for the created effect
-   */
-  public createExplosion(
-    x: number, 
-    y: number, 
-    color: number = 0xff8800, 
-    particleCount: number = ParticleManager.EXPLOSION_PARTICLE_COUNT
-  ): ParticleController {
-    try {
-      // Create emitter configuration
-      const emitterConfig: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig = {
-        speed: ParticleManager.EXPLOSION_SPEED,
-        angle: ParticleManager.FULL_ANGLE_RANGE,
-        scale: ParticleManager.DEFAULT_SCALE,
-        alpha: ParticleManager.DEFAULT_ALPHA,
-        lifespan: ParticleManager.DEFAULT_EXPLOSION_LIFESPAN,
-        tint: { onEmit: () => color },
-        blendMode: ParticleManager.DEFAULT_SCREEN_BLEND_MODE,
-        frequency: ParticleManager.ONE_TIME_BURST, // Emit all particles at once
-        quantity: particleCount
-      };
-      
-      // Create the emitter directly (it's now a GameObject in v3.60+)
-      const emitter = this.scene.add.particles(x, y, 'particle', emitterConfig);
-      
-      // Track this emitter
-      this.activeParticles.add(emitter);
-      
-      // Create and store controller
-      const controller = new ParticleController(this.scene, emitter, ParticleManager.DEFAULT_EXPLOSION_LIFESPAN);
-      this.particleControllers.push(controller);
-      
-      return controller;
-    } catch (e) {
-      console.warn('[ParticleManager] Error creating explosion:', e);
-      return null;
-    }
-  }
-
-  /**
-   * Create a trail effect that follows an object
-   * @param target Object to follow
-   * @param color Color of the trail
-   * @param duration How long the trail should last (0 for permanent)
-   * @returns Controller for the created effect
-   */
-  public createTrail(
-    target: Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Transform,
-    color: number = 0x00ffff,
-    duration: number = 0
-  ): ParticleController {
-    try {
-      // Safety check for target
-      if (!target) {
-        console.warn('[ParticleManager] Cannot create trail for null target');
-        return null;
-      }
-      
-      // Safely get target position
-      const x = this.safeGetX(target);
-      const y = this.safeGetY(target);
-      
-      // Create emitter configuration
-      const emitterConfig: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig = {
-        speed: ParticleManager.TRAIL_SPEED,
-        scale: ParticleManager.SMALL_SCALE,
-        alpha: ParticleManager.DEFAULT_ALPHA,
-        lifespan: ParticleManager.DEFAULT_TRAIL_LIFESPAN,
-        tint: { onEmit: () => color },
-        blendMode: ParticleManager.DEFAULT_BLEND_MODE,
-        frequency: ParticleManager.TRAIL_EMISSION,
-        follow: target
-      };
-
-      // Create the emitter directly (it's now a GameObject in v3.60+)
-      const emitter = this.scene.add.particles(x, y, 'particle', emitterConfig);
-      
-      // Track this emitter
-      this.activeParticles.add(emitter);
-
-      // Create and store controller
-      const controller = new ParticleController(this.scene, emitter, duration);
-      this.particleControllers.push(controller);
-
-      return controller;
-    } catch (e) {
-      console.warn('[ParticleManager] Error creating trail:', e);
-      return null;
-    }
-  }
-
-  /**
-   * Create particles at a specific position
-   * @param x X position
-   * @param y Y position
-   * @param config Configuration options for the particles
-   * @returns Controller for the created effect
-   */
-  public createParticles(
-    x: number,
-    y: number,
-    config: {
-      texture?: string,
-      color?: number,
-      duration?: number,
-      count?: number,
-      speed?: { min: number, max: number },
-      scale?: { start: number, end: number },
-      lifespan?: number,
-      blendMode?: number,
-      angle?: { min: number, max: number }
-    } = {}
-  ): ParticleController {
-    try {
-      // Set defaults for particle configuration
-      const texture = config.texture || 'particle';
-      const color = config.color || 0xffffff;
-      const duration = config.duration || 1000;
-      const count = config.count || ParticleManager.DEFAULT_PARTICLE_COUNT;
-      const speed = config.speed || ParticleManager.DEFAULT_SPEED;
-      const scale = config.scale || ParticleManager.MEDIUM_SCALE;
-      const lifespan = config.lifespan || ParticleManager.DEFAULT_PARTICLES_LIFESPAN;
-      const blendMode = config.blendMode || ParticleManager.DEFAULT_SCREEN_BLEND_MODE;
-      const angle = config.angle || ParticleManager.FULL_ANGLE_RANGE;
-      
-      // Create emitter configuration
-      const emitterConfig: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig = {
-        speed: speed,
-        scale: scale,
-        alpha: ParticleManager.DEFAULT_ALPHA,
-        angle: angle,
-        lifespan: lifespan,
-        tint: { onEmit: () => color },
-        blendMode: blendMode,
-        frequency: ParticleManager.ONE_TIME_BURST, // Emit all particles at once
-        quantity: count
-      };
-      
-      // Create the emitter directly (it's now a GameObject in v3.60+)
-      const emitter = this.scene.add.particles(x, y, texture, emitterConfig);
-      
-      // Track this emitter
-      this.activeParticles.add(emitter);
-      
-      // Create and store controller
-      const controller = new ParticleController(this.scene, emitter, duration);
-      this.particleControllers.push(controller);
-      
-      return controller;
-    } catch (e) {
-      console.warn('[ParticleManager] Error creating particles:', e);
-      return null;
-    }
-  }
 
   /**
    * Safely get X position of an object
    */
-  private safeGetX(obj: any): number {
+  safeGetX(obj: any): number {
     if (!obj) return 0;
     
     try {
       // First try direct x property
       if (typeof obj.x === 'number') {
         return obj.x;
-      }
-      
+}
+
       // Then try position.x
       if (obj.position && typeof obj.position.x === 'number') {
         return obj.position.x;
@@ -338,7 +189,7 @@ class ParticleManager {
   /**
    * Safely get Y position of an object
    */
-  private safeGetY(obj: any): number {
+  safeGetY(obj: any): number {
     if (!obj) return 0;
     
     try {
@@ -372,7 +223,7 @@ class ParticleManager {
   /**
    * Check if a particle emitter is still active and valid
    */
-  private isEmitterActive(emitter: Phaser.GameObjects.Particles.ParticleEmitter): boolean {
+  isEmitterActive(emitter: Phaser.GameObjects.Particles.ParticleEmitter): boolean {
     if (!emitter) return false;
     
     try {
@@ -391,231 +242,190 @@ class ParticleManager {
     }
   }
 
+  // Delegate methods to specialized managers
+  
+  /**
+   * Create a bounce effect at the specified position
+   */
+  public createBounceEffect(x: number, y: number, color: number = 0x4444ff, particleScale?: number, particleCount?: number): ParticleController {
+    return this.bounceEffectManager.createBounceEffect(x, y, color);
+  }
+  
   /**
    * Create a particle effect when a brick is hit
-   * @param brick The brick that was hit
-   * @param color Color to use for particles
    */
   public createBrickHitEffect(brick: Phaser.Physics.Matter.Sprite, color?: number): void {
-    try {
-      // Safety check for brick
-      if (!brick) {
-        // Silent fail - this is an expected case when objects are destroyed
-        return;
-      }
-      
-      // Use default position if brick is not valid
-      let x = 0;
-      let y = 0;
-      let brickValid = false;
-      
-      try {
-        // Check if the brick is valid by accessing a property
-        const test = brick.active;
-        brickValid = test !== undefined;
-        
-        if (brickValid) {
-          // Safely get brick position
-          x = this.safeGetX(brick);
-          y = this.safeGetY(brick);
-        }
-      } catch (e) {
-        // Brick is not valid, use default position
-        brickValid = false;
-      }
-      
-      // If brick is not valid, exit silently
-      if (!brickValid) {
-        return;
-      }
-      
-      // Use brick tint if color not specified
-      if (!color) {
-        // Safely access tintTopLeft
-        color = this.errorManager ? 
-          this.errorManager.safeAccess(brick, 'tintTopLeft', 0xffffff) : 
-          (brick.tintTopLeft || 0xffffff);
-      }
-
-      // Create a small particle burst at the brick's position
-      this.createParticles(x, y, {
-        color,
-        count: ParticleManager.BRICK_HIT_PARTICLE_COUNT,
-        speed: ParticleManager.BRICK_HIT_SPEED,
-        scale: ParticleManager.BRICK_HIT_SCALE,
-        lifespan: ParticleManager.BRICK_HIT_LIFESPAN,
-        duration: ParticleManager.BRICK_HIT_LIFESPAN
-      });
-    } catch (e) {
-      // Silent fail - don't log this error to avoid console spam
-    }
+    this.brickEffectManager.createBrickHitEffect(brick, color);
   }
-
-/**
- * Create a particle effect when a brick is destroyed
- * @param brick The brick that was destroyed
- * @param color Color to use for particles
- */
-public createBrickDestroyEffect(brick: Phaser.GameObjects.GameObject, color?: number): void {
-  try {
-    // Safety check for brick
-    if (!brick) {
-      // Silent fail - this is an expected case when objects are destroyed
-      return;
-    }
-    
-    // Use default position if brick is not valid
-    let x = 0;
-    let y = 0;
-    let brickValid = false;
-    
-    try {
-      // Check if the brick is valid by accessing a property
-      const test = 'active' in brick ? brick.active : false;
-      brickValid = test !== undefined;
-      
-      if (brickValid) {
-        // Safely get brick position
-        x = this.safeGetX(brick);
-        y = this.safeGetY(brick);
-      }
-    } catch (e) {
-      // Brick is not valid, use default position
-      brickValid = false;
-    }
-    
-    // If brick is not valid, exit silently
-    if (!brickValid) {
-      return;
-    }
-    
-    // Use brick tint if color not specified and brick is a sprite
-    if (!color && brick instanceof Phaser.GameObjects.Sprite) {
-      // Safely access tintTopLeft
-      color = this.errorManager ? 
-        this.errorManager.safeAccess(brick, 'tintTopLeft', 0xffffff) : 
-        (brick.tintTopLeft || 0xffffff);
-    }
-    
-    // Default color if still not set
-    if (!color) {
-      color = 0xffffff;
-    }
-    
-    // Create a larger particle burst with square particles
-    this.createParticles(x, y, {
-      texture: 'square',
-      color,
-      count: ParticleManager.BRICK_DESTROY_PARTICLE_COUNT,
-      speed: ParticleManager.DEFAULT_SPEED,
-      scale: ParticleManager.DEFAULT_SCALE,
-      lifespan: ParticleManager.BRICK_DESTROY_LIFESPAN,
-      duration: ParticleManager.BRICK_DESTROY_LIFESPAN
-    });
-  } catch (e) {
-    // Silent fail - don't log this error to avoid console spam
-  }
-}
   
-/**
- * Create a directional effect based on the edge that was hit
- * @param x X position
- * @param y Y position
- * @param angle Angle of impact in radians
- * @param color Color of particles
- */
-createParticleDirectionalEffect(x: number, y: number, angle: number, color: number = 0xffffff) {
-  try {
-    // Calculate the direction vector from the angle
-    const dirX = Math.cos(angle);
-    const dirY = Math.sin(angle);
-    
-    // Create a particle emitter for the effect
-    const particles = this.scene.add.particles(x, y, 'particle', {
-      speed: { min: 50, max: 150 },
-      scale: { start: 0.5, end: 0 },
-      quantity: 10,
-      lifespan: 500,
-      tint: color,
-      emitZone: {
-        type: 'edge',
-        source: new Phaser.Geom.Line(0, 0, dirX * 20, dirY * 20),
-        quantity: 10,
-        yoyo: false
-      }
-    });
-    
-    // Track this emitter
-    this.activeParticles.add(particles);
-    
-    // Store reference to this for use in callbacks
-    const self = this;
-    
-    // Stop emitting after a short time and destroy
-    this.scene.time.delayedCall(200, () => {
-      try {
-        if (self.isEmitterActive(particles)) {
-          particles.stop();
-          this.scene.time.delayedCall(500, () => {
-            try {
-              if (self.isEmitterActive(particles)) {
-                particles.destroy();
-                // Remove from active particles set
-                self.activeParticles.delete(particles);
-              }
-            } catch (e) {
-              // Silent fail
-            }
-          });
-        }
-      } catch (e) {
-        // Silent fail
-      }
-    });
-    
-    return particles;
-  } catch (e) {
-    console.warn('[ParticleManager] Error creating directional effect:', e);
-    return null;
+  /**
+   * Create a particle effect when a brick is destroyed
+   */
+  public createBrickDestroyEffect(brick: Phaser.GameObjects.GameObject, color?: number): void {
+    this.brickEffectManager.createBrickDestroyEffect(brick, color);
   }
-}
-
+  
+  /**
+   * Create an explosion effect
+   */
+  public createExplosion(x: number, y: number, color: number = 0xff8800, particleCount: number = 20): ParticleController {
+    return this.explosionEffectManager.createExplosion(x, y, color, particleCount);
+  }
+  
   /**
    * Create a particle effect for a power-up
-   * @param x X position
-   * @param y Y position
-   * @param color Color of the power-up
    */
-  public createPowerUpEffect(
-    x: number,
-    y: number,
-    color: number = 0x00ff00
-  ): ParticleController {
-    try {
-      const emitterConfig: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig = {
-        speed: ParticleManager.POWERUP_SPEED,
-        scale: ParticleManager.SMALL_SCALE,
-        alpha: ParticleManager.DEFAULT_ALPHA,
-        lifespan: ParticleManager.DEFAULT_POWERUP_LIFESPAN,
-        tint: { onEmit: () => color },
-        blendMode: ParticleManager.DEFAULT_BLEND_MODE,
-        frequency: ParticleManager.CONTINUOUS_EMISSION
-      };
+  public createPowerUpEffect(x: number, y: number, color: number = 0x00ff00): ParticleController {
+    return this.powerUpEffectManager.createPowerUpEffect(x, y, color);
+  }
+  
+  /**
+   * Create a trail effect that follows an object
+   */
+  public createTrail(target: Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Transform, color: number = 0x00ffff, duration: number = 0): ParticleController {
+    return this.trailEffectManager.createTrail(target, color, duration);
+  }
+  
+  /**
+   * Create a directional effect based on the edge that was hit
+   */
+  public createParticleDirectionalEffect(x: number, y: number, angle: number, color: number = 0xffffff) {
+    return this.explosionEffectManager.createParticleDirectionalEffect(x, y, angle, color);
+  }
+  
+  /**
+   * Create particles at a specific position
+   */
+  public createParticles(x: number, y: number, config: any = {}): ParticleController {
+    return this.explosionEffectManager.createParticles(x, y, config);
+  }
 
-      // Create the emitter directly (it's now a GameObject in v3.60+)
-      const emitter = this.scene.add.particles(x, y, 'particle', emitterConfig);
+  /**
+   * Create a visual effect to show ball spin
+   * @param ball The ball sprite to create the spin effect for
+   * @param color The color of the spin effect particles
+   * @param spinMagnitude The magnitude of the spin (affects particle speed and direction)
+   */
+  public createSpinEffect(
+    ball: Phaser.Physics.Matter.Sprite,
+    color: number,
+    spinMagnitude: number
+  ): void {
+    try {
+      // Create particles that rotate around the ball to show spin direction
+      const particles = this.scene.add.particles(ball.x, ball.y, 'particle', {
+        speed: 20,
+        scale: { start: 0.2, end: 0 },
+        blendMode: 'ADD',
+        lifespan: 200,
+        quantity: 1,
+        frequency: 20,
+        tint: color
+      });
+      
+      // In Phaser 3.60+, the particles object is the emitter itself
+      const emitter = particles;
       
       // Track this emitter
       this.activeParticles.add(emitter);
+      
+      // Update emitter position in scene update
+      const updateListener = () => {
+        if (ball.active) {
+          particles.setPosition(ball.x, ball.y);
+          
+          // Create a circular path around the ball
+          const radius = ball.displayWidth * 0.7;
+          const angle = this.scene.time.now * 0.01 * (spinMagnitude > 0 ? 1 : -1);
+          
+          // Set emitter properties based on spin
+          emitter.speedX ={ min: -20 * spinMagnitude, max: 20 * spinMagnitude };
+          emitter.speedY ={ min: -20 * spinMagnitude, max: 20 * spinMagnitude };
+        } else {
+          // Ball is no longer active, destroy particles
+          particles.destroy();
+          this.scene.events.off('update', updateListener);
+          this.activeParticles.delete(emitter);
+        }
+      };
+      
+      // Add update listener
+      this.scene.events.on('update', updateListener);
+      
+      // Destroy particles after a short time
+      this.scene.time.delayedCall(500, () => {
+        if (particles && particles.active) {
+          particles.destroy();
+          this.scene.events.off('update', updateListener);
+          this.activeParticles.delete(emitter);
+        }
+      });
+    } catch (error) {
+      console.error('Error creating spin effect:', error);
+    }
+  }
 
-      // Wrap it in your controller
-      const controller = new ParticleController(this.scene, emitter);
-      this.particleControllers.push(controller);
-
-      return controller;
-    } catch (e) {
-      console.warn('[ParticleManager] Error creating power-up effect:', e);
-      return null;
+  /**
+   * Create speed lines behind a fast-moving object
+   * @param object The game object to create speed lines behind
+   * @param speedFactor Factor that affects the intensity of the speed lines
+   */
+  public createSpeedLines(
+    object: Phaser.Physics.Matter.Sprite,
+    speedFactor: number = 1.0
+  ): void {
+    try {
+      if (!object || !object.body) return;
+      
+      // Get velocity
+      const velocity = object.body.velocity;
+      const speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+      
+      // Only create speed lines if the object is moving fast enough
+      if (speed < 5) return;
+      
+      // Calculate normalized velocity vector (direction)
+      const normalizedVelocity = {
+        x: velocity.x / speed,
+        y: velocity.y / speed
+      };
+      
+      // Calculate position behind the object
+      const offsetDistance = object.displayWidth * 0.6;
+      const position = {
+        x: object.x - normalizedVelocity.x * offsetDistance,
+        y: object.y - normalizedVelocity.y * offsetDistance
+      };
+      
+      // Calculate angle based on velocity direction
+      const angle = Math.atan2(velocity.y, velocity.x) * (180 / Math.PI);
+      
+      // Create speed line particles
+      const particles = this.scene.add.particles(position.x, position.y, 'particle', {
+        speed: 5,
+        scale: { start: 0.3, end: 0.1 },
+        alpha: { start: 0.7, end: 0 },
+        lifespan: 200 * speedFactor,
+        blendMode: Phaser.BlendModes.ADD,
+        angle: angle + 180, // Emit in the opposite direction of movement
+        frequency: 10 / speedFactor, // Emit more particles at higher speeds
+        quantity: 1,
+        tint: 0x88ccff
+      });
+      
+      // In Phaser 3.60+, the particles object is the emitter itself
+      const emitter = particles;
+      this.activeParticles.add(emitter);
+      
+      // Auto-destroy after a short time
+      this.scene.time.delayedCall(300, () => {
+        if (particles && particles.active) {
+          particles.destroy();
+          this.activeParticles.delete(emitter);
+        }
+      });
+    } catch (error) {
+      console.error('Error creating speed lines:', error);
     }
   }
 

@@ -2,9 +2,6 @@ import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import * as Phaser from 'phaser';
 
 class ScoreManager {
-  addScore(value: number) {
-    throw new Error('Method not implemented.');
-  }
   private scene: BreakoutScene;
   private score: number = 0;
   private highScore: number = 0;
@@ -17,6 +14,14 @@ class ScoreManager {
     
     // Get high score from registry if available
     this.highScore = this.scene.registry.get('highScore') || 0;
+  }
+  
+  /**
+   * Add points to the score (alias for increaseScore for compatibility)
+   * @param points Points to add
+   */
+  public addScore(points: number): void {
+    this.increaseScore(points);
   }
   
   /**
@@ -34,7 +39,7 @@ class ScoreManager {
     // Update UI
     const uiManager = this.scene.getUIManager();
     if (uiManager) {
-      uiManager.updateScore({ score: this.score });
+      uiManager.updateGameScore(this.score);
     }
     
     // Emit score changed event
@@ -50,8 +55,8 @@ class ScoreManager {
     // Update high score if needed
     if (this.score > this.highScore) {
       this.updateHighScore(this.score);
-    }
-    
+  }
+  
     // Increase combo and reset timer
     if (applyCombo) {
       this.increaseCombo();
@@ -85,8 +90,8 @@ class ScoreManager {
     // Cap combo at a reasonable maximum
     if (this.combo > 10) {
       this.combo = 10;
-    }
-    
+}
+
     // Reset combo timer
     if (this.comboTimer) {
       this.comboTimer.remove();
@@ -150,7 +155,7 @@ class ScoreManager {
     // Update UI
     const uiManager = this.scene.getUIManager();
     if (uiManager) {
-      uiManager.updateScore({ score: this.score });
+      uiManager.updateGameScore(this.score);
     }
     
     // Emit score reset event

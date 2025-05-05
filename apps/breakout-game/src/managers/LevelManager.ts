@@ -61,10 +61,11 @@ class LevelManager {
     // Update UI
     const uiManager = this.scene.getUIManager();
     if (uiManager) {
-      uiManager.updateLevel({ level: this.currentLevel });
-      // Check if updateLevelTheme exists before calling it
-      if (typeof uiManager.updateLevelTheme === 'function') {
-        uiManager.updateLevelTheme(this.levelTheme);
+      if (uiManager) {
+        uiManager.updateLevel(this.currentLevel ); // Use the new updateTheme method
+      }
+      if (uiManager) {
+        uiManager.updateTheme(this.levelTheme);
       }
     }
     
@@ -100,7 +101,7 @@ class LevelManager {
     // Show level complete message
     const uiManager = this.scene.getUIManager();
     if (uiManager && typeof uiManager.showLevelComplete === 'function') {
-      uiManager.showLevelComplete();
+      uiManager.showLevelComplete(this.currentLevel);
     }
     
     // Pause the game briefly
@@ -147,12 +148,8 @@ class LevelManager {
     // Update UI
     const uiManager = this.scene.getUIManager();
     if (uiManager) {
-      uiManager.updateLevel({ level: this.currentLevel });
-      
-      // Update level theme in UI
-      if (typeof uiManager.updateLevelTheme === 'function') {
-        uiManager.updateLevelTheme(this.levelTheme);
-      }
+        uiManager.updateLevel(this.currentLevel );
+        uiManager.updateTheme(this.levelTheme);
     }
     
     // Emit level changed event
@@ -187,11 +184,8 @@ class LevelManager {
     // Update UI
     const uiManager = this.scene.getUIManager();
     if (uiManager) {
-      uiManager.updateLevel({ level: this.currentLevel });
-      // Check if updateLevelTheme exists before calling it
-      if (typeof uiManager.updateLevelTheme === 'function') {
-        uiManager.updateLevelTheme(this.levelTheme);
-      }
+        uiManager.updateLevel(this.currentLevel );
+        uiManager.updateTheme(this.levelTheme);
     }
     
     // Emit level reset event
@@ -205,6 +199,40 @@ class LevelManager {
     }
   }
   
+  /**
+ * Calculate the level dimensions based on the game size
+ */
+private calculateLevelDimensions(): { rows: number, cols: number, brickWidth: number, brickHeight: number, startX: number, startY: number } {
+  const { width, height } = this.scene.scale;
+  
+  // Get HUD height if available - use getHUDManager() instead of direct property access
+  const hudManager = this.scene.getHUDManager ? this.scene.getHUDManager() : null;
+  const hudHeight = hudManager && typeof hudManager.getHudHeight === 'function' 
+    ? hudManager.getHudHeight() 
+    : 40; // Default height if HUD manager not available
+  
+  // Add a small gap below the HUD
+  const topGap = hudHeight + 10;
+  
+  // Calculate available space
+  const availableWidth = width * 0.9; // Use 90% of screen width
+  const availableHeight = height - topGap - 100; // Leave space at bottom for paddle
+  
+  // Calculate brick dimensions
+  const cols = 9; // Fixed number of columns
+  const brickWidth = availableWidth / cols;
+  const brickHeight = brickWidth * 0.4; // Aspect ratio of bricks
+  
+  // Calculate number of rows based on available height
+  const rows = Math.floor(availableHeight / (brickHeight * 1.2)); // 1.2 for spacing
+  
+  // Calculate starting position (centered horizontally, below HUD with gap)
+  const startX = (width - availableWidth) / 2;
+  const startY = topGap + 20; // Add a 20px gap below the HUD
+  
+  return { rows, cols, brickWidth, brickHeight, startX, startY };
+}
+
   /**
    * Rotate to the next theme
    */
@@ -267,10 +295,10 @@ class LevelManager {
     
     // Update UI
     const uiManager = this.scene.getUIManager();
-    if (uiManager && typeof uiManager.updateLevelTheme === 'function') {
-      uiManager.updateLevelTheme(theme);
+    if (uiManager) {
+      uiManager.updateTheme(theme); // Use the new public method
     }
-    
+
     // Emit theme changed event
     const eventManager = this.scene.getEventManager();
     if (eventManager) {

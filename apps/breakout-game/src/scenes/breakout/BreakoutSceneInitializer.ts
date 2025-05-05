@@ -1,13 +1,12 @@
 import PaddleController from '@/controllers/paddle/PaddleController';
-import { BrickManager, CollisionManager, PhysicsManager } from '@/managers';
+import { BrickManager, CollisionManager, PhysicsManager, ThemeManager, UIManager } from '@/managers';
+import PaddleManager from '@/managers/paddle/PaddleManager'; // Fixed import path
 import BallManager from '../../managers/Ball/BallManager';
 import InputManager from '../../managers/InputManager';
 import LevelManager from '../../managers/LevelManager';
-import PaddleManager from '../../managers/PaddleManager'; // Import PaddleManager
 import ParticleManager from '../../managers/ParticleManager';
 import PowerUpManager from '../../managers/PowerUpManager';
 import ScoreManager from '../../managers/ScoreManager';
-import UIManager from '../../managers/UIManager';
 import { MarketSim } from '../../simulations/MarketSim';
 import BreakoutScene from './BreakoutScene';
 
@@ -16,6 +15,7 @@ import BreakoutScene from './BreakoutScene';
  */
 class BreakoutSceneInitializer {
   private scene: BreakoutScene;
+  themeManager: any;
   
   constructor(scene: BreakoutScene) {
     this.scene = scene;
@@ -28,11 +28,23 @@ public initialize(): void {
   console.log('Initializing BreakoutScene...');
   
   try {
+    // Initialize theme manager
+    this.themeManager = new ThemeManager(this.scene);
+    this.scene.setThemeManager(this.themeManager);
+
+    // Set NeuralIquid as the default theme
+    if (this.themeManager.getThemeNames().includes('NeuralIquid')) {
+      this.themeManager.setThemeByName('NeuralIquid');
+    } else {
+      // Apply default theme if NeuralIquid is not available
+      this.themeManager.applyCurrentTheme();
+    }
+
     // Initialize managers in the correct order (dependency-based)
     this.initializePhysicsManager();
     this.initializeCollisionManager();
     this.initializeParticleManager();
-    
+
     // Initialize paddle manager before ball manager
     this.initializePaddleManager();
     
@@ -51,6 +63,9 @@ public initialize(): void {
     this.initializeMarketSim();
     this.initializeLevelManager();
     
+    // Create game objects (including HUD)
+    this.createGameObjects();
+    
     // Set up event listeners
     this.setupEventListeners();
     
@@ -60,6 +75,34 @@ public initialize(): void {
     console.log('BreakoutScene initialization complete');
   } catch (error) {
     console.error('Error initializing scene:', error);
+  }
+}
+
+/**
+ * Create game objects including UI elements
+ */
+private createGameObjects(): void {
+  try {
+    // Create the game HUD (after other UI elements are created)
+    //const gameHUD = new GameHUD(this.scene);
+    
+    // // Set the HUD using the appropriate setter method
+    // if (typeof this.scene.setHUDManager === 'function') {
+    //   this.scene.setHUDManager(gameHUD);
+    // } else {
+    //   // Fallback: set it using type assertion if setter doesn't exist
+    //   (this.scene as any).gameHUD = gameHUD;
+    // }
+    //letft for uimanager
+    
+    console.log('Game objects created successfully');
+  } catch (error) {
+    console.error('Error creating game objects:', error);
+    // Use getErrorManager method instead of direct access
+    const errorManager = this.scene.getErrorManager ? this.scene.getErrorManager() : null;
+    if (errorManager) {
+      errorManager.logError('Failed to create game objects', error instanceof Error ? error.stack : undefined);
+    }
   }
 }
 
@@ -295,25 +338,35 @@ private initializeGameplay(): void {
    * Clean up resources when scene is shut down
    */
   public shutdown(): void {
-    // Clean up managers in reverse order of initialization
-    const levelManager = this.scene.getLevelManager();
-    if (levelManager && typeof levelManager.cleanup === 'function') {
-      levelManager.cleanup();
-    }
-    
-    const inputManager = this.scene.getInputManager();
-    if (inputManager && typeof inputManager.cleanup === 'function') {
-      inputManager.cleanup();
-    }
-    
-    const collisionManager = this.scene.getCollisionManager();
-    if (collisionManager && typeof collisionManager.cleanup === 'function') {
-      collisionManager.cleanup();
-    }
-    
-    const physicsManager = this.scene.getPhysicsManager();
-    if (physicsManager && typeof physicsManager.cleanup === 'function') {
-      physicsManager.cleanup();
+    try {
+      // Clean up the game HUD - use the appropriate getter method
+      const hudManager = this.scene.getHUDManager ? this.scene.getHUDManager() : null;
+      if (hudManager && typeof hudManager.destroy === 'function') {
+        hudManager.destroy();
+      }
+      
+      // Clean up managers in reverse order of initialization
+      const levelManager = this.scene.getLevelManager();
+      if (levelManager && typeof levelManager.cleanup === 'function') {
+        levelManager.cleanup();
+      }
+      
+      const inputManager = this.scene.getInputManager();
+      if (inputManager && typeof inputManager.cleanup === 'function') {
+        inputManager.cleanup();
+      }
+      
+      const collisionManager = this.scene.getCollisionManager();
+      if (collisionManager && typeof collisionManager.cleanup === 'function') {
+        collisionManager.cleanup();
+      }
+      
+      const physicsManager = this.scene.getPhysicsManager();
+      if (physicsManager && typeof physicsManager.cleanup === 'function') {
+        physicsManager.cleanup();
+      }
+    } catch (error) {
+      console.error('Error in BreakoutSceneInitializer.shutdown:', error);
     }
   }
 }

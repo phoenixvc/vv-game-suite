@@ -1,4 +1,4 @@
-import { PhysicsManager } from './index';
+import { PhysicsManager } from './PhysicsManager';
 
 /**
  * Setup collision groups for the physics world

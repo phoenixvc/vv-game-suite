@@ -6,6 +6,9 @@ import { BrickFactory } from './BrickFactory';
 
 
 class BrickManager {
+  updateBrickColors(brickColors: { [key: string]: number; }) {
+    throw new Error('Method not implemented.');
+  }
   private scene: BreakoutScene;
   private bricks: Phaser.GameObjects.Group;
   private factory: BrickFactory;

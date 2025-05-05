@@ -15,6 +15,11 @@ import BallUIManager from './BallUIManager';
  * Manages all balls in the game
  */
 class BallManager {
+  updateBallColors /**
+ * Create a ball
+ */(ballColor: number) {
+    throw new Error('Method not implemented.');
+  }
   private scene: BreakoutScene;
   
   // Speed settings
@@ -375,7 +380,16 @@ class BallManager {
     console.log('Ball attached to paddle:', this.ballStateManager.isBallAttachedToPaddle());
     console.log('Ball visibility:', ball.visible, 'Alpha:', ball.alpha);
   }
-  
+
+  /**
+ * Get a ball by its physics body
+ * @param body The physics body to search for
+ * @returns The ball sprite with this body, or undefined if not found
+ */
+public getBallByBody(body: MatterJS.BodyType): Phaser.Physics.Matter.Sprite | undefined {
+  return this.ballStateManager.getAllBalls().find(ball => ball.body === body);
+}
+
   /**
    * Set the speed factor for balls
    * @param factor Speed multiplier to apply to the initial ball velocity

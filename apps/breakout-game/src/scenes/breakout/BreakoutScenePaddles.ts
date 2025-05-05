@@ -1,4 +1,4 @@
-import PaddleManager from '@/managers/PaddleManager';
+import { PaddleManager } from '@/managers';
 import * as Phaser from 'phaser';
 import { GAME_CONFIG } from '../../constants/GameConstants';
 import PaddleController from '../../controllers/paddle/PaddleController';
@@ -127,11 +127,14 @@ export class BreakoutScenePaddles {
         
         // Determine which edges should have active paddles
         const activePaddles = ['bottom'];
-        if (currentLevel >= 2) {
+        if (currentLevel >= 3) {
           activePaddles.push('top');
         }
-        if (currentLevel >= 3) {
-          activePaddles.push('left', 'right');
+        if (currentLevel >= 5) {
+          activePaddles.push('left');
+        }
+        if (currentLevel >= 7) {
+          activePaddles.push('right');
         }
         
         // Store in registry for the manager to use

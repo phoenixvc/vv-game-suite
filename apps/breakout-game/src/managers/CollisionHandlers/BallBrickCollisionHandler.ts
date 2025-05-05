@@ -1,3 +1,4 @@
+import { Ball } from '@/objects/Ball';
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import MatterJS from 'matter-js';
 import * as Phaser from 'phaser';
@@ -47,6 +48,11 @@ export class BallBrickCollisionHandler implements CollisionHandlerInterface {
       bodyA.label?.includes('ball') ? bodyA : bodyB,
       bodyA.label?.includes('brick') ? bodyA : bodyB
     );
+    
+    // Increment consecutive hit counter if the ball is a Ball instance
+    if (ball instanceof Ball) {
+      ball.incrementHitCounter();
+    }
     
     // Process the collision (score, brick destruction, etc.)
     this.processBallBrickCollision(ball, brick);

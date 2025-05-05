@@ -1,7 +1,9 @@
-import * as Phaser from 'phaser';
-import MatterJS from 'matter-js';
-import { CollisionHandlerInterface } from './CollisionHandlerInterface';
+import { Ball } from '@/objects/Ball';
+import { Paddle } from '@/objects/Paddle';
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
+import MatterJS from 'matter-js';
+import * as Phaser from 'phaser';
+import { CollisionHandlerInterface } from './CollisionHandlerInterface';
 
 export class BallPaddleCollisionHandler implements CollisionHandlerInterface {
   private scene: BreakoutScene;
@@ -56,6 +58,64 @@ export class BallPaddleCollisionHandler implements CollisionHandlerInterface {
       ballManager.calculateBallAngle(ballSprite, paddleSprite);
     }
     
+    // Increment the paddle hit counter if it's our custom Paddle class
+    // Method 1: Check if the method exists on the object directly
+    if ('incrementPaddleHitCounter' in paddleSprite && 
+        typeof (paddleSprite as any).incrementPaddleHitCounter === 'function') {
+      (paddleSprite as any).incrementPaddleHitCounter();
+    }
+    // Method 2: Try to cast to our Paddle class
+    else if (paddleSprite instanceof Paddle) {
+      paddleSprite.incrementPaddleHitCounter();
+    }
+    // Method 3: Use a data property as a fallback
+    else if (paddleSprite.getData('isPaddle')) {
+      // Try to access the method through scene's paddle manager if available
+      const paddleManager = this.scene.getPaddleManager?.();
+      if (paddleManager) {
+        // Check if the method exists on the manager
+        if (typeof (paddleManager as any).incrementPaddleHits === 'function') {
+          (paddleManager as any).incrementPaddleHits(paddleSprite);
+    }
+        // Alternatively, emit an event that the manager might be listening for
+        else {
+          const eventManager = this.scene.getEventManager();
+    if (eventManager) {
+            eventManager.emit('paddleHit', { paddle: paddleSprite });
+          }
+        }
+      }
+    }
+    
+    // Increment the ball hit counter if it's our custom Ball class
+    // Method 1: Check if the method exists on the object
+    if ('incrementHitCounter' in ballSprite && 
+        typeof (ballSprite as any).incrementHitCounter === 'function') {
+      (ballSprite as any).incrementHitCounter();
+  }
+    // Method 2: Try to cast to our Ball class
+    else if (ballSprite instanceof Ball) {
+      ballSprite.incrementHitCounter();
+  }
+    // Method 3: Use a data property as a fallback
+    else if (ballSprite.getData('isBall')) {
+      // Try to access the method through scene's ball manager
+      const ballManager = this.scene.getBallManager();
+      if (ballManager) {
+        // Check if the method exists on the manager
+        if (typeof (ballManager as any).incrementBallHits === 'function') {
+          (ballManager as any).incrementBallHits(ballSprite);
+        }
+        // Alternatively, emit an event that the manager might be listening for
+        else {
+          const eventManager = this.scene.getEventManager();
+          if (eventManager) {
+            eventManager.emit('ballHit', { ball: ballSprite });
+          }
+        }
+      }
+    }
+  
     // Emit an event for the ball-paddle collision
     const eventManager = this.scene.getEventManager();
     if (eventManager) {

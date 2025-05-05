@@ -1,3 +1,6 @@
+import { PaddleManager, UIManager } from '@/managers'; // This should work if barrel file is correct
+// Alternatively, use direct import if needed:
+// import PaddleManager from '@/managers/paddle/PaddleManager';
 import GameObjectManager from '@/managers/GameObjectManager';
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import BallManager from '../managers/Ball/BallManager';
@@ -7,13 +10,11 @@ import EventManager from '../managers/EventManager';
 import GameStateManager from '../managers/GameStateManager';
 import InputManager from '../managers/InputManager';
 import LevelManager from '../managers/LevelManager';
-import PaddleManager from '../managers/PaddleManager';
 import ParticleManager from '../managers/ParticleManager';
 import PhysicsManager from '../managers/PhysicsManager';
 import PowerUpManager from '../managers/PowerUpManager';
 import ScoreManager from '../managers/ScoreManager';
 import TimeManager from '../managers/TimeManager';
-import UIManager from '../managers/UIManager';
 import { AdaptiveRenderer } from '../plugins/PerformanceMonitor';
 import { MarketSim } from '../simulations/MarketSim';
 import wrapManagerWithErrorHandling from '../utils/wrapWithErrorHandling';
@@ -43,6 +44,10 @@ class BreakoutInitializer {
       if (physicsManager) {
         console.log('Initializing physics');
         physicsManager.initializePhysics();
+        
+        // Ensure walls are created
+        console.log('Creating game boundaries');
+        physicsManager.createWalls();
       }
       
       // Initialize game state
@@ -105,6 +110,13 @@ class BreakoutInitializer {
    */
   private createGameObjects(): void {
     try {
+      // Create walls/boundaries if they don't exist yet
+      const physicsManager = this.scene.getPhysicsManager();
+      if (physicsManager && typeof physicsManager.createWalls === 'function') {
+        console.log('Ensuring game boundaries exist');
+        physicsManager.createWalls();
+      }
+      
       // Create paddles first
       const paddleManager = this.scene.getPaddleManager();
       if (paddleManager && typeof paddleManager.createPaddles === 'function') {

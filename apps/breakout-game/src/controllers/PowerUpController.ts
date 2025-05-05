@@ -343,10 +343,10 @@ class PowerUpController {
       // Fallback to direct scene property
       if (typeof this.scene['lives'] === 'number') {
         this.scene['lives']++;
-        // Update UI - Fix: Pass an object with lives property
+        // Update UI - Use the handleLivesUpdated method
         const uiManager = this.scene.getUIManager();
         if (uiManager) {
-          uiManager.updateLives({ lives: this.scene['lives'] });
+          uiManager.updateLives(this.scene['lives']);
         }
       }
       return;

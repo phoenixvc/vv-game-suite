@@ -1,4 +1,4 @@
-import { CollisionManager } from '@/managers';
+import { CollisionManager, UIManager } from '@/managers';
 import { GAME_STATE } from '../../constants/GameConstants';
 import BallManager from '../../managers/Ball/BallManager';
 import BrickManager from '../../managers/BrickManager';
@@ -8,7 +8,6 @@ import ParticleManager from '../../managers/ParticleManager';
 import PhysicsManager from '../../managers/PhysicsManager';
 import PowerUpManager from '../../managers/PowerUpManager';
 import ScoreManager from '../../managers/ScoreManager';
-import UIManager from '../../managers/UIManager';
 import { MarketSim } from '../../simulations/MarketSim';
 import BreakoutScene from './BreakoutScene';
 

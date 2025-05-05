@@ -1,11 +1,10 @@
-import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import * as Phaser from 'phaser';
 
 /**
  * Controls a single particle effect in the game
  */
 class ParticleController {
-  private scene: BreakoutScene;
+  private scene: Phaser.Scene;
   private particles: Phaser.GameObjects.Particles.ParticleEmitter;
   private duration: number;
   private active: boolean = true;
@@ -18,7 +17,7 @@ class ParticleController {
    * @param duration Duration in ms before auto-destroying (0 for permanent)
    */
   constructor(
-    scene: BreakoutScene, 
+    scene: Phaser.Scene, 
     particles: Phaser.GameObjects.Particles.ParticleEmitter, 
     duration: number = 0
   ) {

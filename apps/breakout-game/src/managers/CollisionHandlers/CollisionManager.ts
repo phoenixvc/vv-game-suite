@@ -1,38 +1,29 @@
-import * as Phaser from 'phaser';
-import { CollisionHandlerInterface } from './CollisionHandlerInterface';
-import { BallPaddleCollisionHandler } from './BallPaddleCollisionHandler';
-import { BallBrickCollisionHandler } from './BallBrickCollisionHandler';
-import { PaddlePowerUpCollisionHandler } from './PaddlePowerUpCollisionHandler';
-import { BallWallCollisionHandler } from './BallWallCollisionHandler';
-import { LaserBrickCollisionHandler } from './LaserBrickCollisionHandler';
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
+import * as Phaser from 'phaser';
+import { BallBrickCollisionHandler } from './BallBrickCollisionHandler';
+import { BallPaddleCollisionHandler } from './BallPaddleCollisionHandler';
+import { BallWallCollisionHandler } from './BallWallCollisionHandler';
+import { CollisionHandlerInterface } from './CollisionHandlerInterface';
+import { LaserBrickCollisionHandler } from './LaserBrickCollisionHandler';
+import { PaddlePowerUpCollisionHandler } from './PaddlePowerUpCollisionHandler';
 
 class CollisionManager {
   private scene: BreakoutScene;
   private collisionHandlers: CollisionHandlerInterface[] = [];
-  
+
   constructor(scene: BreakoutScene) {
     this.scene = scene;
   }
-  
-  /**
-   * Set up all collision handlers for the game
-   */
+
   public setupCollisionHandlers(): void {
-    // Create and register collision handlers
     this.registerCollisionHandlers();
-    
-    // Listen for Matter.js collision events
     this.scene.matter.world.on('collisionstart', this.handleCollisionStart, this);
     this.scene.matter.world.on('collisionactive', this.handleCollisionActive, this);
     this.scene.matter.world.on('collisionend', this.handleCollisionEnd, this);
+    console.log('CollisionManager: All collision handlers set up');
   }
-  
-  /**
-   * Register all collision handlers
-   */
+
   private registerCollisionHandlers(): void {
-    // Create handlers for different collision types
     this.collisionHandlers = [
       new BallPaddleCollisionHandler(this.scene),
       new BallBrickCollisionHandler(this.scene),
@@ -40,67 +31,96 @@ class CollisionManager {
       new BallWallCollisionHandler(this.scene),
       new LaserBrickCollisionHandler(this.scene)
     ];
+    console.log(`CollisionManager: Registered ${this.collisionHandlers.length} collision handlers`);
   }
-  
-  /**
-   * Handle collision start events from Matter.js
-   */
+
   public handleCollisionStart(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
     this.processCollisionEvent(event, 'start');
   }
-  
-  /**
-   * Handle active collisions from Matter.js
-   */
+
   public handleCollisionActive(event: Phaser.Physics.Matter.Events.CollisionActiveEvent): void {
     this.processCollisionEvent(event, 'active');
   }
-  
-  /**
-   * Handle collision end events from Matter.js
-   */
+
   public handleCollisionEnd(event: Phaser.Physics.Matter.Events.CollisionEndEvent): void {
     this.processCollisionEvent(event, 'end');
   }
-  
-  /**
-   * Process a collision event by delegating to registered handlers
-   */
+
   private processCollisionEvent(
-    event: Phaser.Physics.Matter.Events.CollisionStartEvent | 
-           Phaser.Physics.Matter.Events.CollisionActiveEvent | 
+    event: Phaser.Physics.Matter.Events.CollisionStartEvent |
+           Phaser.Physics.Matter.Events.CollisionActiveEvent |
            Phaser.Physics.Matter.Events.CollisionEndEvent,
     stage: 'start' | 'active' | 'end'
   ): void {
     const pairs = event.pairs;
-    
+
     for (let i = 0; i < pairs.length; i++) {
       const bodyA = pairs[i].bodyA;
       const bodyB = pairs[i].bodyB;
-      
-      // Skip if bodies don't have gameObject references
-      if (!bodyA.gameObject || !bodyB.gameObject) continue;
-      
-      // Try each handler until one handles the collision
+
+      if (!bodyA.gameObject || !bodyB.gameObject) {
+        continue;
+      }
+
+      if (stage === 'start') {
+        console.log(`Collision detected between ${bodyA.label || 'unknown'} and ${bodyB.label || 'unknown'}`);
+      }
+
+      let handled = false;
       for (const handler of this.collisionHandlers) {
-        const handled = handler.handleCollision(bodyA, bodyB, stage);
-        if (handled) break;
+        handled = handler.handleCollision(bodyA, bodyB, stage);
+        if (handled) {
+          if (stage === 'start') {
+            console.log(`Collision handled by ${handler.constructor.name}`);
+          }
+          break;
+        }
+      }
+
+      const ballA = bodyA.label?.includes('ball') ? bodyA.gameObject : null;
+      const ballB = bodyB.label?.includes('ball') ? bodyB.gameObject : null;
+      const ball = ballA || ballB;
+
+      if (ball && stage === 'end') {
+        this.ensureBallActive(ball as Phaser.Physics.Matter.Sprite);
       }
     }
   }
-  
-  /**
-   * Clean up resources
-   */
+
+  private ensureBallActive(ball: Phaser.Physics.Matter.Sprite): void {
+    if (!ball) return;
+
+    const { width, height } = this.scene.scale;
+    if (ball.x < -50 || ball.x > width + 50 || ball.y < -50 || ball.y > height + 50) {
+      console.warn('Ball out of bounds, repositioning...');
+      ball.setPosition(width / 2, height / 2);
+      ball.setVelocity(Phaser.Math.Between(-3, 3), -5);
+    }
+
+    if (!ball.body) {
+      this.scene.matter.add.gameObject(ball);
+    }
+
+    ball.setVisible(true);
+    ball.setActive(true);
+
+    if (ball.body && Math.abs(ball.body.velocity.x) < 0.1 && Math.abs(ball.body.velocity.y) < 0.1) {
+      const ballManager = this.scene.getBallManager();
+      const initialSpeed = 5;
+      const angle = Math.random() * Math.PI * 2;
+      const vx = Math.cos(angle) * initialSpeed;
+      const vy = Math.sin(angle) * initialSpeed;
+      ball.setVelocity(vx, vy);
+      console.log(`Ball velocity reset to (${vx}, ${vy})`);
+    }
+  }
+
   public cleanup(): void {
-    // Remove collision event listeners
     if (this.scene.matter && this.scene.matter.world) {
       this.scene.matter.world.off('collisionstart', this.handleCollisionStart, this);
       this.scene.matter.world.off('collisionactive', this.handleCollisionActive, this);
       this.scene.matter.world.off('collisionend', this.handleCollisionEnd, this);
     }
-    
-    // Clear collision handlers
     this.collisionHandlers = [];
   }
 }

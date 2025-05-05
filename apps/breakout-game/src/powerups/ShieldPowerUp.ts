@@ -1,5 +1,5 @@
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
-import { PowerUpType } from '../types/PowerUp';
+import { PowerUpType } from '../types/PowerUpType';
 import { PowerUpHandler } from './PowerUpHandler';
 
 export class ShieldPowerUp implements PowerUpHandler {
@@ -10,7 +10,7 @@ export class ShieldPowerUp implements PowerUpHandler {
   private ballShieldEffect: Phaser.GameObjects.Arc | null = null;
   private shieldUpdateListener: Function | null = null;
 
-  apply(scene: BreakoutScene, paddle: Phaser.Physics.Arcade.Sprite, duration: number): void {
+  apply(scene: BreakoutScene, paddle: Phaser.Physics.Matter.Sprite, duration: number): void {
     this.shield = true;
     
     // Create shield indicator if it doesn't exist

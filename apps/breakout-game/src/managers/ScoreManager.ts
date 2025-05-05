@@ -2,6 +2,9 @@ import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import * as Phaser from 'phaser';
 
 class ScoreManager {
+  addScore(value: number) {
+    throw new Error('Method not implemented.');
+  }
   private scene: BreakoutScene;
   private score: number = 0;
   private highScore: number = 0;

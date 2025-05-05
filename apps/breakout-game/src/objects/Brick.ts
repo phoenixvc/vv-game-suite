@@ -12,102 +12,105 @@ export interface BrickConfig {
   frame?: string | number;
 }
 
-export class Brick extends Phaser.Physics.Arcade.Sprite {
+export class Brick extends Phaser.Physics.Matter.Sprite {
   private brickType: string;
   private brickValue: number;
   private brickHealth: number;
-  private originalTint: number;
-  
+  private originalTint: number = 0xffffff;
+
   constructor(scene: Phaser.Scene, config: BrickConfig) {
-    super(scene, config.x, config.y, config.texture, config.frame);
-    
+    super(scene.matter.world, config.x, config.y, config.texture, config.frame);
+
     this.brickType = config.type || 'normal';
     this.brickValue = config.value || 100;
     this.brickHealth = config.health || 1;
-    this.originalTint = this.tint;
-    
-    // Set up the brick
+
     scene.add.existing(this);
-    scene.physics.add.existing(this, true); // true = static body
-    
+    scene.matter.add.gameObject(this, { isStatic: true });
+
     this.setData('type', this.brickType);
     this.setData('value', this.brickValue);
     this.setData('health', this.brickHealth);
-    
-    // Set size if provided
+
     if (config.width && config.height) {
       this.setDisplaySize(config.width, config.height);
     }
-    
-    // Apply special styling based on type
+
     this.applyBrickStyling();
+    this.originalTint = this.tintTopLeft ?? 0xffffff;
   }
-  
+
   public hit(damage: number = 1): boolean {
     this.brickHealth -= damage;
-    
-    // Visual feedback for hit
+
     this.scene.tweens.add({
       targets: this,
       alpha: 0.5,
       duration: 50,
       yoyo: true
     });
-    
-    // Apply damage visual effect
+
     this.applyDamageEffect();
-    
-    // Return true if brick is destroyed
+
     return this.brickHealth <= 0;
   }
-  
+
   public getValue(): number {
     return this.brickValue;
   }
-  
+
   public getType(): string {
     return this.brickType;
   }
-  
+
   private applyBrickStyling(): void {
     switch (this.brickType) {
       case 'special':
-        this.setTint(0xFFD700); // Gold color for special bricks
+        this.setTint(0xFFD700); // Gold
         break;
       case 'hard':
-        this.setTint(0xA0A0A0); // Silver color for hard bricks
+        this.setTint(0xA0A0A0); // Silver
         break;
       case 'price':
-        this.setTint(0x3B82F6); // Blue for price data
+        this.setTint(0x3B82F6); // Blue
         break;
       case 'volume':
-        this.setTint(0xEF4444); // Red for volume data
+        this.setTint(0xEF4444); // Red
         break;
       case 'liquidity':
-        this.setTint(0x10B981); // Green for liquidity data
+        this.setTint(0x10B981); // Green
         break;
       default:
-        // Normal brick keeps default tint
+        this.setTint(0xffffff); // Default white
         break;
     }
+
+    this.originalTint = this.tintTopLeft ?? 0xffffff;
   }
-  
+
   private applyDamageEffect(): void {
     if (this.brickHealth > 0) {
-      // Darken the brick as it takes damage
       const damageRatio = this.brickHealth / (this.getData('health') || 1);
       const darkenFactor = 0.7 + (0.3 * damageRatio);
-      
-      // Apply tint based on damage
-      const r = ((this.originalTint >> 16) & 0xFF) * darkenFactor;
-      const g = ((this.originalTint >> 8) & 0xFF) * darkenFactor;
-      const b = (this.originalTint & 0xFF) * darkenFactor;
-      
+
+      const baseTint = this.originalTint;
+      const r = ((baseTint >> 16) & 0xff) * darkenFactor;
+      const g = ((baseTint >> 8) & 0xff) * darkenFactor;
+      const b = (baseTint & 0xff) * darkenFactor;
+
       this.setTint(
-        Math.floor(r) << 16 | 
-        Math.floor(g) << 8 | 
+        (Math.floor(r) << 16) |
+        (Math.floor(g) << 8) |
         Math.floor(b)
       );
     }
+  }
+
+  public destroyIfDead(): boolean {
+    if (this.brickHealth <= 0) {
+      this.destroy();
+      return true;
+    }
+    return false;
   }
 }

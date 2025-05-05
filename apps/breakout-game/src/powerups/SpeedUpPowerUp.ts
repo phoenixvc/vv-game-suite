@@ -1,11 +1,11 @@
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
-import { PowerUpType } from '../types/PowerUp';
+import { PowerUpType } from '../types/PowerUpType';
 import { PowerUpHandler } from './PowerUpHandler';
 
 export class SpeedUpPowerUp implements PowerUpHandler {
   type = PowerUpType.SPEED_UP;
   
-  apply(scene: BreakoutScene, paddle: Phaser.Physics.Arcade.Sprite, duration: number): void {
+  apply(scene: BreakoutScene, paddle: Phaser.Physics.Matter.Sprite, duration: number): void {
     const ball = scene['ball'];
     
     // Add null check for ball.body

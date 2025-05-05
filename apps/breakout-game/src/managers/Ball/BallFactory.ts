@@ -69,11 +69,30 @@ class BallFactory {
         // Use the physics manager to set up collisions
         physicsManager.setupCollisionForBall(ball);
       } else {
-        // Fall back to existing methods
+        // Fall back to setCollisionCategory method
         physicsManager.setCollisionCategory(ball, 'ball');
-        physicsManager.setCollidesWith(ball, ['paddle', 'brick', 'wall', 'powerUp']);
+        
+        // Instead, if you need to set specific collision masks, do it directly:
+        if (ball.body) {
+          const ballGroup = physicsManager.getCollisionGroup('ball');
+          if (ballGroup) {
+            // Use proper type assertion for Matter.js body
+            const matterBody = ball.body as unknown as MatterJS.BodyType;
+            if (matterBody.collisionFilter) {
+              matterBody.collisionFilter.category = ballGroup.category;
+              matterBody.collisionFilter.mask = ballGroup.mask;
+            } else {
+              // Initialize collisionFilter if it doesn't exist
+              matterBody.collisionFilter = {
+                category: ballGroup.category,
+                mask: ballGroup.mask,
+                group: 0
+              };
+            }
+          }
+        }
       }
-      
+    
       // Enable collision events for debugging
       if (typeof physicsManager.enableCollisionEvents === 'function') {
         physicsManager.enableCollisionEvents(ball);
@@ -93,14 +112,23 @@ class BallFactory {
       // Set collision filter directly on the body
       if (ball.body) {
         // Cast the body to a Matter.js body to access collisionFilter
-        const matterBody = ball.body as MatterBody;
+        const matterBody = ball.body as unknown as MatterJS.BodyType;
         
-        // Set collision category
-        matterBody.collisionFilter.category = Category.BALL;
-        
-        // Set what the ball collides with
-        matterBody.collisionFilter.mask = 
-          Category.DEFAULT | Category.PADDLE | Category.BRICK | Category.WALL | Category.POWERUP;
+        // Initialize collisionFilter if it doesn't exist
+        if (!matterBody.collisionFilter) {
+          matterBody.collisionFilter = {
+            category: Category.BALL,
+            mask: Category.DEFAULT | Category.PADDLE | Category.BRICK | Category.WALL | Category.POWERUP,
+            group: 0
+          };
+        } else {
+          // Set collision category
+          matterBody.collisionFilter.category = Category.BALL;
+          
+          // Set what the ball collides with
+          matterBody.collisionFilter.mask = 
+            Category.DEFAULT | Category.PADDLE | Category.BRICK | Category.WALL | Category.POWERUP;
+        }
       }
     }
     
@@ -122,7 +150,7 @@ class BallFactory {
     
     return ball;
   }
-  
+
   /**
    * Create a placeholder texture for the ball if the original is missing
    */

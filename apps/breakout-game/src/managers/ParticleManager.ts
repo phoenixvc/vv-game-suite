@@ -451,66 +451,71 @@ class ParticleManager {
     }
   }
 
-  /**
-   * Create a particle effect when a brick is destroyed
-   * @param brick The brick that was destroyed
-   * @param color Color to use for particles
-   */
-  public createBrickDestroyEffect(brick: Phaser.Physics.Matter.Sprite, color?: number): void {
-    try {
-      // Safety check for brick
-      if (!brick) {
-        // Silent fail - this is an expected case when objects are destroyed
-        return;
-      }
-      
-      // Use default position if brick is not valid
-      let x = 0;
-      let y = 0;
-      let brickValid = false;
-      
-      try {
-        // Check if the brick is valid by accessing a property
-        const test = brick.active;
-        brickValid = test !== undefined;
-        
-        if (brickValid) {
-          // Safely get brick position
-          x = this.safeGetX(brick);
-          y = this.safeGetY(brick);
-        }
-      } catch (e) {
-        // Brick is not valid, use default position
-        brickValid = false;
-      }
-      
-      // If brick is not valid, exit silently
-      if (!brickValid) {
-        return;
-      }
-      
-      // Use brick tint if color not specified
-      if (!color) {
-        // Safely access tintTopLeft
-        color = this.errorManager ? 
-          this.errorManager.safeAccess(brick, 'tintTopLeft', 0xffffff) : 
-          (brick.tintTopLeft || 0xffffff);
-      }
-      
-      // Create a larger particle burst with square particles
-      this.createParticles(x, y, {
-        texture: 'square',
-        color,
-        count: ParticleManager.BRICK_DESTROY_PARTICLE_COUNT,
-        speed: ParticleManager.DEFAULT_SPEED,
-        scale: ParticleManager.DEFAULT_SCALE,
-        lifespan: ParticleManager.BRICK_DESTROY_LIFESPAN,
-        duration: ParticleManager.BRICK_DESTROY_LIFESPAN
-      });
-    } catch (e) {
-      // Silent fail - don't log this error to avoid console spam
+/**
+ * Create a particle effect when a brick is destroyed
+ * @param brick The brick that was destroyed
+ * @param color Color to use for particles
+ */
+public createBrickDestroyEffect(brick: Phaser.GameObjects.GameObject, color?: number): void {
+  try {
+    // Safety check for brick
+    if (!brick) {
+      // Silent fail - this is an expected case when objects are destroyed
+      return;
     }
+    
+    // Use default position if brick is not valid
+    let x = 0;
+    let y = 0;
+    let brickValid = false;
+    
+    try {
+      // Check if the brick is valid by accessing a property
+      const test = 'active' in brick ? brick.active : false;
+      brickValid = test !== undefined;
+      
+      if (brickValid) {
+        // Safely get brick position
+        x = this.safeGetX(brick);
+        y = this.safeGetY(brick);
+      }
+    } catch (e) {
+      // Brick is not valid, use default position
+      brickValid = false;
+    }
+    
+    // If brick is not valid, exit silently
+    if (!brickValid) {
+      return;
+    }
+    
+    // Use brick tint if color not specified and brick is a sprite
+    if (!color && brick instanceof Phaser.GameObjects.Sprite) {
+      // Safely access tintTopLeft
+      color = this.errorManager ? 
+        this.errorManager.safeAccess(brick, 'tintTopLeft', 0xffffff) : 
+        (brick.tintTopLeft || 0xffffff);
+    }
+    
+    // Default color if still not set
+    if (!color) {
+      color = 0xffffff;
+    }
+    
+    // Create a larger particle burst with square particles
+    this.createParticles(x, y, {
+      texture: 'square',
+      color,
+      count: ParticleManager.BRICK_DESTROY_PARTICLE_COUNT,
+      speed: ParticleManager.DEFAULT_SPEED,
+      scale: ParticleManager.DEFAULT_SCALE,
+      lifespan: ParticleManager.BRICK_DESTROY_LIFESPAN,
+      duration: ParticleManager.BRICK_DESTROY_LIFESPAN
+    });
+  } catch (e) {
+    // Silent fail - don't log this error to avoid console spam
   }
+}
   
 /**
  * Create a directional effect based on the edge that was hit

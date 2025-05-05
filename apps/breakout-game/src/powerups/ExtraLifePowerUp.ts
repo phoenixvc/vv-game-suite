@@ -1,11 +1,11 @@
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
-import { PowerUpType } from '../types/PowerUp';
+import { PowerUpType } from '../types/PowerUpType';
 import { PowerUpHandler } from './PowerUpHandler';
 
 export class ExtraLifePowerUp implements PowerUpHandler {
   type = PowerUpType.EXTRA_LIFE;
   
-  apply(scene: BreakoutScene, paddle: Phaser.Physics.Arcade.Sprite, duration: number): void {
+  apply(scene: BreakoutScene, paddle: Phaser.Physics.Matter.Sprite, duration: number): void {
     // Increment lives directly
     const currentLives = parseInt(scene['livesText'].text.replace('Lives: ', ''));
     scene['lives'] = currentLives + 1;

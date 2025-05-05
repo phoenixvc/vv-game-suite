@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { ASSETS } from '../../constants/GameConstants';
-import { PowerUpType } from '../../types/PowerUp';
+import { PowerUpType } from '../../types/PowerUpType';
 import BreakoutScene from './BreakoutScene';
 
 declare global {
@@ -126,7 +126,7 @@ class BreakoutAssetLoader {
       this.scene.events.emit('assetsLoaded');
     }
   }
-  
+
   /**
    * Force game initialization if it appears to be stuck
    */
@@ -163,7 +163,7 @@ class BreakoutAssetLoader {
             { 
               value: 100, 
               trend: 'up', 
-              strength: 'strong', 
+              strength: 1, // Changed from 'strong' to 1
               color: 0xff0000,
               position: 0, // Use numeric position instead of x/y coordinates
               type: 'stock'
@@ -171,7 +171,7 @@ class BreakoutAssetLoader {
             { 
               value: 200, 
               trend: 'down', 
-              strength: 'medium', 
+              strength: 0.6, // Changed from 'medium' to 0.6
               color: 0x00ff00,
               position: 1,
               type: 'crypto'
@@ -179,7 +179,7 @@ class BreakoutAssetLoader {
             { 
               value: 150, 
               trend: 'up', 
-              strength: 'weak', 
+              strength: 0.3, // Changed from 'weak' to 0.3
               color: 0x0000ff,
               position: 2,
               type: 'forex'
@@ -187,7 +187,7 @@ class BreakoutAssetLoader {
             { 
               value: 120, 
               trend: 'up', 
-              strength: 'strong', 
+              strength: 1, // Changed from 'strong' to 1
               color: 0xffff00,
               position: 3,
               type: 'stock'
@@ -195,7 +195,7 @@ class BreakoutAssetLoader {
             { 
               value: 180, 
               trend: 'down', 
-              strength: 'medium', 
+              strength: 0.6, // Changed from 'medium' to 0.6
               color: 0xff00ff,
               position: 4,
               type: 'crypto'

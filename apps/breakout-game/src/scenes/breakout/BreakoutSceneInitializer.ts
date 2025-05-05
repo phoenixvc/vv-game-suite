@@ -1,12 +1,10 @@
 import PaddleController from '@/controllers/paddle/PaddleController';
-import { CollisionManager } from '@/managers';
+import { BrickManager, CollisionManager, PhysicsManager } from '@/managers';
 import BallManager from '../../managers/Ball/BallManager';
-import BrickManager from '../../managers/BrickManager';
 import InputManager from '../../managers/InputManager';
 import LevelManager from '../../managers/LevelManager';
 import PaddleManager from '../../managers/PaddleManager'; // Import PaddleManager
 import ParticleManager from '../../managers/ParticleManager';
-import PhysicsManager from '../../managers/PhysicsManager';
 import PowerUpManager from '../../managers/PowerUpManager';
 import ScoreManager from '../../managers/ScoreManager';
 import UIManager from '../../managers/UIManager';
@@ -137,7 +135,6 @@ private initializeGameplay(): void {
    */
   private initializePhysicsManager(): void {
     const physicsManager = new PhysicsManager(this.scene);
-    physicsManager.initializePhysics();
     this.scene.setPhysicsManager(physicsManager);
   }
   

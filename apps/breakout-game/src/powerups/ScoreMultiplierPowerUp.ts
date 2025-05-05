@@ -1,13 +1,13 @@
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
-import { PowerUpType } from '../types/PowerUp';
-import { PowerUpHandler } from './PowerUpHandler';
+import { PowerUpType } from '../types/PowerUpType';
 import { TextUtils } from '../utils/TextUtils';
+import { PowerUpHandler } from './PowerUpHandler';
 
 export class ScoreMultiplierPowerUp implements PowerUpHandler {
   type = PowerUpType.SCORE_MULTIPLIER;
   private multiplierText: Phaser.GameObjects.BitmapText | Phaser.GameObjects.Text | null = null;
   
-  apply(scene: BreakoutScene, paddle: Phaser.Physics.Arcade.Sprite, duration: number): void {
+  apply(scene: BreakoutScene, paddle: Phaser.Physics.Matter.Sprite, duration: number): void {
     // Store the multiplier in the scene data
     scene.data.set('scoreMultiplier', 2);
     

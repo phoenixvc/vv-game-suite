@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import { GameState, LEVEL_THEMES } from '../types/game-types';
-import { PowerUp, PowerUpType } from '../types/PowerUp';
 import { Paddle } from '../types/Paddle';
-import { usePowerUpActions } from './actions/usePowerUpActions';
-import { useWalletActions } from './actions/useWalletActions';
+import { PowerUp } from '../types/PowerUp';
 import { useGameProgressActions } from './actions/useGameProgressActions';
+import { usePowerUpActions } from './actions/usePowerUpActions';
 import { useUIActions } from './actions/useUIActions';
+import { useWalletActions } from './actions/useWalletActions';
 
 interface UseGameActionsProps {
   gameState: GameState;

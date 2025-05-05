@@ -1,6 +1,5 @@
-import { MarketSignal } from '../managers/BrickManager';
-import * as Phaser from 'phaser';  // Changed from "import Phaser from 'phaser'"
-
+import * as Phaser from 'phaser';
+import { MarketSignal } from '../types/MarketSignal';
 /**
  * Simulates market data for the game
  */
@@ -14,7 +13,14 @@ export class MarketSim {
     return Array(60).fill(null).map((_, i) => ({
       position: i,
       value: Phaser.Math.Between(50, 200),
-      type: ['liquidity', 'price', 'volume'][i % 3]
+      type: ['liquidity', 'price', 'volume'][i % 3],
+      trend: Math.random() > 0.5 ? 'up' : 'down',
+      strength: Math.random(), // Add strength as a number between 0 and 1
+      color: Phaser.Display.Color.GetColor(
+        Phaser.Math.Between(100, 255),
+        Phaser.Math.Between(100, 255),
+        Phaser.Math.Between(100, 255)
+      )
     }));
   }
 }

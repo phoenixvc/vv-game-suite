@@ -1,4 +1,4 @@
-import React from 'react';
+import { Paddle } from '@/objects/Paddle';
 import * as Phaser from 'phaser';
 
 // Base interface for paddle props
@@ -14,11 +14,11 @@ export interface BasePaddleProps {
 
 // Define a custom scene type that includes the paddles
 export interface CustomPaddleScene extends Phaser.Scene {
-  topPaddle?: Phaser.Physics.Arcade.Sprite;
-  bottomPaddle?: Phaser.Physics.Arcade.Sprite;
-  leftPaddle?: Phaser.Physics.Arcade.Sprite;
-  rightPaddle?: Phaser.Physics.Arcade.Sprite;
-  paddles?: Phaser.Physics.Arcade.Group;
+  topPaddle?: Phaser.Physics.Matter.Sprite;
+  bottomPaddle?: Phaser.Physics.Matter.Sprite;
+  leftPaddle?: Phaser.Physics.Matter.Sprite;
+  rightPaddle?: Phaser.Physics.Matter.Sprite;
+  paddles?: Phaser.Physics.Matter.Sprite[];
 }
 
 // Base positions type
@@ -112,8 +112,8 @@ export const createPhaserGame = (
     width: gameWidth,
     height: gameHeight,
     physics: {
-      default: 'arcade',
-      arcade: {
+      default: 'matter',
+      matter: {
         gravity: { y: 0, x: 0 },
         debug: false
       }
@@ -124,69 +124,113 @@ export const createPhaserGame = (
         this.load.image('paddle', 'path/to/paddle.svg');
       },
       create: function (this: CustomPaddleScene) {
-        // Create a group for all paddles
-        this.paddles = this.physics.add.group();
+        // Create an array for all paddles
+        this.paddles = [];
         
-        // Create ball
-        const ball = this.physics.add.image(gameWidth / 2, gameHeight / 2, 'ball');
-        ball.setCollideWorldBounds(true);
-        ball.setBounce(1, 1);
-        ball.setVelocity(200, 200); // Initial velocity
+        // Create ball using Matter.js
+        const ball = this.matter.add.sprite(gameWidth / 2, gameHeight / 2, 'ball');
+        ball.setCircle(ball.width / 2);
+        ball.setBounce(1); // Matter.js only needs one value
+        ball.setFriction(0, 0); // Set friction to 0
+        ball.setVelocity(2, 2); // Initial velocity
+        ball.setData('isBall', true);
+        (ball.body as MatterJS.BodyType).label = 'ball';
+
+        // Set up collision categories
+        const worldCategory = 0x0001;
+        const ballCategory = 0x0002;
+        const paddleCategory = 0x0004;
         
-        // Create all four paddles with appropriate dimensions
-        // Bottom paddle (horizontal)
-        this.bottomPaddle = this.physics.add.sprite(
-          positions.bottom.x + width/2, 
-          positions.bottom.y, 
-          'paddle'
-        );
-        this.bottomPaddle.setDisplaySize(width, height);
-        this.bottomPaddle.setImmovable(true);
-        this.paddles.add(this.bottomPaddle);
+        // Configure world bounds as static bodies with collision
+        this.matter.world.setBounds(0, 0, gameWidth, gameHeight);
         
-        // Top paddle (horizontal)
-        this.topPaddle = this.physics.add.sprite(
-          positions.top.x + width/2, 
-          positions.top.y, 
-          'paddle'
-        );
-        this.topPaddle.setDisplaySize(width, height);
-        this.topPaddle.setImmovable(true);
-        this.paddles.add(this.topPaddle);
+        // Create all four paddles with appropriate dimensions using Matter.js
         
-        // Left paddle (vertical)
-        this.leftPaddle = this.physics.add.sprite(
-          positions.left.x, 
-          positions.left.y + width/2, 
-          'paddle'
-        );
-        this.leftPaddle.setDisplaySize(height, width); // Swap dimensions for vertical paddles
-        this.leftPaddle.setImmovable(true);
-        this.paddles.add(this.leftPaddle);
+        this.bottomPaddle = new Paddle({
+          scene: this,
+          x: positions.bottom.x + width / 2,
+          y: positions.bottom.y,
+          width,
+          height,
+          orientation: 'horizontal',
+          collisionCategory: paddleCategory,
+          collidesWith: [ballCategory],
+          texture: 'paddle'
+        });
+
+        this.paddles.push(this.bottomPaddle);
+        this.topPaddle = new Paddle({
+          scene: this,
+          x: positions.top.x + width / 2,
+          y: positions.top.y,
+          width,
+          height,
+          orientation: 'horizontal',
+          collisionCategory: paddleCategory,
+          collidesWith: [ballCategory],
+          texture: 'paddle'
+        });
+        this.paddles.push(this.topPaddle);
+
+        this.leftPaddle = new Paddle({
+          scene: this,
+          x: positions.left.x,
+          y: positions.left.y + width / 2,
+          width: height, // swapped
+          height: width,
+          orientation: 'vertical',
+          collisionCategory: paddleCategory,
+          collidesWith: [ballCategory],
+          texture: 'paddle'
+        });
+        this.paddles.push(this.leftPaddle);
         
-        // Right paddle (vertical)
-        this.rightPaddle = this.physics.add.sprite(
-          positions.right.x, 
-          positions.right.y + width/2, 
-          'paddle'
-        );
-        this.rightPaddle.setDisplaySize(height, width); // Swap dimensions for vertical paddles
-        this.rightPaddle.setImmovable(true);
-        this.paddles.add(this.rightPaddle);
+        this.rightPaddle = new Paddle({
+          scene: this,
+          x: positions.right.x,
+          y: positions.right.y + width / 2,
+          width: height, // swapped
+          height: width,
+          orientation: 'vertical',
+          collisionCategory: paddleCategory,
+          collidesWith: [ballCategory],
+          texture: 'paddle'
+        });
+        this.paddles.push(this.rightPaddle);
         
-        // Add collision between ball and all paddles
-        this.physics.add.collider(ball, this.paddles, (ball: any, paddle: any) => {
-          // Calculate impact point for horizontal paddles (bottom and top)
-          if (paddle === this.bottomPaddle || paddle === this.topPaddle) {
-            const impactPoint = ball.x - paddle.x;
-            const normalizedImpact = impactPoint / (width / 2); // Range: -1 to 1
-            ball.setVelocityX(ball.body.velocity.x + normalizedImpact * angleFactor * 100);
-          } 
-          // Calculate impact point for vertical paddles (left and right)
-          else if (paddle === this.leftPaddle || paddle === this.rightPaddle) {
-            const impactPoint = ball.y - paddle.y;
-            const normalizedImpact = impactPoint / (width / 2); // Range: -1 to 1
-            ball.setVelocityY(ball.body.velocity.y + normalizedImpact * angleFactor * 100);
+        // Set up collision handler for ball and paddles using Matter.js events
+        this.matter.world.on('collisionstart', (event: Phaser.Physics.Matter.Events.CollisionStartEvent) => {
+          const pairs = event.pairs;
+          
+          for (let i = 0; i < pairs.length; i++) {
+            const bodyA = pairs[i].bodyA as MatterJS.BodyType;
+            const bodyB = pairs[i].bodyB as MatterJS.BodyType;
+
+            const labels = [bodyA.label, bodyB.label];
+            if (labels.includes('ball') && labels.includes('paddle')) {
+              const ballBody = bodyA.label === 'ball' ? bodyA : bodyB;
+              const paddleBody = bodyA.label === 'paddle' ? bodyA : bodyB;
+
+              if (ballBody.gameObject && paddleBody.gameObject) {
+                const ball = ballBody.gameObject as Phaser.Physics.Matter.Sprite;
+                const paddle = paddleBody.gameObject as Phaser.Physics.Matter.Sprite;
+
+                const isPaddleHorizontal =
+                  paddle === this.bottomPaddle || paddle === this.topPaddle;
+
+                const impactPoint = isPaddleHorizontal
+                  ? ball.x - paddle.x
+                  : ball.y - paddle.y;
+                const normalizedImpact = impactPoint / (width / 2);
+
+                const velocity = ball.body.velocity as Phaser.Math.Vector2;
+                const newVelocity = isPaddleHorizontal
+                  ? { x: velocity.x + normalizedImpact * angleFactor, y: velocity.y }
+                  : { x: velocity.x, y: velocity.y + normalizedImpact * angleFactor };
+
+                ball.setVelocity(newVelocity.x, newVelocity.y);
+              }
+            }
           }
         });
         

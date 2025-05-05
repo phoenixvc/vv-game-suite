@@ -1,5 +1,5 @@
 import { getParticleConfig } from '../../config/ParticleEffectsConfig';
-import { PowerUpType } from '../../types/PowerUp';
+import { PowerUpType } from '../../types/PowerUpType';
 import BreakoutScene from './BreakoutScene';
 
 /**

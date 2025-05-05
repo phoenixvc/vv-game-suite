@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { GameState } from '../../types/game-types';
-import { PowerUp, PowerUpType } from '../../types/PowerUp';
 import { Paddle } from '../../types/Paddle';
+import { PowerUp } from '../../types/PowerUp';
+import { PowerUpType } from '../../types/PowerUpType';
 
 interface UsePowerUpActionsProps {
   gameState: GameState;
@@ -53,7 +54,7 @@ export function usePowerUpActions({
         powerUpType = PowerUpType.EXTRA_LIFE; // Default fallback
     }
     
-    // Create a partial PowerUp since we can't create a full Phaser.Physics.Arcade.Sprite here
+    // Create a partial PowerUp since we can't create a full Phaser.Physics.Matter.Sprite here
     const newPowerUp = { 
       x, 
       y, 

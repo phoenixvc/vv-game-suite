@@ -1,11 +1,11 @@
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
-import { PowerUpType } from '../types/PowerUp';
+import { PowerUpType } from '../types/PowerUpType';
 import { PowerUpHandler } from './PowerUpHandler';
 
 export class StickyPaddlePowerUp implements PowerUpHandler {
   type = PowerUpType.STICKY;
   
-  apply(scene: BreakoutScene, paddle: Phaser.Physics.Arcade.Sprite, duration: number): void {
+  apply(scene: BreakoutScene, paddle: Phaser.Physics.Matter.Sprite, duration: number): void {
     paddle.setData('sticky', true);
     
     // Visual indication

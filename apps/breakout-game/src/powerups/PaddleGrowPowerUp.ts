@@ -1,11 +1,11 @@
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
-import { PowerUpType } from '../types/PowerUp';
+import { PowerUpType } from '../types/PowerUpType';
 import { PowerUpHandler } from './PowerUpHandler';
 
 export class PaddleGrowPowerUp implements PowerUpHandler {
   type = PowerUpType.PADDLE_GROW;
   
-  apply(scene: BreakoutScene, paddle: Phaser.Physics.Arcade.Sprite, duration: number): void {
+  apply(scene: BreakoutScene, paddle: Phaser.Physics.Matter.Sprite, duration: number): void {
     paddle.setScale(1.5, 1);
     
     // Add visual feedback

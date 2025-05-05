@@ -18,10 +18,10 @@ export const PHYSICS = {
   
   // Ball physics
   BALL: {
-    INITIAL_VELOCITY: 50,
+    INITIAL_VELOCITY: 10,
     MAX_VELOCITY: 800,
-    MIN_VELOCITY: 30,
-    VELOCITY_INCREMENT: 5,
+    MIN_VELOCITY: 5,
+    VELOCITY_INCREMENT: 1,
   },
   
   // Paddle physics

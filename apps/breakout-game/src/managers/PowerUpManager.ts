@@ -2,7 +2,7 @@ import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 import { PowerUp, PowerUpConfig } from '../objects/PowerUp';
 import { PowerUpFactory } from '../powerups/PowerUpFactory';
 import { ShieldPowerUp } from '../powerups/ShieldPowerUp';
-import { PowerUpType } from '../types/PowerUp';
+import { PowerUpType } from '../types/PowerUpType';
 
 // Define available power-up types
 const powerUpTypes: PowerUpType[] = [

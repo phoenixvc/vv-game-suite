@@ -1,4 +1,4 @@
-import { PowerUpType } from "../types/PowerUp";
+import { PowerUpType } from "../types/PowerUpType";
 
 // Update the color scheme to match the website's theme
 export const COLOR = "#61AEEE" // Light blue from the website's "AI-Powered" text

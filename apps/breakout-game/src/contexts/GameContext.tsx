@@ -1,9 +1,9 @@
-import React, { createContext, useRef, useState, useContext, useMemo, useEffect } from 'react'
-import { Ball } from '../types/Ball'
-import { PowerUp, PowerUpType } from '../types/PowerUp'
-import { Paddle } from '../types/Paddle'
-import { GameState, PerformanceMetrics, WalletType, Pixel, PointLossIndicator, LEVEL_THEMES, initialGameState } from '../types/game-types'
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useGameActions } from '../hooks/useGameActions'
+import { Ball } from '../types/Ball'
+import { Paddle } from '../types/Paddle'
+import { PowerUp } from '../types/PowerUp'
+import { GameState, Pixel, PointLossIndicator, WalletType, initialGameState } from '../types/game-types'
 
 interface GameContextType {
   gameState: GameState

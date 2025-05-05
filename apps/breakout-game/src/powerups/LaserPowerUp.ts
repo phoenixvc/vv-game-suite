@@ -1,13 +1,13 @@
 import BreakoutScene from '@/scenes/breakout/BreakoutScene';
-import { PowerUpType } from '../types/PowerUp';
+import { PowerUpType } from '../types/PowerUpType';
 import { PowerUpHandler } from './PowerUpHandler';
 
 export class LaserPowerUp implements PowerUpHandler {
   type = PowerUpType.LASER;
   private fireLaserHandler: Function | null = null;
-  private activeLasers: Phaser.Physics.Arcade.Sprite[] = [];
+  private activeLasers: Phaser.Physics.Matter.Sprite[] = [];
   
-  apply(scene: BreakoutScene, paddle: Phaser.Physics.Arcade.Sprite, duration: number): void {
+  apply(scene: BreakoutScene, paddle: Phaser.Physics.Matter.Sprite, duration: number): void {
     paddle.setData('laser', true);
     
     // Create visual laser effect - check if 'laser' texture exists
@@ -33,57 +33,38 @@ export class LaserPowerUp implements PowerUpHandler {
         
         try {
           // Create laser beam - check if 'laser' texture exists
-        const laser = scene.physics.add.sprite(x, y, 'laser');
+        const laser = scene.matter.add.sprite(x, y, 'laser');
         laser.setVelocityY(-600);
         this.activeLasers.push(laser);
         
-          // Add collision with bricks using the exact ArcadePhysicsCallback type
-        scene.physics.add.collider(
-          laser, 
-          scene['bricks'], 
-            // Use a properly typed callback that matches ArcadePhysicsCallback
-            (
-              object1: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody | Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile,
-              object2: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody | Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile
-            ) => {
-              // Fix: Get the actual game objects from the physics bodies
-              // We need to handle different types of objects properly
-              let laserObj: Phaser.Physics.Arcade.Sprite;
-              let brickObj: Phaser.GameObjects.GameObject;
-              
-              if ('gameObject' in object1) {
-                laserObj = object1.gameObject as Phaser.Physics.Arcade.Sprite;
-              } else if (object1 instanceof Phaser.GameObjects.GameObject) {
-                laserObj = object1 as Phaser.Physics.Arcade.Sprite;
-              } else {
-                return; // Can't handle this type
-            }
-            
-              if ('gameObject' in object2) {
-                brickObj = object2.gameObject as Phaser.GameObjects.GameObject;
-              } else if (object2 instanceof Phaser.GameObjects.GameObject) {
-                brickObj = object2 as Phaser.GameObjects.GameObject;
-              } else {
-                return; // Can't handle this type
+        scene.matter.world.on('collisionstart', (event: Phaser.Physics.Matter.Events.CollisionStartEvent) => {
+          event.pairs.forEach(pair => {
+            const bodyA = pair.bodyA;
+            const bodyB = pair.bodyB;
+        
+            const gameObjectA = bodyA.gameObject;
+            const gameObjectB = bodyB.gameObject;
+        
+            if (!gameObjectA || !gameObjectB) return;
+        
+            // Match laser and brick (order agnostic)
+            const laser = [gameObjectA, gameObjectB].find(obj => this.activeLasers.includes(obj as Phaser.Physics.Matter.Sprite));
+            const brick = [gameObjectA, gameObjectB].find(obj => obj !== laser && obj.name === 'brick'); // assuming bricks have `name = 'brick'`
+        
+            if (laser && brick) {
+              const index = this.activeLasers.indexOf(laser as Phaser.Physics.Matter.Sprite);
+              if (index !== -1) {
+                this.activeLasers.splice(index, 1);
+                laser.destroy();
               }
-              
-            // Remove the laser from our tracking array
-              const index = this.activeLasers.indexOf(laserObj);
-          if (index !== -1) {
-            this.activeLasers.splice(index, 1);
-      }
-            
-            // Destroy the laser
-              laserObj.destroy();
-            
-            // Call the hitBrick method on the scene
+        
               if (typeof scene['hitBrick'] === 'function') {
-                scene['hitBrick'].call(scene, laserObj, brickObj);
-  }
-            },
-            undefined, 
-            scene
-          );
+                scene['hitBrick'].call(scene, laser, brick);
+              }
+            }
+          });
+        });
+        
           
         // Auto-destroy after 1 second
         scene.time.delayedCall(1000, () => {

@@ -1,14 +1,14 @@
-import { PowerUpType } from '../types/PowerUp';
-import { PowerUpHandler } from './PowerUpHandler';
-import { ShieldPowerUp } from './ShieldPowerUp';
+import { PowerUpType } from '../types/PowerUpType';
 import { ExtraLifePowerUp } from './ExtraLifePowerUp';
-import { PaddleGrowPowerUp } from './PaddleGrowPowerUp';
+import { LaserPowerUp } from './LaserPowerUp';
 import { MultiBallPowerUp } from './MultiBallPowerUp';
+import { PaddleGrowPowerUp } from './PaddleGrowPowerUp';
+import { PaddleShrinkPowerUp } from './PaddleShrinkPowerUp';
+import { PowerUpHandler } from './PowerUpHandler';
+import { ScoreMultiplierPowerUp } from './ScoreMultiplierPowerUp';
+import { ShieldPowerUp } from './ShieldPowerUp';
 import { SpeedUpPowerUp } from './SpeedUpPowerUp';
 import { StickyPaddlePowerUp } from './StickyPaddlePowerUp';
-import { LaserPowerUp } from './LaserPowerUp';
-import { ScoreMultiplierPowerUp } from './ScoreMultiplierPowerUp';
-import { PaddleShrinkPowerUp } from './PaddleShrinkPowerUp';
 
 export class PowerUpFactory {
   private static handlers = new Map<PowerUpType, PowerUpHandler>();

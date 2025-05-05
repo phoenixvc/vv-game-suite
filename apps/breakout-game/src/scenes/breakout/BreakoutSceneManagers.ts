@@ -1,4 +1,4 @@
-import { CollisionManager, UIManager } from '@/managers';
+import { CollisionManager, ThemeManager, UIManager } from '@/managers';
 import { GAME_STATE } from '../../constants/GameConstants';
 import BallManager from '../../managers/Ball/BallManager';
 import BrickManager from '../../managers/BrickManager';
@@ -125,5 +125,14 @@ export class BreakoutSceneManagers {
   
   public getMarketData = (): any => {
     return this.scene['marketData'];
+  }
+  
+  // Add the missing ThemeManager methods
+  public setThemeManager = (manager: ThemeManager): void => {
+    this.scene['themeManager'] = manager;
+  }
+  
+  public getThemeManager = (): ThemeManager => {
+    return this.scene['themeManager'];
   }
 }

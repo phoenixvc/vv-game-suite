@@ -358,14 +358,16 @@ public createPaddlePhysicsShape(paddle: Phaser.Physics.Matter.Sprite, isConcave:
     this.setInputManager = this.managers.setInputManager;
     this.getParticleManager = this.managers.getParticleManager;
     this.setParticleManager = this.managers.setParticleManager;
-    this.getPhysicsManager = this.managers.getPhysicsManager; // This line is correct but the function might not be working
-    this.setPhysicsManager = this.managers.setPhysicsManager; // This line is correct
+    this.getPhysicsManager = this.managers.getPhysicsManager;
+    this.setPhysicsManager = this.managers.setPhysicsManager;
     this.getSoundManager = this.managers.getSoundManager;
     this.getAngleFactor = this.managers.getAngleFactor;
     this.setAngleFactor = this.managers.setAngleFactor;
     this.getMarketSim = this.managers.getMarketSim;
     this.setMarketSim = this.managers.setMarketSim;
     this.getMarketData = this.managers.getMarketData;
+    this.getThemeManager = this.managers.getThemeManager; // Add this line
+    this.setThemeManager = this.managers.setThemeManager; // Add this line
     
     // Add getGameplay and setGameplay assignments
     this.getGameplay = () => this.gameplay;
@@ -428,12 +430,8 @@ public createPaddlePhysicsShape(paddle: Phaser.Physics.Matter.Sprite, isConcave:
       // Create fallback textures first to ensure they're available
       this.createFallbackTextures();
       
-      // Load vault wall image with multiple path options
-      this.load.image('vault-wall', [
-        'assets/games/breakout/vault-wall.svg',
-        'assets/breakout/vault-wall.svg',
-        'vault-wall.svg'
-      ]);
+      // Load vault wall image with just the filename - NO paths
+      this.load.image('vault-wall', 'vault-wall.svg');
       
       // Handle loading errors for vault wall
       this.load.once('loaderror', (fileObj: any) => {

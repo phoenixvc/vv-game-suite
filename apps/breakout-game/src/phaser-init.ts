@@ -72,7 +72,7 @@ const createPlaceholderAssets = () => {
 // Override Phaser's loader to use our placeholder assets
 const originalLoadImage = Phaser.Loader.FileTypes.ImageFile.prototype.load;
 Phaser.Loader.FileTypes.ImageFile.prototype.load = function() {
-  if (this.url.startsWith('/assets/games/breakout/') && (window as any).placeholderAssets) {
+  if (this.url.startsWith('/') && (window as any).placeholderAssets) {
     const assetName = this.url.split('/').pop()?.split('.')[0];
     if (assetName && (window as any).placeholderAssets[assetName]) {
       this.src = (window as any).placeholderAssets[assetName];

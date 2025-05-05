@@ -11,9 +11,6 @@ import PaddleVisualEffects from './PaddleVisualEffects';
  * Manages the creation and coordination of all paddles in the game
  */
 class PaddleManager {
-  updatePaddleColors(paddleColor: number) {
-    throw new Error('Method not implemented.');
-  }
   private scene: Phaser.Scene;
   private paddles: Phaser.Physics.Matter.Sprite[] = [];
   private paddleControllers: Record<string, PaddleController> = {};
@@ -305,7 +302,25 @@ public setupPaddleCollisions(): void {
           }
         }
       }
-      
+      /**
+  * Update the color of all paddles
+  * Called by ThemeManager when applying a theme
+  */
+ updatePaddleColors(paddleColor: number): void {
+  try {
+    // Apply the color to all paddles
+    this.paddles.forEach(paddle => {
+      paddle.setTint(paddleColor);
+    });
+    
+    console.log(`Updated paddle colors to: ${paddleColor.toString(16)}`);
+  } catch (error) {
+    console.error('Error updating paddle colors:', error);
+    if (this.errorManager) {
+      this.errorManager.logError('Failed to update paddle colors', error instanceof Error ? error.stack : undefined);
+    }
+  }
+}
   /**
    * Transfer spin to the ball based on paddle movement
    * This creates a more realistic physics effect where the paddle's motion

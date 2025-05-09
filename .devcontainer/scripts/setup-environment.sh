@@ -2,7 +2,7 @@
 echo "Setting up development environment..."
 
 # Setup Monica authentication
-if [ -n "ghu_7lU1cY1Yy9kapCYd6ZlbNBpCtp9USZ0oludB" ]; then
+if [ -n "$GITHUB_TOKEN" ]; then
   echo "GitHub token found, configuring..."
   gh auth setup-git
 else

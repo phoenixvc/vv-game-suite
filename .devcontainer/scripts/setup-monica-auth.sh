@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Setting up Monica authentication..."
-if [ -n ]; then
+if [ -n "$GITHUB_TOKEN" ]; then
   echo "GitHub token found, configuring..."
   gh auth setup-git
 else

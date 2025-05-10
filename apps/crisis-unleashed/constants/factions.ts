@@ -28,13 +28,15 @@ export const FACTION_NAMES: Record<FactionKey, string> = {
    AETHER: "Aetheric Conclave",
  } as const;
  
-export const FACTION_COLORS: Record<FactionKey, {
+ export interface FactionColorPalette {
   primary: string;
   secondary: string;
   accent: string;
   dark: string;
   light: string;
-}> = {
+}
+
+export const FACTION_COLORS: Record<FactionKey, FactionColorPalette> = {
   PRIMORDIAL: {
     // Vibrant emerald green - represents primal nature, growth, and ancient power
     primary: "#2E7D32",

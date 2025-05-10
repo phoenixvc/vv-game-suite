@@ -96,6 +96,8 @@ export interface ReadonlyCardData {
       synergies?: ReadonlyArray<string>;
       restrictions?: ReadonlyArray<string>;
     }>;
+
+  abilities?: ReadonlyArray<Readonly<CardAbility>>;
 }
 
 export interface CardBackProps {

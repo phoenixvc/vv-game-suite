@@ -3,7 +3,7 @@
 import { useTheme } from "@/contexts/theme-context"
 import { getRarityClass } from "@/lib/card-utils"
 import styles from "@/styles/card-backs.module.css"
-import { CardBackProps } from "@/types/card"
+import { CardAbility, CardBackProps } from "@/types/card"
 import { CelestialCardBack } from "./card-backs/celestial-card-back"
 import { CyberneticCardBack } from "./card-backs/cybernetic-card-back"
 import { EclipsedCardBack } from "./card-backs/eclipsed-card-back"
@@ -45,22 +45,22 @@ export function StandardizedCardBack({ card, darkMode = false, className = "" }:
                 <div className={styles.statsSection}>
                   <div className={styles.statItem}>
                     <span className={styles.statLabel}>Power</span>
-                    <span className={styles.statValue}>{card.power || 0}</span>
+                    <span className={styles.statValue}>{card.stats?.power || 0}</span>
                   </div>
                   <div className={styles.statItem}>
                     <span className={styles.statLabel}>Health</span>
-                    <span className={styles.statValue}>{card.health || 0}</span>
+                    <span className={styles.statValue}>{card.stats?.health || 0}</span>
                   </div>
                   <div className={styles.statItem}>
                     <span className={styles.statLabel}>Cost</span>
-                    <span className={styles.statValue}>{card.cost || 0}</span>
+                    <span className={styles.statValue}>{card.stats?.cost || 0}</span>
                   </div>
                 </div>
 
                 <div className={styles.abilitiesSection}>
                   <h4 className={styles.sectionTitle}>Abilities</h4>
                   {card.abilities && card.abilities.length > 0 ? (
-                    card.abilities.map((ability: any, index: number) => (
+                    card.abilities.map((ability: CardAbility, index: number) => (
                       <div key={index} className={styles.abilityItem}>
                         <div className={styles.abilityHeader}>
                           <span className={styles.abilityName}>{ability.name || `Ability ${index + 1}`}</span>

@@ -1,6 +1,6 @@
 import { CardRarity } from "@/types/card";
-
-export const VALID_RARITIES: readonly CardRarity[] = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic'] as const;
+export const VALID_RARITIES = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic'] as const;
+type ValidRarity = typeof VALID_RARITIES[number];
 
 /**
  * Get CSS class name for a card rarity
@@ -17,8 +17,11 @@ export function getRarityClass(
   }
   
   // Create the key with proper type assertion
-  const key = `rarity${rarity}` as keyof typeof styles;
-  return styles[key] || styles.rarityCommon;
+ const key = `rarity${rarity}`;
+ if (key in styles) {
+   return styles[key as keyof typeof styles];
+ }
+ return styles.rarityCommon;
 }
 
 /**
@@ -46,10 +49,10 @@ export function getVoidGlyph(cardId?: string): string {
  * @returns A primordial-themed rune character
  */
 export function getPrimordialRune(cardId?: string): string {
-  // Special case for primordial runes since they use a character code range
-  const runeIndex = cardId ? cardId.charCodeAt(0) % 20 : 0;
-  return String.fromCharCode(8448 + runeIndex);
-}
+   // Special case for primordial runes since they use a character code range
+   const runeIndex = cardId ? cardId.charCodeAt(0) % 20 : 0;
+  return String.fromCharCode(0x16A0 + runeIndex);
+ }
 
 export const CELESTIAL_SYMBOLS = ["✧", "★", "☆", "✦", "✴", "✷", "✸", "✹", "✺", "✻", "✼", "❋", "❊", "❉", "❈"] as const;
 /**
@@ -89,8 +92,6 @@ export function getEclipsedMark(cardId?: string): string {
  * @returns A formatted cybernetic code
  */
 export function getCyberneticCode(cardId?: string): string {
-  if (cardId) {
-    return cardId.substring(0, 8);
-}
-  return "CN-0000"; // Static fallback
+  const core = cardId ? cardId.substring(0, 8) : "0000";
+  return `CN-${core}`;
 }

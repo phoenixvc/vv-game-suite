@@ -41,7 +41,7 @@ export interface CardMechanics {
 export interface Card {
   type: string;
   id: string;
-      name: string;
+  name: string;
   set?: string;
   rarity?: CardRarity;
   faction?: string;

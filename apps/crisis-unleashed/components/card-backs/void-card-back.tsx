@@ -1,13 +1,9 @@
 import styles from "@/styles/card-backs.module.css"
-
-interface CardBackProps {
-  card: any
-  darkMode?: boolean
-  className?: string
-}
+import { getVoidGlyph, getRarityClass } from "@/lib/card-utils"
+import { CardBackProps } from "@/types/card";
 
 export function VoidCardBack({ card, darkMode = false, className = "" }: CardBackProps) {
-  const rarityClass = card.rarity ? styles[`rarity${card.rarity}`] : ""
+  const rarityClass = getRarityClass(card.rarity, styles);
 
   return (
     <div
@@ -31,7 +27,9 @@ export function VoidCardBack({ card, darkMode = false, className = "" }: CardBac
 
         <div className={styles.cardBackFooter}>
           <div className={styles.cardSet}>{card.set || "Core Set"}</div>
-          <div className={styles.voidGlyph}>⌀</div>
+          <div className={styles.voidGlyph}>
+            {getVoidGlyph(card.id)}
+          </div>
         </div>
       </div>
     </div>

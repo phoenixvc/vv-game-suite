@@ -1,7 +1,8 @@
 "use client"
 import { ErrorMonitor } from "@/components/admin/error-monitor"
-import SharedNavigation from "@/components/shared-navigation"
 import { ContentErrorBoundary } from "@/components/error-boundaries/content-error-boundary"
+import SharedNavigation from "@/components/shared-navigation"
+import { Container } from "@/components/ui/container"
 
 export default function ErrorLogsPage() {
   return (
@@ -11,8 +12,10 @@ export default function ErrorLogsPage() {
       <main className="container mx-auto px-4 pt-24 pb-12">
         <h1 className="text-3xl font-bold mb-8">Error Logs</h1>
 
-        <ContentErrorBoundary contentName="ErrorMonitor">
-          <ErrorMonitor />
+        <ContentErrorBoundary contentName="Error Logs">
+          <Container>
+            <ErrorMonitor />
+          </Container>
         </ContentErrorBoundary>
       </main>
     </div>

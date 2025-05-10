@@ -1,13 +1,13 @@
 "use client"
 
 import { useTheme } from "@/contexts/theme-context"
-import { CyberneticCardBack } from "./card-backs/cybernetic-card-back"
-import { PrimordialCardBack } from "./card-backs/primordial-card-back"
-import { EclipsedCardBack } from "./card-backs/eclipsed-card-back"
+import styles from "@/styles/card-backs.module.css"
 import { CelestialCardBack } from "./card-backs/celestial-card-back"
+import { CyberneticCardBack } from "./card-backs/cybernetic-card-back"
+import { EclipsedCardBack } from "./card-backs/eclipsed-card-back"
+import { PrimordialCardBack } from "./card-backs/primordial-card-back"
 import { TitanbornCardBack } from "./card-backs/titanborn-card-back"
 import { VoidCardBack } from "./card-backs/void-card-back"
-import styles from "@/styles/card-styles.module.css"
 
 interface StandardizedCardBackProps {
   card: any

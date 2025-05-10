@@ -1,13 +1,10 @@
-import styles from "@/styles/card-backs.module.css"
-
-interface CardBackProps {
-  card: any
-  darkMode?: boolean
-  className?: string
-}
+import { FACTION_LOGOS } from "@/constants/factions";
+import { getCyberneticCode, getRarityClass } from "@/lib/card-utils";
+import styles from "@/styles/card-backs.module.css";
+import { CardBackProps } from "@/types/card";
 
 export function CyberneticCardBack({ card, darkMode = false, className = "" }: CardBackProps) {
-  const rarityClass = card.rarity ? styles[`rarity${card.rarity}`] : ""
+  const rarityClass = getRarityClass(card.rarity, styles);
 
   return (
     <div
@@ -18,7 +15,7 @@ export function CyberneticCardBack({ card, darkMode = false, className = "" }: C
       <div className={styles.cardBackInner}>
         <div className={styles.cardBackHeader}>
           <div className={styles.cardBackLogo}>
-            <div className={styles.cyberneticLogo}>CN</div>
+            <div className={styles.cyberneticLogo}>{FACTION_LOGOS.CYBERNETIC}</div>
           </div>
           <h3 className={styles.cardBackName}>{card.name}</h3>
         </div>
@@ -32,7 +29,7 @@ export function CyberneticCardBack({ card, darkMode = false, className = "" }: C
         <div className={styles.cardBackFooter}>
           <div className={styles.cardSet}>{card.set || "Core Set"}</div>
           <div className={styles.cyberneticCode}>
-            {card.id ? card.id.substring(0, 8) : "CN-" + Math.floor(Math.random() * 10000)}
+            {getCyberneticCode(card.id)}
           </div>
         </div>
       </div>

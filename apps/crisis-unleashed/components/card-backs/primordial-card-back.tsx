@@ -1,13 +1,10 @@
-import styles from "@/styles/card-backs.module.css"
-
-interface CardBackProps {
-  card: any
-  darkMode?: boolean
-  className?: string
-}
+import { FACTION_LOGOS } from "@/constants/factions";
+import { getPrimordialRune, getRarityClass } from "@/lib/card-utils";
+import styles from "@/styles/card-backs.module.css";
+import { CardBackProps } from "@/types/card";
 
 export function PrimordialCardBack({ card, darkMode = false, className = "" }: CardBackProps) {
-  const rarityClass = card.rarity ? styles[`rarity${card.rarity}`] : ""
+  const rarityClass = getRarityClass(card.rarity, styles);
 
   return (
     <div
@@ -18,7 +15,7 @@ export function PrimordialCardBack({ card, darkMode = false, className = "" }: C
       <div className={styles.cardBackInner}>
         <div className={styles.cardBackHeader}>
           <div className={styles.cardBackLogo}>
-            <div className={styles.primordialLogo}>PA</div>
+            <div className={styles.primordialLogo}>{FACTION_LOGOS.PRIMORDIAL}</div>
           </div>
           <h3 className={styles.cardBackName}>{card.name}</h3>
         </div>
@@ -32,7 +29,7 @@ export function PrimordialCardBack({ card, darkMode = false, className = "" }: C
         <div className={styles.cardBackFooter}>
           <div className={styles.cardSet}>{card.set || "Core Set"}</div>
           <div className={styles.primordialRune}>
-            {String.fromCharCode(8448 + (card.id ? card.id.charCodeAt(0) % 20 : 0))}
+            {getPrimordialRune(card.id)}
           </div>
         </div>
       </div>

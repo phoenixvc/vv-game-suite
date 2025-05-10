@@ -1,13 +1,10 @@
-import styles from "@/styles/card-backs.module.css"
-
-interface CardBackProps {
-  card: any
-  darkMode?: boolean
-  className?: string
-}
+import { FACTION_LOGOS } from "@/constants/factions";
+import { getRarityClass, getTitanbornMark } from "@/lib/card-utils";
+import styles from "@/styles/card-backs.module.css";
+import { CardBackProps } from "@/types/card";
 
 export function TitanbornCardBack({ card, darkMode = false, className = "" }: CardBackProps) {
-  const rarityClass = card.rarity ? styles[`rarity${card.rarity}`] : ""
+  const rarityClass = getRarityClass(card.rarity, styles);
 
   return (
     <div
@@ -18,7 +15,7 @@ export function TitanbornCardBack({ card, darkMode = false, className = "" }: Ca
       <div className={styles.cardBackInner}>
         <div className={styles.cardBackHeader}>
           <div className={styles.cardBackLogo}>
-            <div className={styles.titanbornLogo}>TB</div>
+            <div className={styles.titanbornLogo}>{FACTION_LOGOS.TITANBORN}</div>
           </div>
           <h3 className={styles.cardBackName}>{card.name}</h3>
         </div>
@@ -31,7 +28,7 @@ export function TitanbornCardBack({ card, darkMode = false, className = "" }: Ca
 
         <div className={styles.cardBackFooter}>
           <div className={styles.cardSet}>{card.set || "Core Set"}</div>
-          <div className={styles.titanbornMark}>⚒</div>
+          <div className={styles.titanbornMark}>{getTitanbornMark(card.id)}</div>
         </div>
       </div>
     </div>

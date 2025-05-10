@@ -1,18 +1,13 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-
-type Theme = "light" | "dark" | "system"
-
-interface ThemeContextType {
-  theme: Theme
-  setTheme: (theme: Theme) => void
-}
+import { FactionTheme, Theme, ThemeContextType } from "@/types/theme"
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("dark")
+  const [currentTheme, setCurrentTheme] = useState<FactionTheme>("default")
 
   // Initialize theme from localStorage if available
   useEffect(() => {
@@ -24,7 +19,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } else {
       setTheme("light")
     }
+
+    // Initialize faction theme from localStorage if available
+    const storedFactionTheme = localStorage.getItem("factionTheme") as FactionTheme | null
+    if (storedFactionTheme) {
+      setCurrentTheme(storedFactionTheme)
+    }
   }, [])
+
 
   // Update localStorage and document class when theme changes
   useEffect(() => {
@@ -41,13 +43,23 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [theme])
 
-  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>
+  // Update localStorage when faction theme changes
+  useEffect(() => {
+    localStorage.setItem("factionTheme", currentTheme)
+  }, [currentTheme])
+ 
+  return <ThemeContext.Provider value={{ theme, setTheme, currentTheme, setCurrentTheme }}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {
   const context = useContext(ThemeContext)
   if (context === undefined) {
-    return { theme: "dark", setTheme: () => {} }
+    return { 
+      theme: "dark", 
+      setTheme: () => {}, 
+      currentTheme: "default" as FactionTheme, 
+      setCurrentTheme: () => {} 
+    }
   }
   return context
 }

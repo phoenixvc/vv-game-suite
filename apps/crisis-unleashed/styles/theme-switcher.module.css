@@ -1,0 +1,53 @@
+.themeSwitcher {
+  position: relative;
+  z-index: 50;
+}
+
+.themeButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.themeButton:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.themeColorIndicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.themeDropdown {
+  width: 220px;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.themeItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: white;
+}
+
+.themeItem:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.themeItemContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

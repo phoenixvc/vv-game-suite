@@ -1,0 +1,2320 @@
+/* Common Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+@keyframes cardHover {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes cardReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes buttonPress {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes buttonHover {
+  0% {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes expand {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes typewriter {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes textFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes iconPulse {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+    border-width: 2px;
+  }
+  50% {
+    border-width: 3px;
+  }
+  100% {
+    transform: rotate(360deg);
+    border-width: 2px;
+  }
+}
+
+@keyframes progress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Cybernetic Animations */
+@keyframes cyberDataFlow {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes cyberGridPulse {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes cyberScanLine {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes cyberGlitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes cyberDataStream {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
+
+@keyframes cyberHologram {
+  0% {
+    opacity: 0.7;
+    text-shadow: 0 0 5px rgba(14, 165, 233, 0.7);
+  }
+  50% {
+    opacity: 0.9;
+    text-shadow: 0 0 15px rgba(14, 165, 233, 0.9), 0 0 20px rgba(14, 165, 233, 0.5);
+  }
+  100% {
+    opacity: 0.7;
+    text-shadow: 0 0 5px rgba(14, 165, 233, 0.7);
+  }
+}
+
+@keyframes cyberPowerUp {
+  0% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+    background-position: 0% 0%;
+  }
+  50% {
+    box-shadow: 0 0 10px 2px rgba(14, 165, 233, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+    background-position: 100% 0%;
+  }
+}
+
+@keyframes cyberCircuitConnect {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 100;
+  }
+  100% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes cyberDigitalPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(14, 165, 233, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+  }
+}
+
+@keyframes cyberBootUp {
+  0% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+@keyframes cyberDataProcess {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes cyberSystemScan {
+  0% {
+    height: 0%;
+    opacity: 0.7;
+  }
+  100% {
+    height: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes cyberCodeType {
+  0% {
+    width: 0;
+    border-right: 2px solid rgba(14, 165, 233, 1);
+  }
+  50% {
+    border-right: 2px solid rgba(14, 165, 233, 0);
+  }
+  100% {
+    width: 100%;
+    border-right: 2px solid rgba(14, 165, 233, 1);
+  }
+}
+
+@keyframes cyberDataScroll {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes cyberGlitchText {
+  0% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(14, 165, 233, 0);
+  }
+  2% {
+    opacity: 0.9;
+    transform: translate(-2px, 0);
+    text-shadow: -2px 0 0 rgba(14, 165, 233, 0.5);
+  }
+  4% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(14, 165, 233, 0);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(14, 165, 233, 0);
+  }
+  22% {
+    opacity: 0.9;
+    transform: translate(2px, 0);
+    text-shadow: 2px 0 0 rgba(14, 165, 233, 0.5);
+  }
+  24% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(14, 165, 233, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(14, 165, 233, 0);
+  }
+}
+
+@keyframes cyberLoadingCircle {
+  0% {
+    stroke-dashoffset: 283;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes cyberDataTransfer {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes cyberPowerIcon {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px rgba(14, 165, 233, 0.7));
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 5px rgba(14, 165, 233, 1));
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px rgba(14, 165, 233, 0.7));
+  }
+}
+
+@keyframes cyberDataLoad {
+  0% {
+    transform: rotate(0deg);
+    box-shadow: 0 0 0 rgba(14, 165, 233, 0);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.8);
+  }
+  100% {
+    transform: rotate(360deg);
+    box-shadow: 0 0 0 rgba(14, 165, 233, 0);
+  }
+}
+
+@keyframes cyberSystemBoot {
+  0% {
+    height: 0%;
+  }
+  100% {
+    height: 100%;
+  }
+}
+
+@keyframes cyberDigitalDissolve {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes cyberSystemTransfer {
+  0% {
+    clip-path: inset(0 0 0 0);
+  }
+  50% {
+    clip-path: inset(0 0 0 50%);
+  }
+  100% {
+    clip-path: inset(0 0 0 100%);
+  }
+}
+
+@keyframes cyberPixelate {
+  0% {
+    filter: blur(0px);
+  }
+  50% {
+    filter: blur(4px);
+  }
+  100% {
+    filter: blur(0px);
+  }
+}
+
+@keyframes cyberGlitchEffect {
+  0% {
+    clip-path: inset(0 0 0 0);
+  }
+  2% {
+    clip-path: inset(10% 0 20% 0);
+  }
+  4% {
+    clip-path: inset(0 0 0 0);
+  }
+  6% {
+    clip-path: inset(0 10% 0 30%);
+  }
+  8% {
+    clip-path: inset(0 0 0 0);
+  }
+  10% {
+    clip-path: inset(30% 0 0 0);
+  }
+  12% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes cyberDataBurst {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes cyberSystemOverload {
+  0% {
+    filter: brightness(1) contrast(1);
+    transform: scale(1);
+  }
+  25% {
+    filter: brightness(1.5) contrast(1.2);
+    transform: scale(1.03);
+  }
+  50% {
+    filter: brightness(1) contrast(1);
+    transform: scale(1);
+  }
+  75% {
+    filter: brightness(1.5) contrast(1.2);
+    transform: scale(1.03);
+  }
+  100% {
+    filter: brightness(1) contrast(1);
+    transform: scale(1);
+  }
+}
+
+/* Primordial Animations */
+@keyframes primordialLeafRustle {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes primordialVineGrow {
+  0% {
+    height: 0;
+    opacity: 0;
+  }
+  100% {
+    height: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes primordialNatureCycle {
+  0% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  33% {
+    filter: hue-rotate(30deg) brightness(1.1);
+  }
+  66% {
+    filter: hue-rotate(-30deg) brightness(0.9);
+  }
+  100% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+}
+
+@keyframes primordialBloom {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes primordialLeafUnfold {
+  0% {
+    transform: scale(0) rotate(-90deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes primordialNaturalShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes primordialGrowthPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    transform: scale(1);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    transform: scale(1);
+  }
+}
+
+@keyframes primordialSeedSprout {
+  0% {
+    transform: scale(0) translateY(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes primordialLeafWave {
+  0% {
+    transform: rotate(-5deg) translateY(0);
+  }
+  50% {
+    transform: rotate(5deg) translateY(-5px);
+  }
+  100% {
+    transform: rotate(-5deg) translateY(0);
+  }
+}
+
+@keyframes primordialOrganicExpand {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes primordialRootSpread {
+  0% {
+    clip-path: polygon(50% 0%, 50% 0%, 50% 100%, 50% 100%);
+  }
+  100% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+}
+
+@keyframes primordialNaturalFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes primordialOrganicType {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes primordialLeafReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) rotate(-10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes primordialNaturalPulse {
+  0% {
+    text-shadow: 0 0 2px rgba(34, 197, 94, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 8px rgba(34, 197, 94, 0.8), 0 0 12px rgba(74, 222, 128, 0.4);
+  }
+  100% {
+    text-shadow: 0 0 2px rgba(34, 197, 94, 0.5);
+  }
+}
+
+@keyframes primordialLeafSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes primordialSeedGrow {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+@keyframes primordialFlowerBloom {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes primordialGrowthRing {
+  0% {
+    transform: scale(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes primordialSeedGerminate {
+  0% {
+    height: 0;
+    opacity: 0;
+  }
+  100% {
+    height: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes primordialLeafCycle {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1);
+  }
+  75% {
+    transform: rotate(270deg) scale(0.9);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes primordialOrganicDissolve {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+}
+
+@keyframes primordialLeafCurtain {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: 100%;
+  }
+}
+
+@keyframes primordialNaturalBlend {
+  0% {
+    opacity: 0;
+    background-position: 0% 0%;
+  }
+  100% {
+    opacity: 1;
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes primordialNatureBurst {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes primordialLeafStorm {
+  0% {
+    transform: translateY(-50px) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(50px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes primordialRootEruption {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-20px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+}
+
+/* Eclipsed Order Animations */
+@keyframes eclipsedShadowMove {
+  0% {
+    transform: translateX(-10px) translateY(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateX(0) translateY(5px);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(10px) translateY(0);
+    opacity: 0.3;
+  }
+}
+
+@keyframes eclipsedDarkMist {
+  0% {
+    opacity: 0.3;
+    filter: blur(5px);
+  }
+  50% {
+    opacity: 0.5;
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 0.3;
+    filter: blur(5px);
+  }
+}
+
+@keyframes eclipsedBloodRipple {
+  0% {
+    transform: scale(0);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes eclipsedShadowReveal {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes eclipsedBloodDrip {
+  0% {
+    height: 0;
+    opacity: 0;
+  }
+  100% {
+    height: 100%;
+    opacity: 0.7;
+  }
+}
+
+@keyframes eclipsedDaggerSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes eclipsedShadowPulse {
+  0% {
+    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+  }
+}
+
+@keyframes eclipsedDaggerStrike {
+  0% {
+    transform: translateX(-20px) rotate(-45deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(20px) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+@keyframes eclipsedBloodSplatter {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes eclipsedShadowExpand {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+}
+
+@keyframes eclipsedStealthReveal {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes eclipsedDarkPulse {
+  0% {
+    background-color: rgba(28, 25, 23, 0.7);
+  }
+  50% {
+    background-color: rgba(28, 25, 23, 0.9);
+  }
+  100% {
+    background-color: rgba(28, 25, 23, 0.7);
+  }
+}
+
+@keyframes eclipsedShadowText {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes eclipsedBloodWrite {
+  0% {
+    width: 0;
+    color: rgba(239, 68, 68, 0.7);
+  }
+  100% {
+    width: 100%;
+    color: rgba(239, 68, 68, 1);
+  }
+}
+
+@keyframes eclipsedFadeWhisper {
+  0% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+}
+
+@keyframes eclipsedDaggerThrow {
+  0% {
+    transform: translateX(-50px) rotate(-180deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(50px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes eclipsedShadowFlicker {
+  0% {
+    opacity: 0.7;
+  }
+  5% {
+    opacity: 0.5;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  15% {
+    opacity: 0.5;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes eclipsedPoisonDrip {
+  0% {
+    height: 0;
+    opacity: 0;
+  }
+  100% {
+    height: 20px;
+    opacity: 0.7;
+  }
+}
+
+@keyframes eclipsedShadowGather {
+  0% {
+    filter: blur(10px);
+    opacity: 0;
+  }
+  100% {
+    filter: blur(5px);
+    opacity: 0.7;
+  }
+}
+
+@keyframes eclipsedBloodFill {
+  0% {
+    height: 0%;
+    background-color: rgba(239, 68, 68, 0.3);
+  }
+  100% {
+    height: 100%;
+    background-color: rgba(239, 68, 68, 0.7);
+  }
+}
+
+@keyframes eclipsedDaggerCircle {
+  0% {
+    transform: rotate(0deg) translateX(20px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(20px) rotate(-360deg);
+  }
+}
+
+@keyframes eclipsedShadowVeil {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(5px);
+  }
+}
+
+@keyframes eclipsedBloodCurtain {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0.7;
+  }
+}
+
+@keyframes eclipsedStealthFade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes eclipsedAssassinateSlash {
+  0% {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  }
+}
+
+@keyframes eclipsedShadowBurst {
+  0% {
+    transform: scale(0);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes eclipsedPoisonCloud {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+    filter: blur(5px);
+  }
+  50% {
+    opacity: 0.7;
+    filter: blur(10px);
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+    filter: blur(5px);
+  }
+}
+
+/* Celestial Animations */
+@keyframes celestialStarField {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes celestialCosmicNebula {
+  0% {
+    opacity: 0.3;
+    filter: blur(5px);
+  }
+  50% {
+    opacity: 0.5;
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 0.3;
+    filter: blur(5px);
+  }
+}
+
+@keyframes celestialTimeRipple {
+  0% {
+    transform: scale(0);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes celestialStarReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes celestialConstellationForm {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes celestialCosmicGlow {
+  0% {
+    box-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.8), 0 0 30px rgba(192, 132, 252, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
+  }
+}
+
+@keyframes celestialStarBurst {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes celestialPortalOpen {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+@keyframes celestialCosmicPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(168, 85, 247, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+  }
+}
+
+@keyframes celestialDimensionalShift {
+  0% {
+    transform: perspective(500px) rotateY(0);
+  }
+  50% {
+    transform: perspective(500px) rotateY(15deg);
+  }
+  100% {
+    transform: perspective(500px) rotateY(0);
+  }
+}
+
+@keyframes celestialTimeFlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes celestialCosmicExpand {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes celestialStarScript {
+  0% {
+    width: 0;
+    text-shadow: 0 0 5px rgba(168, 85, 247, 0.7);
+  }
+  100% {
+    width: 100%;
+    text-shadow: 0 0 10px rgba(168, 85, 247, 0.9), 0 0 15px rgba(192, 132, 252, 0.5);
+  }
+}
+
+@keyframes celestialCosmicText {
+  0% {
+    text-shadow: 0 0 4px rgba(168, 85, 247, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.8), 0 0 12px rgba(192, 132, 252, 0.4);
+  }
+  100% {
+    text-shadow: 0 0 4px rgba(168, 85, 247, 0.5);
+  }
+}
+
+@keyframes celestialTimeEcho {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(1);
+  }
+  20% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.8);
+  }
+}
+
+@keyframes celestialStarTwinkle {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes celestialCosmicSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes celestialTimeReverse {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes celestialCosmicOrbit {
+  0% {
+    transform: rotate(0deg) translateX(20px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(20px) rotate(-360deg);
+  }
+}
+
+@keyframes celestialStarFormation {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+@keyframes celestialTimeLoop {
+  0% {
+    transform: rotate(0deg);
+    border-width: 1px;
+  }
+  50% {
+    border-width: 3px;
+  }
+  100% {
+    transform: rotate(360deg);
+    border-width: 1px;
+  }
+}
+
+@keyframes celestialDimensionalPortal {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+@keyframes celestialStarCurtain {
+  0% {
+    height: 0;
+    opacity: 0;
+  }
+  100% {
+    height: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes celestialTimeWarp {
+  0% {
+    filter: blur(0) hue-rotate(0deg);
+  }
+  50% {
+    filter: blur(5px) hue-rotate(180deg);
+  }
+  100% {
+    filter: blur(0) hue-rotate(360deg);
+  }
+}
+
+@keyframes celestialCosmicBurst {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes celestialStarShower {
+  0% {
+    transform: translateY(-50px) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(50px) translateX(20px) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+@keyframes celestialTimeFreeze {
+  0% {
+    filter: contrast(1) brightness(1) saturate(1);
+  }
+  50% {
+    filter: contrast(1.2) brightness(1.5) saturate(0.8);
+  }
+  100% {
+    filter: contrast(1) brightness(1) saturate(1);
+  }
+}
+
+/* Titanborn Animations */
+@keyframes titanbornForgeGlow {
+  0% {
+    filter: brightness(1) drop-shadow(0 0 5px rgba(249, 115, 22, 0.5));
+  }
+  50% {
+    filter: brightness(1.3) drop-shadow(0 0 10px rgba(249, 115, 22, 0.8));
+  }
+  100% {
+    filter: brightness(1) drop-shadow(0 0 5px rgba(249, 115, 22, 0.5));
+  }
+}
+
+@keyframes titanbornEmberRise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50px) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes titanbornStoneRumble {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  75% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes titanbornMetalShine {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes titanbornRuneGlow {
+  0% {
+    text-shadow: 0 0 5px rgba(234, 179, 8, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(234, 179, 8, 0.8), 0 0 15px rgba(250, 204, 21, 0.5);
+  }
+  100% {
+    text-shadow: 0 0 5px rgba(234, 179, 8, 0.5);
+  }
+}
+
+@keyframes titanbornForgeHeat {
+  0% {
+    background-color: rgba(234, 179, 8, 0.1);
+  }
+  50% {
+    background-color: rgba(234, 179, 8, 0.3);
+  }
+  100% {
+    background-color: rgba(234, 179, 8, 0.1);
+  }
+}
+
+@keyframes titanbornHammerStrike {
+  0% {
+    transform: rotate(-20deg) translateY(-10px);
+  }
+  10% {
+    transform: rotate(5deg) translateY(0);
+  }
+  20% {
+    transform: rotate(0deg) translateY(0);
+  }
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+}
+
+@keyframes titanbornMetalClang {
+  0% {
+    transform: scale(1);
+  }
+  10% {
+    transform: scale(1.05);
+  }
+  20% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.02);
+  }
+  40% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes titanbornForgePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(234, 179, 8, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0);
+  }
+}
+
+@keyframes titanbornStoneSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes titanbornAnvilRing {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7);
+  }
+  10% {
+    transform: scale(1.05);
+  }
+  20% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(234, 179, 8, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0);
+  }
+}
+
+@keyframes titanbornMountainRise {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes titanbornRuneCarve {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes titanbornStoneChisel {
+  0% {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  }
+}
+
+@keyframes titanbornForgeText {
+  0% {
+    text-shadow: 0 0 5px rgba(234, 179, 8, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(234, 179, 8, 0.8), 0 0 15px rgba(250, 204, 21, 0.5);
+  }
+  100% {
+    text-shadow: 0 0 5px rgba(234, 179, 8, 0.5);
+  }
+}
+
+@keyframes titanbornHammerSwing {
+  0% {
+    transform: rotate(-20deg);
+  }
+  25% {
+    transform: rotate(20deg);
+  }
+  50% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+  100% {
+    transform: rotate(-20deg);
+  }
+}
+
+@keyframes titanbornAnvilStrike {
+  0% {
+    transform: scale(1);
+  }
+  10% {
+    transform: scale(1.05);
+  }
+  20% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes titanbornRuneActivate {
+  0% {
+    opacity: 0.3;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.5);
+  }
+  100% {
+    opacity: 0.3;
+    filter: brightness(1);
+  }
+}
+
+@keyframes titanbornForgeProgress {
+  0% {
+    width: 0%;
+    background-color: rgba(234, 179, 8, 0.5);
+  }
+  100% {
+    width: 100%;
+    background-color: rgba(234, 179, 8, 0.8);
+  }
+}
+
+@keyframes titanbornStoneForm {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes titanbornEmberCircle {
+  0% {
+    transform: rotate(0deg) translateX(10px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(10px) rotate(-360deg);
+  }
+}
+
+@keyframes titanbornStoneCrumble {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+    filter: blur(5px);
+  }
+}
+
+@keyframes titanbornForgeCurtain {
+  0% {
+    height: 0;
+    opacity: 0;
+  }
+  100% {
+    height: 100%;
+    opacity: 0.7;
+  }
+}
+
+@keyframes titanbornMountainSlide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes titanbornTitanStomp {
+  0% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(5px);
+  }
+  20% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes titanbornForgeBurst {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes titanbornMountainShatter {
+  0% {
+    clip-path: polygon(50% 0%, 50% 0%, 50% 100%, 50% 100%);
+  }
+  100% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+}
+
+/* Void Harbingers Animations */
+@keyframes voidRipple {
+  0% {
+    transform: scale(0);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes voidRealityWarp {
+  0% {
+    filter: blur(0) hue-rotate(0deg);
+  }
+  50% {
+    filter: blur(2px) hue-rotate(180deg);
+  }
+  100% {
+    filter: blur(0) hue-rotate(360deg);
+  }
+}
+
+@keyframes voidDimensionalTear {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes voidGlitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes voidEntropyDecay {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0.5;
+    filter: blur(5px);
+  }
+}
+
+@keyframes voidDimensionalShift {
+  0% {
+    transform: perspective(500px) rotateY(0);
+  }
+  50% {
+    transform: perspective(500px) rotateY(15deg);
+  }
+  100% {
+    transform: perspective(500px) rotateY(0);
+  }
+}
+
+@keyframes voidPulse {
+  0% {
+    box-shadow: 0 0 5px rgba(99, 102, 241, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(99, 102, 241, 0.5);
+  }
+}
+
+@keyframes voidRealityBreak {
+  0% {
+    clip-path: inset(0 0 0 0);
+  }
+  2% {
+    clip-path: inset(10% 0 20% 0);
+  }
+  4% {
+    clip-path: inset(0 0 0 0);
+  }
+  6% {
+    clip-path: inset(0 10% 0 30%);
+  }
+  8% {
+    clip-path: inset(0 0 0 0);
+  }
+  10% {
+    clip-path: inset(30% 0 0 0);
+  }
+  12% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes voidChaosFlicker {
+  0% {
+    opacity: 0.7;
+  }
+  5% {
+    opacity: 0.5;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  15% {
+    opacity: 0.5;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes voidExpand {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes voidRealityDistort {
+  0% {
+    transform: skew(0deg, 0deg);
+  }
+  25% {
+    transform: skew(2deg, 1deg);
+  }
+  50% {
+    transform: skew(0deg, 0deg);
+  }
+  75% {
+    transform: skew(-2deg, -1deg);
+  }
+  100% {
+    transform: skew(0deg, 0deg);
+  }
+}
+
+@keyframes voidEntropyFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes voidTextGlitch {
+  0% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(99, 102, 241, 0);
+  }
+  2% {
+    opacity: 0.9;
+    transform: translate(-2px, 0);
+    text-shadow: -2px 0 0 rgba(99, 102, 241, 0.5);
+  }
+  4% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(99, 102, 241, 0);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(99, 102, 241, 0);
+  }
+  22% {
+    opacity: 0.9;
+    transform: translate(2px, 0);
+    text-shadow: 2px 0 0 rgba(99, 102, 241, 0.5);
+  }
+  24% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(99, 102, 241, 0);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(99, 102, 241, 0);
+  }
+  82% {
+    opacity: 0.9;
+    transform: translate(-1px, 1px);
+    text-shadow: -1px 1px 0 rgba(99, 102, 241, 0.5);
+  }
+  84% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(99, 102, 241, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+    text-shadow: 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+@keyframes voidEntropyWrite {
+  0% {
+    width: 0;
+    filter: blur(2px);
+  }
+  100% {
+    width: 100%;
+    filter: blur(0);
+  }
+}
+
+@keyframes voidDimensionalEcho {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(1);
+  }
+  20% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.8);
+  }
+}
+
+@keyframes voidRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes voidSymbolAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  10% {
+    opacity: 0.7;
+    transform: scale(1.2) rotate(20deg);
+  }
+  20% {
+    opacity: 0.5;
+    transform: scale(0.9) rotate(-10deg);
+  }
+  30% {
+    opacity: 0.7;
+    transform: scale(1) rotate(0deg);
+  }
+  90% {
+    opacity: 0.7;
+    transform: scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+}
+
+@keyframes voidChaosEnergy {
+  0% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  50% {
+    filter: hue-rotate(180deg) brightness(1.2);
+  }
+  100% {
+    filter: hue-rotate(360deg) brightness(1);
+  }
+}
+
+@keyframes voidPortal {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes voidRealityUnravel {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+}
+
+@keyframes voidEntropyGather {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes voidTear {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes voidDimensionalFold {
+  0% {
+    transform: perspective(500px) rotateY(0);
+  }
+  100% {
+    transform: perspective(500px) rotateY(90deg);
+  }
+}
+
+@keyframes voidRealityShatter {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+    filter: blur(10px);
+  }
+}
+
+@keyframes voidImplosion {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes voidEntropyBurst {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes voidRealityCrack {
+  0% {
+    clip-path: polygon(50% 0%, 50% 0%, 50% 100%, 50% 100%);
+  }
+  100% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+}

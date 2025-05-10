@@ -1,0 +1,169 @@
+.container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: #0f0f1a;
+}
+
+.cosmicBackground {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("/stars-bg.png");
+  background-size: cover;
+  z-index: 0;
+}
+
+.twinkling {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("/twinkling-stars.png");
+  background-size: cover;
+  animation: twinkle 10s linear infinite;
+  z-index: 1;
+}
+
+@keyframes twinkle {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100px);
+  }
+}
+
+.content {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  z-index: 10;
+  padding: 0 1rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, #ffffff, #bbbbff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #bbbbff;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.selectionContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 600px;
+  perspective: 1200px;
+  margin-bottom: 2rem;
+}
+
+.previewContainer {
+  position: relative;
+  width: 80%;
+  height: 100%;
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+.previewWrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  will-change: transform, opacity;
+}
+
+.navButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.3s ease;
+}
+
+.navButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.indicators {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.activeIndicator {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .selectionContainer {
+    height: 450px;
+  }
+
+  .previewContainer {
+    width: 70%;
+  }
+}

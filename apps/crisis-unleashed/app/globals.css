@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+}
+
+/* Accessibility improvements */
+:focus {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
+}
+
+/* Improved contrast for text */
+.high-contrast-text {
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Reduced motion styles */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Improved line height for readability */
+p,
+li,
+label,
+input,
+textarea,
+button {
+  line-height: 1.5;
+}
+
+/* Minimum text size */
+body {
+  font-size: 1rem;
+}
+
+/* Skip to content link */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.skip-to-content:focus {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+  padding: 1rem;
+  background: #0ea5e9;
+  color: white;
+  z-index: 9999;
+  font-weight: bold;
+}
+
+/* Improve text contrast */
+.text-gray-300 {
+  color: rgba(209, 213, 219, 1); /* Increased from the default gray-300 */
+}
+
+.text-gray-400 {
+  color: rgba(156, 163, 175, 1); /* Increased from the default gray-400 */
+}
+
+/* Add focus styles for better accessibility */
+*:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+/* Improve button focus states */
+.btn:focus-visible,
+.button:focus-visible,
+button:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+/* Improve link hover states */
+a:hover {
+  text-decoration: underline;
+}
+
+/* Improve form element contrast */
+input,
+textarea,
+select {
+  color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(55, 65, 81, 1);
+}
+
+/* Improve placeholder text contrast */
+::placeholder {
+  color: rgba(156, 163, 175, 0.8);
+}

@@ -13,7 +13,13 @@
     "build": "npx turbo run build",
     "test": "npx turbo run test",
     "lint": "npx turbo run lint",
-    "clean": "npx turbo run clean"
+    "clean": "npx turbo run clean",
+    "dev:breakout": "npx turbo run dev --filter=breakout-game",
+    "dev:crisis": "npx turbo run dev --filter=crisis-unleashed",
+    "build:breakout": "npx turbo run build --filter=breakout-game",
+    "build:crisis": "npx turbo run build --filter=crisis-unleashed",
+    "test:breakout": "npx turbo run test --filter=breakout-game",
+    "test:crisis": "npx turbo run test --filter=crisis-unleashed"
   },
   "keywords": [
     "phaser",

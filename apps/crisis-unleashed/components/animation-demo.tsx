@@ -9,6 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AnimationErrorBoundary } from "./error-boundaries/animation-error-boundary"
 
+/**
+ * Displays an interactive UI for browsing and previewing faction-themed animations by category and intensity.
+ *
+ * Renders a tabbed interface for selecting animation categories, buttons for adjusting animation intensity, and a grid of preview cards for each animation in the selected category. Animation previews are styled according to the current theme and faction, with error boundaries isolating individual animation failures. The component dynamically loads faction-specific animations based on the active theme.
+ */
 export function AnimationDemo() {
   const { currentTheme, themeData } = useTheme()
   const { getAnimationStyle } = useFactionAnimations()

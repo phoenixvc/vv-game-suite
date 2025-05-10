@@ -54,6 +54,11 @@ const ANIMATIONS = [
   { id: "shimmer", name: "Shimmer", description: "Starry shimmer", faction: "celestial-dominion" },
 ]
 
+/**
+ * Renders an interactive page for exploring, customizing, and exporting Crisis Unleashed logo variants.
+ *
+ * Provides a tabbed interface to preview and configure logo variants, sizes, factions, and animations, with live previews and export options for SVG and React code. Includes sections for all logo variants, animation presets, and faction-themed logos with color palettes.
+ */
 export default function LogoShowcasePage() {
   const [selectedVariant, setSelectedVariant] = useState("standard")
   const [selectedSize, setSelectedSize] = useState("md")

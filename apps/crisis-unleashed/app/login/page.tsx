@@ -4,6 +4,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 
+/**
+ * Renders the login page interface with email and password fields, alternative login options, and navigation links.
+ *
+ * Displays a centered, styled login form with fields for email and password, a "Remember me" checkbox, and a submit button. Also provides options to log in with Google or Discord, and links to password recovery and signup pages.
+ *
+ * @returns The React element representing the login page UI.
+ */
 export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center p-4">

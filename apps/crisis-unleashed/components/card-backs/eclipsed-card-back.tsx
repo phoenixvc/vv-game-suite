@@ -3,6 +3,18 @@ import { getEclipsedMark, getRarityClass } from "@/lib/card-utils";
 import styles from "@/styles/card-backs.module.css";
 import { CardBackProps } from "@/types/card";
 
+/**
+ * Renders a styled card back UI for an "Eclipsed" faction card, displaying its name, type, set, and decorative elements.
+ *
+ * @param card - The card object to display on the card back.
+ * @param darkMode - Whether to apply dark mode styling. Defaults to false.
+ * @param className - Additional CSS class names to apply.
+ *
+ * @returns A React element representing the card back.
+ *
+ * @remark
+ * If the card's type or set is missing, "Hero" and "Core Set" are used as defaults, respectively.
+ */
 export function EclipsedCardBack({ card, darkMode = false, className = "" }: CardBackProps) {
   const rarityClass = getRarityClass(card.rarity, styles);
 

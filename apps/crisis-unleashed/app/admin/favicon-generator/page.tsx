@@ -20,6 +20,15 @@ const factions = [
   "celestial-dominion",
 ]
 
+/**
+ * React component providing an interactive UI for generating, previewing, and downloading customizable faction-themed favicons.
+ *
+ * Users can select a faction, adjust appearance settings (background color, padding, border radius, size, monochrome, inverted), and choose between standard, letter, or icon favicon styles. The component renders a live preview on a canvas and allows downloading the generated favicon as a PNG file.
+ *
+ * @returns The rendered favicon generator page component.
+ *
+ * @remark The "Generate All Sizes" feature is currently a placeholder and does not produce multiple favicon files.
+ */
 export default function FaviconGeneratorPage() {
   const [selectedFaction, setSelectedFaction] = useState<string>("cybernetic-nexus")
   const [backgroundColor, setBackgroundColor] = useState<string>("#ffffff")

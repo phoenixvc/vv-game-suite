@@ -33,6 +33,11 @@ const factions = [
   "celestial-dominion",
 ]
 
+/**
+ * Renders an interactive demo page for previewing and customizing a logo system.
+ *
+ * Provides controls for selecting logo variant, size, faction, and visual options such as interactivity, monochrome, inverted colors, and tagline display. Displays a live preview and grids showing all variants, sizes, and factions with the current settings.
+ */
 export default function LogoDemoPage() {
   const [selectedVariant, setSelectedVariant] = useState<string>("standard")
   const [selectedSize, setSelectedSize] = useState<LogoSize>("lg")

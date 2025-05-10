@@ -4,6 +4,11 @@ import { ContentErrorBoundary } from "@/components/error-boundaries/content-erro
 import SharedNavigation from "@/components/shared-navigation"
 import { Container } from "@/components/ui/container"
 
+/**
+ * Renders the admin error logs page with navigation, heading, and error monitoring UI.
+ *
+ * Displays a heading and the {@link ErrorMonitor} component within a {@link ContentErrorBoundary} to handle runtime errors gracefully.
+ */
 export default function ErrorLogsPage() {
   return (
     <Container>

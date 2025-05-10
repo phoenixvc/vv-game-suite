@@ -6,6 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AlertTriangle, Trash2, RefreshCw } from "lucide-react"
 
+/**
+ * Displays and manages error logs with filtering, refreshing, and clearing capabilities.
+ *
+ * Renders a tabbed interface for viewing error logs by severity, with options to refresh or clear logs. Each log entry displays details such as component name, timestamp, message, optional URL, and expandable stack trace.
+ */
 export function ErrorMonitor() {
   const [logs, setLogs] = useState<ReturnType<typeof getErrorLogs>>([])
   const [activeTab, setActiveTab] = useState("all")

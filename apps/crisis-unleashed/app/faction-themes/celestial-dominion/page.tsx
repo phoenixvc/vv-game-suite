@@ -9,6 +9,11 @@ import { SharedNavigation } from "../../../components/shared-navigation"
 import styles from "../../../styles/animations.module.css"
 import Image from "next/image"
 
+/**
+ * Renders the Celestial Dominion faction interface with themed UI, interactive cosmic power controls, spell selection, and celestial cards.
+ *
+ * Displays a full-page layout featuring faction overview, cosmic power meter, dimensional portal toggle, spell selection and casting, and showcases hero and artifact cards. Includes a control panel with various styled buttons and cosmic effects.
+ */
 export default function CelestialDominionPage() {
   const [showPortal, setShowPortal] = useState(false)
   const [selectedSpell, setSelectedSpell] = useState<string | null>(null)

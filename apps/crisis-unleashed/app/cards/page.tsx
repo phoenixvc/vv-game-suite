@@ -9,6 +9,11 @@ import { heroCards } from "@/data/heroes"
 import { artifactCards } from "@/data/artifacts"
 import { crisisCards } from "@/data/crisis"
 
+/**
+ * Renders the Crisis Unleashed card library page with search, filter, and tabbed browsing for Heroes, Artifacts, and Crisis Events.
+ *
+ * Displays a navigation bar, page title, and a filter section with search and dropdowns for faction and rarity. Users can browse cards by category using tabs, with each tab showing a responsive grid of card previews.
+ */
 export default function CardsPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">

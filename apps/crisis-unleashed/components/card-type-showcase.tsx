@@ -87,6 +87,11 @@ const cardData = {
   },
 }
 
+/**
+ * Displays an interactive, animated showcase of categorized cards with navigation and filtering.
+ *
+ * Users can select between hero, artifact, and crisis card categories, browse example cards within each category, and view card details with animated transitions. Includes controls for switching categories, navigating cards, and direct card selection.
+ */
 export default function CardTypeShowcase() {
   const [activeType, setActiveType] = useState<CardType>("hero")
   const [activeCardIndex, setActiveCardIndex] = useState(0)
@@ -214,6 +219,16 @@ export default function CardTypeShowcase() {
   )
 }
 
+/**
+ * Renders a selectable button for a card category with an icon and label.
+ *
+ * Highlights the button if it matches the currently active card type.
+ *
+ * @param type - The card category represented by this button.
+ * @param activeType - The currently selected card category.
+ * @param onClick - Handler invoked when the button is clicked.
+ * @param icon - Icon to display alongside the label.
+ */
 function TypeButton({
   type,
   activeType,

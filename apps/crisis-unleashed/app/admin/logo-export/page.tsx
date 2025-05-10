@@ -35,6 +35,11 @@ const variants: LogoVariant[] = [
 
 const sizes: LogoSize[] = ["xs", "sm", "md", "lg", "xl", "2xl"]
 
+/****
+ * Renders a page for customizing, previewing, and exporting logos with various settings.
+ *
+ * Provides controls to select logo faction, variant, size, and style options, as well as export format and dimensions. Displays a live preview and generates a JSX code snippet for the configured logo, which can be copied to the clipboard. Export functionality is currently limited to a placeholder alert.
+ */
 export default function LogoExportPage() {
   const [selectedFaction, setSelectedFaction] = useState<string>("cybernetic-nexus")
   const [selectedVariant, setSelectedVariant] = useState<LogoVariant>("standard")

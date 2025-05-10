@@ -80,6 +80,13 @@ const synergies = [
   { name: "stealth", icon: Target, color: "bg-pink-500" },
 ]
 
+/**
+ * Displays a visual summary and detailed breakdown of card synergies, deck power, and selected cards for a deck-building game.
+ *
+ * Shows deck statistics, synergy occurrence counts, calculated synergy bonuses, and a grid of selected card previews. Users can toggle the visibility of the synergy breakdown section.
+ *
+ * @remark Uses a predefined sample dataset for cards and synergies. Synergy bonus points are awarded for each additional occurrence of a synergy beyond the first.
+ */
 export function DeckBuilderSynergyPreview() {
   const [selectedCards, setSelectedCards] = useState<string[]>(["card1", "card3", "card4"])
   const [showSynergies, setShowSynergies] = useState(true)

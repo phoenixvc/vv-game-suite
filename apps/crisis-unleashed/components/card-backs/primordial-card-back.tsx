@@ -3,6 +3,15 @@ import { getPrimordialRune, getRarityClass } from "@/lib/card-utils";
 import styles from "@/styles/card-backs.module.css";
 import { CardBackProps } from "@/types/card";
 
+/**
+ * Renders a styled card back for a Primordial-themed card, displaying its name, type, set, and decorative elements.
+ *
+ * Applies rarity-based and dark mode styling, and includes faction-specific icons and runes based on the provided card data.
+ *
+ * @param card - Card data containing details such as name, rarity, type, set, and id.
+ * @param darkMode - If true, applies dark mode styling.
+ * @param className - Additional CSS classes to apply to the card back.
+ */
 export function PrimordialCardBack({ card, darkMode = false, className = "" }: CardBackProps) {
   const rarityClass = getRarityClass(card.rarity, styles);
 

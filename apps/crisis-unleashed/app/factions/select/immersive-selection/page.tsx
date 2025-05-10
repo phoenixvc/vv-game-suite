@@ -13,6 +13,13 @@ import styles from "./immersive-selection.module.css"
 // Faction selection steps
 type SelectionStep = "intro" | "overview" | "detail" | "quiz" | "confirmation"
 
+/**
+ * Renders the immersive multi-step faction selection experience for Crisis Unleashed.
+ *
+ * Guides the user through an animated sequence of steps: an intro, a carousel overview of factions, detailed faction information, a personality quiz for faction recommendation, and a confirmation screen. Handles animated transitions, quiz logic, faction selection, and applies the chosen faction's theme before redirecting to the designer page.
+ *
+ * @returns The React component for the immersive faction selection flow.
+ */
 export default function ImmersiveSelectionPage() {
   const router = useRouter()
   const { setCurrentTheme } = useTheme()

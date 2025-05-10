@@ -18,6 +18,19 @@ interface CardTemplatePreviewProps {
   className?: string
 }
 
+/**
+ * Renders an interactive preview of a card with animated overlays and tooltips for stats, abilities, aspects, and faction information.
+ *
+ * Displays the appropriate card component based on the card's type and shows contextual overlays on hover, including quick stats for hero cards, ability previews, aspect synergies, and faction playstyle details.
+ *
+ * @param card - The card data to display in the preview.
+ * @param size - The size of the card preview ("sm", "md", or "lg"). Defaults to "md".
+ * @param onClick - Optional click handler for the card.
+ * @param showDetails - Controls detail visibility (currently not used).
+ * @param className - Additional CSS classes for the container.
+ *
+ * @returns A React element rendering the card preview with interactive overlays.
+ */
 export default function CardTemplatePreview({
   card,
   size = "md",
@@ -204,7 +217,12 @@ export default function CardTemplatePreview({
   )
 }
 
-// Helper function to get faction playstyle description
+/**
+ * Returns a descriptive playstyle summary for a given faction.
+ *
+ * @param faction - The name of the faction.
+ * @returns A string describing the typical playstyle associated with the specified faction, or a default description if the faction is unrecognized.
+ */
 function getFactionPlaystyle(faction: string): string {
   const playstyles: Record<string, string> = {
     Order: "Control-oriented with strong defensive capabilities and tactical positioning.",

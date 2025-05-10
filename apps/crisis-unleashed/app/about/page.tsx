@@ -2,6 +2,11 @@ import SharedNavigation from "@/components/shared-navigation"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
+/**
+ * Renders the "About Crisis Unleashed" page with information about the game's vision, features, team, and community.
+ *
+ * Displays a full-page layout including a navigation bar, detailed descriptions of the game's philosophy and mechanics, a team introduction, and calls to action for joining the community.
+ */
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">

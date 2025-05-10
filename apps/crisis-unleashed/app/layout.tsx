@@ -15,6 +15,13 @@ export const metadata = {
     generator: 'v0.dev'
 }
 
+/**
+ * Defines the root layout for the application, providing global structure, theming, error boundaries, navigation, footer, and accessibility controls.
+ *
+ * Wraps all page content with providers and shared UI components to ensure consistent appearance and behavior across the app.
+ *
+ * @param children - The page content to be rendered within the layout.
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">

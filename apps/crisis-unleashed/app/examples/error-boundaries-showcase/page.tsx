@@ -12,7 +12,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
 
-// Component that will throw an error when the button is clicked
+/**
+ * Renders a button that, when clicked, throws an error with a customizable message.
+ *
+ * @param errorMessage - The error message to use when throwing the error.
+ * @param throwOnRender - If true, the error is thrown immediately on initial render.
+ *
+ * @throws {Error} When the button is clicked or if {@link throwOnRender} is true on mount.
+ */
 function ErrorThrower({ errorMessage = "Test error", throwOnRender = false }) {
   const [shouldThrow, setShouldThrow] = useState(throwOnRender)
 
@@ -23,7 +30,11 @@ function ErrorThrower({ errorMessage = "Test error", throwOnRender = false }) {
   return <Button onClick={() => setShouldThrow(true)}>Trigger Error</Button>
 }
 
-// Animation component that will throw an error
+/**
+ * Renders an animated box with a button that triggers an error when clicked.
+ *
+ * @throws {Error} When the "Break Animation" button is clicked, throws an "Animation calculation error".
+ */
 function BrokenAnimation() {
   const [shouldThrow, setShouldThrow] = useState(false)
 
@@ -43,7 +54,11 @@ function BrokenAnimation() {
   )
 }
 
-// Card preview that will throw an error
+/**
+ * Renders a mock card preview that throws an error when the "Break Card" button is clicked.
+ *
+ * @remark Throws an error with the message "Card rendering error" when triggered, intended for testing error boundaries.
+ */
 function BrokenCardPreview() {
   const [shouldThrow, setShouldThrow] = useState(false)
 
@@ -74,7 +89,11 @@ function BrokenCardPreview() {
   )
 }
 
-// Broken image component
+/**
+ * Displays an image that can be deliberately broken to simulate a loading error.
+ *
+ * Renders a valid image by default, and switches to an invalid image source when the "Break Image" button is clicked to trigger an image load failure.
+ */
 function BrokenImage() {
   const [shouldBreak, setShouldBreak] = useState(false)
 
@@ -95,6 +114,11 @@ function BrokenImage() {
   )
 }
 
+/**
+ * Demonstrates various error boundaries in the application using interactive UI examples.
+ *
+ * Renders a tabbed interface where each tab showcases a different error boundary component, allowing users to trigger and observe error handling for card previews, animations, collections, themes, and images. Also includes a content section wrapped in an error boundary to illustrate graceful error recovery in content areas.
+ */
 export default function ErrorBoundariesShowcase() {
   return (
     <div className="container mx-auto py-8">

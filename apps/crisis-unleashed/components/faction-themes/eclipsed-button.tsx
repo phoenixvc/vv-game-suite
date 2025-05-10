@@ -15,6 +15,21 @@ interface EclipsedButtonProps {
   showShadowEffect?: boolean
 }
 
+/**
+ * Renders a customizable button with multiple visual variants, sizes, and interactive effects.
+ *
+ * The button supports primary, secondary, outline, and danger variants, as well as small, medium, and large sizes. It provides visual feedback for hover, press, and click states, including optional shadow and accent effects. When hovered, corner accents appear, and for the primary variant, a decorative dagger icon is shown. The button can be disabled to prevent interaction.
+ *
+ * @param children - Content to display inside the button.
+ * @param onClick - Function to call when the button is clicked.
+ * @param variant - Visual style of the button; defaults to "primary".
+ * @param size - Size of the button; defaults to "md".
+ * @param className - Additional CSS classes to apply.
+ * @param disabled - Whether the button is disabled; defaults to false.
+ * @param showShadowEffect - Whether to enable the shadow effect; defaults to true.
+ *
+ * @returns A styled button element with interactive visual effects.
+ */
 export function EclipsedButton({
   children,
   onClick,

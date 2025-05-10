@@ -17,6 +17,22 @@ interface CelestialCardProps {
   size?: "sm" | "md" | "lg"
 }
 
+/**
+ * Renders a stylized celestial-themed card with dynamic visual effects and interactive behavior.
+ *
+ * Displays a card with a title, description, image, rarity indicator, and type icon. The card features animated cosmic effects, a constellation pattern overlay, and visual styling that adapts to rarity and size. Hovering triggers a glow and shimmer effect. Supports an optional click handler and customizable appearance via props.
+ *
+ * @param title - The card's title text.
+ * @param description - The card's description text.
+ * @param image - Optional image URL for the card; defaults to a placeholder if not provided or if loading fails.
+ * @param rarity - Optional rarity level; determines border and glow effects. Defaults to "common".
+ * @param type - Optional card type; determines the icon displayed. Defaults to "artifact".
+ * @param onClick - Optional click handler for the card.
+ * @param className - Optional additional CSS classes for the card container.
+ * @param size - Optional card size; affects dimensions and image size. Defaults to "md".
+ *
+ * @returns A React element representing the celestial card.
+ */
 export function CelestialCard({
   title,
   description,

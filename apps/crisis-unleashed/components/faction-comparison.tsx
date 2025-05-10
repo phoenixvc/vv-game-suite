@@ -24,6 +24,16 @@ interface FactionComparisonProps {
   onSelectFaction?: (factionId: string, position: "left" | "right") => void
 }
 
+/**
+ * Displays an interactive side-by-side comparison of two factions, allowing users to compare stats, traits, synergies, and cards with animated transitions.
+ *
+ * Users can cycle through available factions on each side, switch between comparison tabs, and view detailed information for each faction. Stats are generated deterministically for consistency, and all transitions are animated for a smooth user experience.
+ *
+ * @param initialFactions - Optional tuple of two faction IDs to initialize the left and right factions.
+ * @param onSelectFaction - Optional callback invoked when a faction is selected or changed, receiving the new faction ID and its position ("left" or "right").
+ *
+ * @remark Faction cycling is temporarily disabled during animations to prevent rapid state changes.
+ */
 export default function FactionComparison({
   initialFactions = ["cybernetic-nexus", "void-harbingers"],
   onSelectFaction,
@@ -731,7 +741,18 @@ export default function FactionComparison({
   )
 }
 
-// Stat comparison component
+/**
+ * Displays a side-by-side comparison of a single stat for two factions with animated bars and a difference indicator.
+ *
+ * @param label - The name of the stat being compared.
+ * @param leftValue - The stat value for the left faction.
+ * @param rightValue - The stat value for the right faction.
+ * @param icon - Icon representing the stat.
+ * @param leftColor - Color used for the left faction's stat bar.
+ * @param rightColor - Color used for the right faction's stat bar.
+ *
+ * @returns A React element rendering the stat comparison row with animated bars and a badge showing the value difference.
+ */
 function StatComparison({
   label,
   leftValue,

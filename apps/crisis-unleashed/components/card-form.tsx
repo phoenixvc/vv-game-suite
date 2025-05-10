@@ -20,6 +20,14 @@ interface CardFormProps {
   darkMode?: boolean
 }
 
+/**
+ * Renders a multi-tabbed form for editing card data, supporting dynamic fields and validation based on card type.
+ *
+ * Allows users to modify card attributes such as name, type, stats, abilities, aspects, lore, artist, and image, with changes managed in local state and resettable on card prop updates. On submission, invokes {@link onSave} with the updated card data; on cancellation, invokes {@link onCancel}.
+ *
+ * @remark
+ * The form adapts its fields based on the selected card type (Hero, Artifact, or Crisis), including dynamic ability management for Hero cards and live image preview with placeholder generation.
+ */
 export function CardForm({ card, onSave, onCancel, darkMode = false }: CardFormProps) {
   const [formData, setFormData] = useState<CardData>({ ...card })
   const [activeTab, setActiveTab] = useState("basic")

@@ -10,6 +10,11 @@ import { artifactCards } from "@/data/artifacts"
 import { crisisCards } from "@/data/crisis"
 import Link from "next/link"
 
+/**
+ * Renders the community gallery page for custom cards, featuring search, filtering, sorting, and tabbed views of card previews.
+ *
+ * Displays a full-page layout with a navigation bar, search and filter controls, and a tabbed interface for browsing featured, popular, recent, and followed cards. Each tab shows a grid of card previews with interactive metadata. Includes a button linking to the card designer for creating new cards.
+ */
 export default function GalleryPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -124,6 +129,14 @@ export default function GalleryPage() {
   )
 }
 
+/**
+ * Displays a preview card for a community gallery item, including card details, creator, and interactive buttons for likes, downloads, and sharing.
+ *
+ * @param card - The card data to preview.
+ * @param creator - The name of the card's creator.
+ * @param likes - The number of likes the card has received.
+ * @param downloads - The number of times the card has been downloaded.
+ */
 function GalleryCard({
   card,
   creator,

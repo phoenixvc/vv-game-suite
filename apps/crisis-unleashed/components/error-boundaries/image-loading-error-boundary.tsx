@@ -16,6 +16,20 @@ interface ImageLoadingErrorBoundaryProps {
   height?: number
 }
 
+/**
+ * Wraps child components with an error boundary that handles image loading errors and displays a customizable fallback UI.
+ *
+ * If an error occurs within the children, logs error details and renders either a provided fallback image or a default placeholder with a retry option.
+ *
+ * @param children - The React nodes to be wrapped by the error boundary.
+ * @param imageSrc - The source URL of the image being loaded, used for error logging.
+ * @param imageAlt - The alt text for the image, used for error logging and fallback UI. Defaults to "Image".
+ * @param fallbackImageSrc - Optional source URL for a fallback image to display if loading fails.
+ * @param width - The width of the fallback container and image. Defaults to 200.
+ * @param height - The height of the fallback container and image. Defaults to 200.
+ *
+ * @returns The children wrapped in an error boundary with image-specific error handling and fallback UI.
+ */
 export function ImageLoadingErrorBoundary({
   children,
   imageSrc,

@@ -5,6 +5,15 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import styles from "@/styles/animations.module.css"
 
+/**
+ * Renders a cybernetic-themed interface with an animated boot sequence followed by a stylized main display.
+ *
+ * Displays a simulated boot process with sequential system messages and a progress bar before revealing the main interface. The main interface includes a header with status indicators, a decorative SVG, a content area for children, and a footer with a pulsing system status.
+ *
+ * @param title - The title displayed in the interface header.
+ * @param children - The content rendered inside the interface body.
+ * @param className - Optional additional CSS classes for the root container.
+ */
 export default function CyberneticInterface({
   title,
   children,

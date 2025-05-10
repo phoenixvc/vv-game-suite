@@ -84,7 +84,7 @@ export const ECLIPSED_MARKS = ["◑", "◐", "◓", "◒", "◕", "◖", "◗", 
  */
 export function getEclipsedMark(cardId?: string): string {
   return getSymbolFromList(ECLIPSED_MARKS, cardId);
-  }
+}
 
 /**
  * Get a cybernetic-themed code based on card ID

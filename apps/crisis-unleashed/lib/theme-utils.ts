@@ -15,19 +15,21 @@ export function isValidFactionTheme(theme: string): theme is FactionTheme {
  * @param theme The theme string to check
  * @returns Boolean indicating if the theme is valid
  */
-export function isValidTheme(theme: string): theme is Theme {
-  return ["dark", "light", "system"].includes(theme as Theme);
-}
+const VALID_THEMES: Theme[] = ["dark", "light", "system"];
 
-const FACTION_THEME_DISPLAY_NAMES: Record<FactionTheme, string> = {
-  default: "Default",
-  celestial: "Celestial Dominion",
-  void: "Void Harbingers",
-  primordial: "Primordial Ascendancy",
-  titanborn: "Titanborn",
-  eclipsed: "Eclipsed Order",
-  cybernetic: "Cybernetic Nexus"
-};
+ export function isValidTheme(theme: string): theme is Theme {
+  return VALID_THEMES.includes(theme as any);
+ }
+
+const FACTION_THEME_DISPLAY_NAMES: Readonly<Record<FactionTheme, string>> = {
+   default: "Default",
+   celestial: "Celestial Dominion",
+   void: "Void Harbingers",
+   primordial: "Primordial Ascendancy",
+   titanborn: "Titanborn",
+   eclipsed: "Eclipsed Order",
+   cybernetic: "Cybernetic Nexus"
+ };
 
 /**
  * Get the display name for a faction theme
@@ -38,15 +40,15 @@ export function getFactionThemeDisplayName(theme: FactionTheme): string {
   return FACTION_THEME_DISPLAY_NAMES[theme];
 }
 
-const FACTION_THEME_CLASS_NAMES: Record<FactionTheme, string> = {
-  default: "theme-default",
-  celestial: "theme-celestial",
-  void: "theme-void",
-  primordial: "theme-primordial",
-  titanborn: "theme-titanborn",
-  eclipsed: "theme-eclipsed",
-  cybernetic: "theme-cybernetic"
-};
+const FACTION_THEME_CLASS_NAMES: Readonly<Record<FactionTheme, string>> = {
+   default: "theme-default",
+   celestial: "theme-celestial",
+   void: "theme-void",
+   primordial: "theme-primordial",
+   titanborn: "theme-titanborn",
+   eclipsed: "theme-eclipsed",
+   cybernetic: "theme-cybernetic"
+ };
 
 /**
  * Get the CSS class name for a faction theme

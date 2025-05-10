@@ -1,55 +1,55 @@
 export type CardRarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary' | 'Mythic';
 
 export interface CardAbility {
-  name: string;
-  cost?: number;
-  description: string;
+  readonly name: string;
+  readonly cost?: number;
+  readonly description: string;
 }
 
 export interface CardStats {
-    power: number;
-    health: number;
-    cost: number;
-    energy: number;
+    readonly power: number;
+    readonly health: number;
+    readonly cost: number;
+    readonly energy: number;
 }
 
 export interface CardContent {
-    description: string;
-    effect: string;
-    lore: string;
-    abilities: CardAbility[];
+    readonly description: string;
+    readonly effect: string;
+    readonly lore: string;
+    readonly abilities: ReadonlyArray<CardAbility>;
 }
 
 export interface CardMetadata {
-    artist: string;
-    illustration: string;
-    releaseDate: string;
-    variant: string;
-    isHolo: boolean;
-    isPromo: boolean;
+    readonly artist: string;
+    readonly illustration: string;
+    readonly releaseDate: string;
+    readonly variant: string;
+    readonly isHolo: boolean;
+    readonly isPromo: boolean;
 }
 
 export interface CardMechanics {
-    keywords: string[];
-    requirements: string;
-    impact: string;
-    duration: string;
-    synergies: string[];
-    restrictions: string[];
+    readonly keywords: ReadonlyArray<string>;
+    readonly requirements: string;
+    readonly impact: string;
+    readonly duration: string;
+    readonly synergies: ReadonlyArray<string>;
+    readonly restrictions: ReadonlyArray<string>;
 }
 
 export interface Card {
-  type: string;
-  id: string;
-  name: string;
-  set?: string;
-  rarity?: CardRarity;
-  faction?: string;
+  readonly type: string;
+  readonly id: string;
+  readonly name: string;
+  readonly set?: string;
+  readonly rarity?: CardRarity;
+  readonly faction?: string;
   
-  stats?: CardStats;
-  content?: CardContent;
-  metadata?: CardMetadata;
-  mechanics?: CardMechanics;
+  readonly stats?: CardStats;
+  readonly content?: CardContent;
+  readonly metadata?: CardMetadata;
+  readonly mechanics?: CardMechanics;
 }
 
 // ReadonlyCard represents a card with all properties readonly

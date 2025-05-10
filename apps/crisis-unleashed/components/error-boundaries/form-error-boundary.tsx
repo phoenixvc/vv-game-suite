@@ -12,6 +12,15 @@ interface FormErrorBoundaryProps {
   onReset?: () => void
 }
 
+/**
+ * Provides an error boundary for forms, displaying a user-friendly fallback UI and logging errors when they occur.
+ *
+ * Wraps form content to catch rendering errors, log error details, and present options to reload the page or reset the form.
+ *
+ * @param children - The form elements or components to be rendered within the error boundary.
+ * @param formName - Optional name used to identify the form in error logs and UI. Defaults to "Form".
+ * @param onReset - Optional callback invoked when the user chooses to reset the form after an error.
+ */
 export function FormErrorBoundary({ children, formName = "Form", onReset }: FormErrorBoundaryProps) {
   const handleError = (error: Error) => {
     logError({

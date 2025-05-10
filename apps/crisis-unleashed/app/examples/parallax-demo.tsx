@@ -2,6 +2,11 @@
 
 import ParallaxElement from "@/components/parallax-element"
 
+/**
+ * Renders a demonstration of multiple parallax elements with varying speeds, directions, and styles.
+ *
+ * Displays four styled shapes positioned at the corners of the viewport, each wrapped in a {@link ParallaxElement} to create a layered parallax effect that responds to mouse movement. Includes a centered overlay with instructions for the user.
+ */
 export default function ParallaxDemo() {
   return (
     <>

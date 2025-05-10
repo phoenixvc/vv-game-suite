@@ -11,6 +11,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ApiErrorAlert } from "@/components/api-error-alert"
 import { Wifi, WifiOff, RefreshCw, Send, Trash2, Clock } from "lucide-react"
 
+/**
+ * React component that demonstrates a request queue system with offline support and priority-based queuing.
+ *
+ * Allows users to configure and send API requests, toggle simulated online/offline status, and observe how requests are queued, processed, or cancelled based on network state and priority.
+ *
+ * @returns The rendered request queue demo UI.
+ *
+ * @remark Simulates network status changes for demonstration purposes by overriding the browser's `navigator.onLine` property and dispatching corresponding events.
+ */
 export default function RequestQueueDemo() {
   const [url, setUrl] = useState("https://jsonplaceholder.typicode.com/posts/1")
   const [method, setMethod] = useState("GET")

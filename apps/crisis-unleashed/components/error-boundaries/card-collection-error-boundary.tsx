@@ -12,6 +12,18 @@ interface CardCollectionErrorBoundaryProps {
   onReset?: () => void
 }
 
+/**
+ * Provides an error boundary for card collection UIs, displaying a recovery interface and logging errors when failures occur.
+ *
+ * Renders its children unless an error is encountered, in which case a fallback UI is shown with options to reload the collection or reset related cache and reload.
+ *
+ * @param children - The React nodes to render within the error boundary.
+ * @param collectionName - Optional name of the collection for contextual error reporting and UI messaging. Defaults to "Card Collection".
+ * @param onReset - Optional callback invoked when the user chooses to reload the collection.
+ *
+ * @remark
+ * If the "Reset Cache & Reload" button is used, all local storage keys containing "collection" or "cards" are cleared before reloading the page.
+ */
 export function CardCollectionErrorBoundary({
   children,
   collectionName = "Card Collection",

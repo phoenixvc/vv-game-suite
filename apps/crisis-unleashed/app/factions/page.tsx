@@ -3,6 +3,11 @@ import SharedNavigation from "@/components/shared-navigation"
 import { Button } from "@/components/ui/button"
 import SimpleCircuitBackground from "@/components/simple-circuit-background"
 
+/**
+ * Renders the Factions selection page with a styled background, navigation, and a grid of faction cards.
+ *
+ * Displays six unique factions, each with themed visuals, descriptions, and stats, allowing users to choose their allegiance.
+ */
 export default function FactionsPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white relative">
@@ -91,6 +96,17 @@ export default function FactionsPage() {
   )
 }
 
+/**
+ * Renders a styled card displaying a faction's icon, name, description, stats, and a link to the faction's detail page.
+ *
+ * @param color - Tailwind CSS class for the card's header background color.
+ * @param icon - Emoji or icon representing the faction.
+ * @param name - Name of the faction.
+ * @param description - Brief description of the faction.
+ * @param stats - Array of objects containing a numeric value and label for each faction stat.
+ *
+ * @returns A React element representing the faction card.
+ */
 function FactionCard({
   color,
   icon,

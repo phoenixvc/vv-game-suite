@@ -17,6 +17,11 @@ const cyberneticCards = [
   ...artifactCards.filter((card) => card.faction === "Cybernetic Nexus" || card.faction === "Tech"),
 ].slice(0, 6)
 
+/**
+ * Renders the themed page for the Cybernetic Nexus faction, providing an interactive multi-tab interface to explore faction overview, technology, abilities, card database, and battle analytics.
+ *
+ * The page features a cybernetic-styled layout with a sidebar for navigation and faction stats, dynamic main content based on the selected tab, and a section highlighting featured technologies. Users can view detailed information about the faction, its strengths and weaknesses, technological advancements, unique abilities, card data, and performance analytics.
+ */
 export default function CyberneticNexusThemePage() {
   const [activeTab, setActiveTab] = useState("overview")
 

@@ -1,6 +1,11 @@
 import FactionComparison from "@/components/faction-comparison"
 import SharedNavigation from "@/components/shared-navigation"
 
+/**
+ * Renders the Faction Comparison page with navigation, a heading, a description, and the faction comparison component.
+ *
+ * Displays a full-page layout for users to compare the strengths, abilities, and playstyles of different factions.
+ */
 export default function FactionComparePage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">

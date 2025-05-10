@@ -1,6 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getFactionColor } from "@/lib/logo-system"
 
+/**
+ * Handles GET requests to generate a PNG favicon image based on query parameters.
+ *
+ * The favicon is rendered as a colored circle, with optional faction-specific details for "cybernetic-nexus". The color and style are determined by the `faction`, `monochrome`, and `inverted` query parameters. The icon size is set by the `size` parameter.
+ *
+ * @returns A {@link NextResponse} containing the generated PNG image with appropriate content type and cache headers.
+ *
+ * @remark Returns a 500 response if the canvas 2D context cannot be obtained.
+ */
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const faction = searchParams.get("faction") || "cybernetic-nexus"

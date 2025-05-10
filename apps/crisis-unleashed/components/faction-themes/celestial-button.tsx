@@ -16,6 +16,22 @@ interface CelestialButtonProps {
   cosmicEffect?: "portal" | "stars" | "time" | "none"
 }
 
+/**
+ * Renders a customizable button with selectable variant, size, and interactive cosmic-themed visual effects.
+ *
+ * The button supports optional icons, multiple style variants, and animated backgrounds that activate on hover. It manages its own hover and press states to trigger visual feedback and disables interaction and effects when the `disabled` prop is set.
+ *
+ * @param children - Content to display inside the button.
+ * @param onClick - Optional click event handler.
+ * @param variant - Visual style of the button; one of "primary", "secondary", "outline", or "ghost". Defaults to "primary".
+ * @param size - Size of the button; one of "sm", "md", or "lg". Defaults to "md".
+ * @param disabled - Whether the button is disabled. Defaults to false.
+ * @param className - Additional CSS class names to apply.
+ * @param icon - Optional icon to display before the button content.
+ * @param cosmicEffect - Type of cosmic animation effect on hover; one of "portal", "stars", "time", or "none". Defaults to "stars".
+ *
+ * @returns The rendered button element with interactive styles and effects.
+ */
 export function CelestialButton({
   children,
   onClick,

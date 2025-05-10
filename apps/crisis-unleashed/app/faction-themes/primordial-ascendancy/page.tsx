@@ -7,6 +7,11 @@ import PrimordialInterface from "../../../components/faction-themes/primordial-i
 import PrimordialButton from "../../../components/faction-themes/primordial-button"
 import styles from "../../../styles/animations.module.css"
 
+/**
+ * Renders a themed interactive demo UI for the "Primordial Ascendancy" faction, featuring card selection, faction overview, and action buttons.
+ *
+ * Displays animated headers, a collection of faction cards with selectable highlighting, an overview of faction abilities, and a set of action buttons with descriptive captions and strategy tips. All content is styled and animated to match a nature-based fantasy theme.
+ */
 export default function PrimordialAscendancyDemo() {
   const [selectedCard, setSelectedCard] = useState<string | null>(null)
 

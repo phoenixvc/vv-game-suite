@@ -9,6 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label"
 import { factionThemes } from "@/lib/faction-themes"
 
+/**
+ * Renders a UI for previewing and exporting a theme-aware logo in PNG or SVG format at selectable sizes and themes.
+ *
+ * Provides controls to choose the logo's theme, export format, and size, and allows users to download the logo as an image file. Includes instructions for using the logo component directly or exporting static images for use in other applications.
+ *
+ * @returns The rendered logo exporter interface.
+ */
 export default function LogoExporter() {
   const { setCurrentTheme, currentTheme } = useTheme()
   const [size, setSize] = useState(300)

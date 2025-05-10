@@ -9,6 +9,17 @@ interface ErrorSafeImageProps extends Omit<ImageProps, "src"> {
   fallbackSrc?: string
 }
 
+/**
+ * Renders an image with automatic error handling and fallback support.
+ *
+ * If the primary image fails to load, displays a fallback image or a generic placeholder.
+ *
+ * @param src - The source URL of the primary image.
+ * @param fallbackSrc - Optional fallback image URL to display if the primary image fails to load.
+ * @param alt - Alternative text for the image.
+ *
+ * @returns A Next.js Image component with built-in error fallback behavior.
+ */
 export function ErrorSafeImage({
   src,
   fallbackSrc = "/generic-placeholder-image.png",

@@ -11,6 +11,15 @@ interface ApiErrorAlertProps {
   className?: string
 }
 
+/**
+ * Displays an alert UI for an API error, showing an icon, title, and message based on the error type.
+ *
+ * If the error is retryable and a retry handler is provided, a retry button is displayed.
+ *
+ * @param error - The API error to display.
+ * @param onRetry - Optional callback to retry the failed operation.
+ * @param className - Optional additional CSS classes for the alert.
+ */
 export function ApiErrorAlert({ error, onRetry, className = "" }: ApiErrorAlertProps) {
   const errorDetails = parseApiError(error)
 

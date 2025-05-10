@@ -19,6 +19,13 @@ interface ErrorLog {
   userAgent?: string
 }
 
+/**
+ * Displays a list of error logs with filtering, severity highlighting, and detailed views for stack traces and additional information.
+ *
+ * Provides tabs to filter logs by source (all, client, or server), shows counts for each category, and formats log details for easy inspection. Includes loading and error states, and simulates fetching logs with mock data.
+ *
+ * @returns The rendered error logs viewer component.
+ */
 export default function ErrorLogsViewer() {
   const [logs, setLogs] = useState<ErrorLog[]>([])
   const [loading, setLoading] = useState(true)

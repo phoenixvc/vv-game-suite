@@ -9,6 +9,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Slider } from "@/components/ui/slider"
 import { ResponsiveAnimatedLogo } from "@/components/responsive-animated-logo"
 
+/**
+ * Provides a user interface for generating, previewing, and downloading a custom logo for Crisis Unleashed.
+ *
+ * Allows users to customize the logo text (up to 4 characters), adjust the logo size, preview the animated logo, and download the generated logo as a PNG file. Also displays the current logo status and provides instructions for updating the logo in the public directory.
+ */
 export default function LogoGenerator() {
   const [size, setSize] = useState(300)
   const [text, setText] = useState("CU")

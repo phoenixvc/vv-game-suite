@@ -11,6 +11,15 @@ import Link from "next/link"
 import { ArrowLeft, Zap, Compass, Skull, Book, Atom } from "lucide-react"
 import styles from "@/styles/animations.module.css"
 
+/**
+ * Renders the interactive themed page for the "Void Harbingers" faction, featuring tabbed content, reality stability mechanics, and entity showcases.
+ *
+ * Displays a dynamic interface with faction overview, abilities, entities, lore, and research sections. Includes a sidebar for navigation and reality stability controls, with visual effects and UI changes based on the current stability state.
+ *
+ * @returns The complete React component for the Void Harbingers faction theme page.
+ *
+ * @remark When reality stability drops below 40%, various UI elements display glitch effects and are marked as unstable.
+ */
 export default function VoidHarbingersThemePage() {
   const [activeTab, setActiveTab] = useState("overview")
   const [realityStability, setRealityStability] = useState(70)

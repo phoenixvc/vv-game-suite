@@ -13,6 +13,15 @@ interface FactionThemeErrorBoundaryProps {
   fallbackToDefault?: boolean
 }
 
+/**
+ * Provides an error boundary for theme-related errors, logging issues and optionally reverting to the default theme with a user-friendly fallback UI.
+ *
+ * Wraps child components to catch and handle errors that occur during theme loading or rendering. If an error is detected, it logs the error details, optionally switches to the default theme, and displays a fallback interface allowing users to retry or manually switch themes.
+ *
+ * @param children - React nodes to render within the error boundary.
+ * @param themeName - Optional name of the theme associated with this boundary.
+ * @param fallbackToDefault - Whether to automatically switch to the default theme on error (default: true).
+ */
 export function FactionThemeErrorBoundary({
   children,
   themeName,

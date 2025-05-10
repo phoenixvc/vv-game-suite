@@ -7,6 +7,11 @@ import { EclipsedInterface } from "../../../components/faction-themes/eclipsed-i
 import { EclipsedButton } from "../../../components/faction-themes/eclipsed-button"
 import styles from "../../../styles/animations.module.css"
 
+/**
+ * Renders the Eclipsed Order faction interface, providing operative selection, mission control, and equipment management in a themed multi-column layout.
+ *
+ * Displays interactive profiles for operatives, mission status and objectives, a mission map with dynamic elements, and a list of equipment and abilities. Users can select operatives, initiate and complete missions, and toggle classified information visibility. The interface adapts its appearance and available actions based on current state.
+ */
 export default function EclipsedOrderPage() {
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null)
   const [missionStatus, setMissionStatus] = useState<"planning" | "active" | "complete">("planning")

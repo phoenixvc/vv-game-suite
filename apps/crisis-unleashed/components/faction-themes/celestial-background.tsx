@@ -12,6 +12,16 @@ interface CelestialBackgroundProps {
   className?: string
 }
 
+/**
+ * Renders a full-screen animated cosmic background with twinkling stars and optional constellations.
+ *
+ * The background is rendered on a canvas element, with star density and constellation count determined by the `intensity` prop. Constellations are randomly generated and animated alongside the starfield. Any provided `children` are rendered above the animated background.
+ *
+ * @param children - Optional React nodes to display above the background.
+ * @param showConstellations - Whether to display animated constellations. Defaults to `true`.
+ * @param intensity - Controls star and constellation density; can be "low", "medium", or "high". Defaults to "medium".
+ * @param className - Additional CSS classes for the container.
+ */
 export function CelestialBackground({
   children,
   showConstellations = true,

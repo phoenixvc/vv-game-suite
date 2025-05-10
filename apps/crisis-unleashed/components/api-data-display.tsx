@@ -13,6 +13,17 @@ interface ApiDataDisplayProps {
   errorProne?: boolean // For demo purposes to simulate errors
 }
 
+/**
+ * Displays data fetched from a specified API endpoint in a card layout, with optional controls to simulate various API error scenarios.
+ *
+ * When error simulation is enabled, users can trigger network, timeout, server, authentication, or not found errors to test error handling. The component automatically fetches data, supports cache clearing and manual refresh, and throws any encountered errors for an error boundary to handle.
+ *
+ * @param endpoint - The API URL to fetch data from.
+ * @param title - The title displayed in the card header.
+ * @param errorProne - If true, enables UI controls for simulating API errors.
+ *
+ * @remark If an error occurs during data fetching, the error is thrown to be handled by a parent error boundary.
+ */
 export function ApiDataDisplay({ endpoint, title, errorProne = false }: ApiDataDisplayProps) {
   const [errorSimulation, setErrorSimulation] = useState<string | null>(null)
 

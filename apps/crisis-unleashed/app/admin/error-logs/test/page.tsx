@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { logError } from "@/lib/error-logger"
 
+/**
+ * React component for testing and demonstrating error logging functionality.
+ *
+ * Renders a UI with controls to trigger and log both client-side and server-side errors, display the most recent error, and provide usage instructions for the error logging system.
+ */
 export default function ErrorLogTester() {
   const [lastError, setLastError] = useState<string | null>(null)
 

@@ -18,6 +18,17 @@ interface CardDetailModalProps {
   onDelete?: () => void
 }
 
+/**
+ * Displays a modal dialog with detailed information about a card, including a preview, stats, abilities, and lore.
+ *
+ * The modal supports fullscreen mode, zoom controls, and flipping between the front and back of the card. Users can view card details organized into tabs and optionally edit or delete the card if callbacks are provided.
+ *
+ * @param card - The card data to display in detail.
+ * @param isOpen - Whether the modal is visible.
+ * @param onClose - Callback invoked when the modal is closed.
+ * @param onEdit - Optional callback for editing the card.
+ * @param onDelete - Optional callback for deleting the card.
+ */
 export function CardDetailModal({ card, isOpen, onClose, onEdit, onDelete }: CardDetailModalProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(1)

@@ -25,6 +25,14 @@ interface CardDesignerProps {
 // Generate a unique ID
 const generateId = () => `card-${Date.now()}-${Math.floor(Math.random() * 1000)}`
 
+/**
+ * Provides an interactive interface for managing, creating, editing, deleting, importing, and exporting card collections for Heroes, Artifacts, and Crises.
+ *
+ * Displays card collections with tab navigation, card preview with flipping and navigation controls, detailed modals for viewing and editing, and synergy suggestions based on card properties. Card data is persisted in localStorage and can be imported/exported as JSON files.
+ *
+ * @remark
+ * Card navigation is available via next/previous buttons and mouse wheel scrolling within the preview section.
+ */
 export function CardDesigner({ darkMode = false }: CardDesignerProps) {
   // State for cards
   const [heroes, setHeroes] = useState<CardData[]>(initialHeroes)
@@ -506,7 +514,13 @@ export function CardDesigner({ darkMode = false }: CardDesignerProps) {
   )
 }
 
-// Helper function to find synergy suggestions
+/**
+ * Returns up to five cards from the given collection that share the same faction or have overlapping aspects with the specified card, excluding the card itself.
+ *
+ * @param card - The reference card for which to find synergy suggestions.
+ * @param collection - The array of cards to search for potential synergies.
+ * @returns An array of up to five unique cards that match by faction or aspects.
+ */
 function getSynergySuggestions(card: CardData, collection: CardData[]): CardData[] {
   if (!card) return []
 

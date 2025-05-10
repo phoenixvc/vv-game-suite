@@ -5,6 +5,20 @@ import type { CardData } from "@/lib/card-data"
 import styles from "@/styles/animations.module.css"
 import { getSafeImagePath } from "@/lib/image-utils"
 
+/**
+ * Renders a stylized cybernetic-themed card UI with animated circuit borders, interactive hover effects, and card details.
+ *
+ * Displays the card's name, image (with fallback), provision, type, stats (if applicable), description, up to two abilities, faction, and rarity. The card features an animated canvas border with pulsating nodes and animated data flow lines on hover, as well as a holographic overlay effect.
+ *
+ * @param card - The card data to display, including properties such as name, imageUrl, provision, type, attack, defense, health, description, abilities, faction, and rarity.
+ * @param className - Optional additional CSS classes for the card container.
+ * @param onClick - Optional click event handler for the card.
+ * @param size - Optional size variant ("sm", "md", or "lg"); defaults to "md".
+ *
+ * @returns The rendered React element for the cybernetic card.
+ *
+ * @remark If the card image fails to load or is missing, a placeholder SVG is displayed based on the card name.
+ */
 export default function CyberneticCard({
   card,
   className = "",

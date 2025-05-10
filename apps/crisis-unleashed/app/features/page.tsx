@@ -2,6 +2,11 @@ import SharedNavigation from "@/components/shared-navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+/**
+ * Renders the main features and mechanics page for the "Crisis Unleashed" card game.
+ *
+ * Displays a themed layout with a navigation bar, a grid of feature cards, and detailed sections describing game mechanics and NFT integration. Includes interactive tabs for exploring different aspects of gameplay and highlights the game's blockchain features.
+ */
 export default function FeaturesPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -313,6 +318,13 @@ export default function FeaturesPage() {
   )
 }
 
+/**
+ * Renders a stylized card displaying a feature icon, title, and description.
+ *
+ * @param icon - The icon representing the feature, typically an emoji or symbol.
+ * @param title - The title of the feature.
+ * @param description - A brief description of the feature.
+ */
 function FeatureCard({ icon, title, description }: { icon: string; title: string; description: string }) {
   return (
     <div className="bg-gray-800 rounded-lg p-6 hover:bg-gray-750 transition-colors duration-300 hover:shadow-lg border border-gray-700">

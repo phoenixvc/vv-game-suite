@@ -39,6 +39,16 @@ interface FactionPreviewProps {
   onSelect: () => void
 }
 
+/**
+ * Renders an interactive, animated preview of a game faction, displaying detailed information, visuals, and selection controls.
+ *
+ * Presents a tabbed interface with animated transitions for faction overview, strengths, lore, and details, including expandable trait lists, stat bars, lore sections, strategy tips, and relationship breakdowns. The component features faction-specific backgrounds, animated emblems, example cards, interface previews, and particle effects. Users can select the faction via an animated button.
+ *
+ * @param faction - The faction data object to display.
+ * @param onSelect - Callback invoked when the user selects the faction.
+ *
+ * @returns The complete animated preview UI for the specified faction.
+ */
 export default function FactionPreview({ faction, onSelect }: FactionPreviewProps) {
   // Ensure faction and its properties are defined
   const safeFaction = {
@@ -1155,7 +1165,12 @@ export default function FactionPreview({ faction, onSelect }: FactionPreviewProp
   )
 }
 
-// Helper functions for faction-specific content
+/**
+ * Returns a description of the playstyle associated with a given faction.
+ *
+ * @param factionId - The unique identifier of the faction.
+ * @returns A string describing the faction's typical playstyle, or "balanced gameplay" if the faction is unrecognized.
+ */
 function getPlaystyleDescription(factionId: string): string {
   if (!factionId) return "balanced gameplay"
 
@@ -1171,6 +1186,12 @@ function getPlaystyleDescription(factionId: string): string {
   return playstyles[factionId as keyof typeof playstyles] || "balanced gameplay"
 }
 
+/**
+ * Returns the core philosophical belief of a faction based on its ID.
+ *
+ * @param factionId - The unique identifier of the faction.
+ * @returns The faction's philosophy as a descriptive string, or a default value if the ID is unrecognized.
+ */
 function getFactionPhilosophy(factionId: string): string {
   if (!factionId) return "maintaining balance"
 
@@ -1186,6 +1207,12 @@ function getFactionPhilosophy(factionId: string): string {
   return philosophies[factionId as keyof typeof philosophies] || "maintaining balance"
 }
 
+/**
+ * Returns a list of notable figures for the specified faction.
+ *
+ * @param factionId - The unique identifier of the faction.
+ * @returns An array of objects containing the name and description of each notable figure, or an empty array if none are found.
+ */
 function getNotableFigures(factionId: string): Array<{ name: string; description: string }> {
   if (!factionId) return []
 
@@ -1243,6 +1270,12 @@ function getNotableFigures(factionId: string): Array<{ name: string; description
   return figures[factionId as keyof typeof figures] || []
 }
 
+/**
+ * Converts a hyphen-separated faction ID into a human-readable, title-cased name.
+ *
+ * @param factionId - The hyphen-separated identifier of the faction.
+ * @returns The formatted faction name, or the original string if formatting fails.
+ */
 function formatFactionName(factionId: string): string {
   if (!factionId) return ""
 

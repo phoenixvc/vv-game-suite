@@ -66,6 +66,14 @@ const factions = [
   // Add other factions here
 ]
 
+/**
+ * Displays a detailed page for a specific faction, including its lore, playstyle, strengths, weaknesses, stats, and associated cards.
+ *
+ * The page is organized into tabs for lore, playstyle guidance, and faction-specific cards (heroes, artifacts, and crisis events). If the provided slug does not match any faction, the first faction is shown by default.
+ *
+ * @param params - Contains the faction slug used to select which faction's details to display.
+ * @returns The rendered faction detail page as a React component.
+ */
 export default function FactionDetailPage({ params }: { params: { slug: string } }) {
   const faction = factions.find((f) => f.slug === params.slug) || factions[0]
 

@@ -5,7 +5,7 @@ export const VALID_FACTION_THEMES: readonly FactionTheme[] = [
 ] as const;
 
 // Map from faction theme to full display name
-export const FACTION_THEME_DISPLAY_NAMES = {
+export const FACTION_THEME_DISPLAY_NAMES: Record<FactionTheme, string> = {
   default: "Default",
   celestial: "Celestial Dominion",
   void: "Void Harbingers",
@@ -16,7 +16,7 @@ export const FACTION_THEME_DISPLAY_NAMES = {
 } as const;
 
 // Map from faction theme to CSS class name
-export const FACTION_THEME_CLASS_NAMES = {
+export const FACTION_THEME_CLASS_NAMES: Record<FactionTheme, string> = {
   default: "theme-default",
   celestial: "theme-celestial-dominion",
   void: "theme-void-harbingers",

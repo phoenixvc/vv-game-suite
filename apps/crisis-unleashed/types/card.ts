@@ -74,7 +74,6 @@ export interface ReadonlyCardData {
       description?: string;
       effect?: string;
       lore?: string;
-      abilities?: ReadonlyArray<Readonly<CardAbility>>;
     }>;
   
     // Card metadata

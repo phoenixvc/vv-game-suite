@@ -9,20 +9,20 @@ type ValidRarity = typeof VALID_RARITIES[number];
  * @returns CSS class name for the rarity
  */
 export function getRarityClass(
-  rarity: CardRarity | undefined,
-  styles: Record<`rarity${CardRarity}` | 'rarityCommon', string>
-): string {
-  if (!rarity || !VALID_RARITIES.includes(rarity)) {
-    return styles.rarityCommon; // Default rarity
+   rarity: CardRarity | undefined,
+  styles: Record<string, string>
+ ): string {
+   if (!rarity || !VALID_RARITIES.includes(rarity)) {
+     return styles.rarityCommon; // Default rarity
+   }
+   
+  // Create the key and check if it exists in styles
+  const key = `rarity${rarity}` as const;
+  if (key in styles) {
+    return styles[key];
   }
-  
-  // Create the key with proper type assertion
- const key = `rarity${rarity}`;
- if (key in styles) {
-   return styles[key as keyof typeof styles];
+   return styles.rarityCommon;
  }
- return styles.rarityCommon;
-}
 
 /**
  * Pick a symbol from a list based on the first char of `cardId`.

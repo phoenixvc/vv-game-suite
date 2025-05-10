@@ -17,8 +17,8 @@ export function isValidFactionTheme(theme: string): theme is FactionTheme {
  */
 const VALID_THEMES: readonly Theme[] = ["dark", "light", "system"] as const;
 
- export function isValidTheme(theme: string): theme is Theme {
-   return theme === "dark" || theme === "light" || theme === "system";
+export function isValidTheme(theme: string): theme is Theme {
+   return VALID_THEMES.includes(theme as Theme);
  }
 
 /**

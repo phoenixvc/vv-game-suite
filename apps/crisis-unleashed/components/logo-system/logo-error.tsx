@@ -10,6 +10,7 @@ interface LogoErrorProps {
   className?: string
   message?: string
   showIcon?: boolean
+  title?: string
 }
 
 export function LogoError({
@@ -18,6 +19,7 @@ export function LogoError({
   className,
   message = "Logo failed to load",
   showIcon = true,
+  title = "Logo not found",
 }: LogoErrorProps) {
   return (
     <div className={cn("flex flex-col items-center justify-center gap-2", className)}>

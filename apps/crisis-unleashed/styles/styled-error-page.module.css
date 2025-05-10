@@ -1,0 +1,396 @@
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  width: 100%;
+  padding: 2rem;
+}
+
+.errorCard {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 1rem;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Theme variations */
+.themeDark .errorCard {
+  background: linear-gradient(135deg, #1a1a2e 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+.themeLight .errorCard {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+  color: #1e293b;
+}
+
+.themeGame .errorCard {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  border: 2px solid #4299e1;
+  box-shadow: 0 0 30px rgba(66, 153, 225, 0.3), 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+.themeGame .errorCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #4299e1, #76e4f7, #4299e1);
+  animation: shimmer 3s infinite linear;
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.errorIconContainer {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.themeDark .errorIcon,
+.themeGame .errorIcon {
+  color: #f59e0b;
+  filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));
+}
+
+.themeLight .errorIcon {
+  color: #d97706;
+}
+
+.errorIcon {
+  width: 4rem;
+  height: 4rem;
+}
+
+.errorTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.themeDark .errorTitle,
+.themeGame .errorTitle {
+  background: linear-gradient(to right, #f7fafc, #4299e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.themeLight .errorTitle {
+  color: #1e293b;
+}
+
+.errorSubtitle {
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  max-width: 400px;
+}
+
+.themeDark .errorSubtitle,
+.themeGame .errorSubtitle {
+  color: #a0aec0;
+}
+
+.themeLight .errorSubtitle {
+  color: #4a5568;
+}
+
+.errorDetailsContainer {
+  width: 100%;
+  margin-bottom: 2rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.themeDark .errorDetailsContainer,
+.themeGame .errorDetailsContainer {
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.themeLight .errorDetailsContainer {
+  background-color: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.errorDetailsToggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.themeDark .errorDetailsToggle:hover,
+.themeGame .errorDetailsToggle:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.themeLight .errorDetailsToggle:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.errorDetailsContent {
+  overflow: hidden;
+}
+
+.errorMessage {
+  padding: 1rem;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.themeDark .errorMessage,
+.themeGame .errorMessage {
+  color: #fc8181;
+}
+
+.themeLight .errorMessage {
+  color: #e53e3e;
+}
+
+.errorStack {
+  padding: 1rem;
+}
+
+.errorStackHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.themeDark .errorStackHeader,
+.themeGame .errorStackHeader {
+  color: #a0aec0;
+}
+
+.themeLight .errorStackHeader {
+  color: #4a5568;
+}
+
+.copyButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+.themeDark .copyButton:hover,
+.themeGame .copyButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.themeLight .copyButton:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.themeDark .copyButton,
+.themeGame .copyButton {
+  color: #a0aec0;
+}
+
+.themeLight .copyButton {
+  color: #4a5568;
+}
+
+.errorStackContent {
+  font-family: monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.themeDark .errorStackContent,
+.themeGame .errorStackContent {
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #cbd5e0;
+}
+
+.themeLight .errorStackContent {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #4a5568;
+}
+
+.errorActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.resetButton {
+  background: linear-gradient(to right, #3182ce, #4299e1);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(49, 130, 206, 0.3);
+}
+
+.resetButton:hover {
+  background: linear-gradient(to right, #2c5282, #3182ce);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(49, 130, 206, 0.4);
+}
+
+.homeButton {
+  transition: all 0.3s ease;
+}
+
+.themeDark .homeButton,
+.themeGame .homeButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.themeDark .homeButton:hover,
+.themeGame .homeButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.themeLight .homeButton {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #1e293b;
+}
+
+.themeLight .homeButton:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.autoResetContainer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.autoResetButton {
+  font-size: 0.875rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.autoResetButton:hover {
+  opacity: 1;
+}
+
+.countdownContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.countdownCircle {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.themeDark .countdownCircle,
+.themeGame .countdownCircle {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.themeLight .countdownCircle {
+  background: rgba(0, 0, 0, 0.05);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.countdownText {
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.themeDark .countdownText,
+.themeGame .countdownText {
+  color: #a0aec0;
+}
+
+.themeLight .countdownText {
+  color: #4a5568;
+}
+
+.countdownCancelButton {
+  font-size: 0.75rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .errorContainer {
+    padding: 1rem;
+  }
+
+  .errorCard {
+    padding: 1.5rem;
+  }
+
+  .errorIcon {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .errorTitle {
+    font-size: 1.5rem;
+  }
+
+  .errorSubtitle {
+    font-size: 0.875rem;
+  }
+
+  .errorActions {
+    flex-direction: column;
+  }
+
+  .errorActions button {
+    width: 100%;
+  }
+}

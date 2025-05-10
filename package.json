@@ -13,7 +13,13 @@
     "build": "npx turbo run build",
     "test": "npx turbo run test",
     "lint": "npx turbo run lint",
-    "clean": "npx turbo run clean"
+    "clean": "npx turbo run clean",
+    "dev:breakout": "npx turbo run dev --filter=breakout-game",
+    "dev:crisis": "npx turbo run dev --filter=crisis-unleashed",
+    "build:breakout": "npx turbo run build --filter=breakout-game",
+    "build:crisis": "npx turbo run build --filter=crisis-unleashed",
+    "test:breakout": "npx turbo run test --filter=breakout-game",
+    "test:crisis": "npx turbo run test --filter=crisis-unleashed"
   },
   "keywords": [
     "phaser",
@@ -28,8 +34,8 @@
     "ethers": "^6.13.7",
     "path": "^0.12.7",
     "phaser": "^3.88.2",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
@@ -39,7 +45,8 @@
     "jest": "^27.0.6",
     "prettier": "^2.8.0",
     "turbo": "^2.5.2",
-    "typescript": "^4.6.4"
+    "typescript": "^4.6.4",
+    "typescript-plugin-css-modules": "^5.1.0"
   },
   "engines": {
     "node": ">=16.15.0"

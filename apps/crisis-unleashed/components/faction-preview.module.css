@@ -1,0 +1,444 @@
+.factionPreview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.backgroundLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.overlayEffect {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.contentWrapper {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  height: 100%;
+  padding: 2rem;
+}
+
+.detailSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 2rem;
+  max-width: 65%;
+}
+
+.factionEmblem {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.emblemInner {
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.factionName {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px currentColor;
+  letter-spacing: 0.05em;
+}
+
+.tabNavigation {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.tabButton {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tabButton:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.activeTab {
+  color: white;
+}
+
+.tabContent {
+  position: relative;
+  min-height: 300px;
+}
+
+.factionDescription {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.featuresList {
+  margin-bottom: 2rem;
+}
+
+.featuresTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.traits {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+}
+
+.traitItem {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.traitItem:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.expandedTrait {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.traitBullet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  box-shadow: 0 0 5px currentColor;
+  flex-shrink: 0;
+}
+
+.traitExpand {
+  margin-left: auto;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+}
+
+.traitDetail {
+  width: 100%;
+  padding: 0.75rem 0 0.25rem 2rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  overflow: hidden;
+}
+
+.animationTags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.animationBadge {
+  font-size: 0.8rem;
+  padding: 0.5rem 0.75rem;
+  border-width: 1px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+}
+
+.animationBadge:hover {
+  box-shadow: 0 0 10px currentColor;
+}
+
+.strengthsTab {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.statsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.statLabel {
+  width: 100px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.statBarContainer {
+  flex: 1;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.statBar {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.statValue {
+  width: 30px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.interfacePreview {
+  width: 100%;
+  height: 80px;
+  margin: 0.5rem 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.strengthsDescription {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.strengthsDescription h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.loreTab {
+  padding: 0.5rem 0;
+}
+
+.loreScroll {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.loreContent {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.loreContent h3 {
+  font-size: 1.2rem;
+  margin: 1rem 0 0.5rem;
+  font-weight: 600;
+}
+
+.loreContent h3:first-child {
+  margin-top: 0;
+}
+
+.loreContent p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.loreContent ul {
+  list-style: none;
+  padding: 0;
+}
+
+.loreContent li {
+  margin-bottom: 0.75rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.loreContent li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+}
+
+.selectButtonWrapper {
+  margin-top: 1.5rem;
+}
+
+.selectButton {
+  font-size: 1.1rem;
+  padding: 0.75rem 2rem;
+  border-width: 2px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.selectButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.selectButton:active {
+  transform: translateY(0);
+}
+
+.selectText {
+  position: relative;
+  z-index: 2;
+  transition: letter-spacing 0.3s ease;
+}
+
+.buttonGlow {
+  position: absolute;
+  inset: 0;
+  opacity: 0.2;
+  z-index: 1;
+  filter: blur(10px);
+}
+
+.cardSection {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+  position: relative;
+}
+
+.cardGlow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  filter: blur(20px);
+  opacity: 0.3;
+  z-index: -1;
+}
+
+.particleContainer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+@media (max-width: 1200px) {
+  .contentWrapper {
+    padding: 1.5rem;
+  }
+
+  .detailSection {
+    max-width: 60%;
+  }
+
+  .factionName {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .contentWrapper {
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  .detailSection {
+    padding-right: 0;
+    padding-bottom: 1.5rem;
+    max-width: 100%;
+  }
+
+  .factionName {
+    font-size: 2.5rem;
+  }
+
+  .factionDescription {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .cardSection {
+    transform: scale(0.8);
+    margin-top: 1rem;
+  }
+
+  .tabContent {
+    min-height: 250px;
+  }
+}
+
+@media (max-width: 640px) {
+  .factionName {
+    font-size: 2rem;
+  }
+
+  .factionDescription {
+    font-size: 1rem;
+  }
+
+  .cardSection {
+    transform: scale(0.7);
+  }
+
+  .tabButton {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .tabContent {
+    min-height: 300px;
+  }
+}

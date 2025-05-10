@@ -1,0 +1,664 @@
+/* Main container */
+.container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: #0a0a14;
+  color: #f5f5f7;
+}
+
+/* Cosmic background */
+.cosmicBackground {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("/stars-bg.png");
+  background-size: cover;
+  z-index: 0;
+}
+
+.twinkling {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("/twinkling-stars.png");
+  background-size: cover;
+  animation: twinkle 10s linear infinite;
+  z-index: 1;
+}
+
+.nebula {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(76, 0, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+  z-index: 2;
+  opacity: 0.5;
+}
+
+@keyframes twinkle {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100px);
+  }
+}
+
+/* Faction-specific background elements */
+.factionBackground {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Cybernetic Nexus background */
+.circuitLines {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10,10 L90,10 M10,30 L90,30 M10,50 L90,50 M10,70 L90,70 M10,90 L90,90 M10,10 L10,90 M30,10 L30,90 M50,10 L50,90 M70,10 L70,90 M90,10 L90,90' stroke='rgba(14, 165, 233, 0.2)' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+  background-size: 100px 100px;
+  opacity: 0.3;
+}
+
+/* Primordial Ascendancy background */
+.vinePatternsContainer {
+  position: absolute;
+  inset: 0;
+}
+
+.vinePattern {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20,100 Q50,50 100,80 Q150,110 180,70' stroke='rgba(34, 197, 94, 0.3)' stroke-width='3' fill='none'/%3E%3Cpath d='M40,150 Q70,120 100,140 Q130,160 160,130' stroke='rgba(34, 197, 94, 0.3)' stroke-width='3' fill='none'/%3E%3Cpath d='M100,80 L100,140' stroke='rgba(34, 197, 94, 0.3)' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  animation: growVine 10s infinite alternate;
+  opacity: 0.5;
+}
+
+@keyframes growVine {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+/* Eclipsed Order background */
+.shadowsContainer {
+  position: absolute;
+  inset: 0;
+}
+
+.shadowElement {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 70%);
+  animation: pulseShadow 8s infinite alternate;
+}
+
+@keyframes pulseShadow {
+  0% {
+    opacity: 0.1;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(1.2);
+  }
+}
+
+/* Celestial Dominion background */
+.constellationsContainer {
+  position: absolute;
+  inset: 0;
+}
+
+.constellation {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background-image: url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='2' fill='rgba(168, 85, 247, 0.8)'/%3E%3Ccircle cx='60' cy='40' r='2' fill='rgba(168, 85, 247, 0.8)'/%3E%3Ccircle cx='90' cy='20' r='2' fill='rgba(168, 85, 247, 0.8)'/%3E%3Ccircle cx='120' cy='50' r='2' fill='rgba(168, 85, 247, 0.8)'/%3E%3Ccircle cx='70' cy='80' r='2' fill='rgba(168, 85, 247, 0.8)'/%3E%3Cpath d='M30,30 L60,40 L90,20 L120,50 L70,80 L30,30' stroke='rgba(168, 85, 247, 0.3)' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  animation: twinkleConstellation 10s infinite alternate;
+}
+
+@keyframes twinkleConstellation {
+  0% {
+    opacity: 0.2;
+    filter: blur(0px);
+  }
+  50% {
+    opacity: 0.5;
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 0.3;
+    filter: blur(0px);
+  }
+}
+
+/* Titanborn background */
+.forgeElementsContainer {
+  position: absolute;
+  inset: 0;
+}
+
+.emberParticle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #eab308;
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: riseEmber 4s infinite;
+}
+
+@keyframes riseEmber {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-300px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Void Harbingers background */
+.voidRiftsContainer {
+  position: absolute;
+  inset: 0;
+}
+
+.voidRift {
+  position: absolute;
+  width: 200px;
+  height: 100px;
+  background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(5px);
+  animation: pulseVoid 8s infinite alternate;
+}
+
+@keyframes pulseVoid {
+  0% {
+    opacity: 0.1;
+    transform: scale(0.8) rotate(0deg);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(1.2) rotate(10deg);
+  }
+}
+
+/* Intro sequence */
+.introSequence {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  text-align: center;
+}
+
+.introLogo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.sparkleIcon {
+  color: #a855f7;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.8));
+}
+
+.introLogo h1 {
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  background: linear-gradient(to right, #a855f7, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+.introText {
+  font-size: 1.5rem;
+  color: #e2e8f0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.skipIntro {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.skipIntro:hover {
+  color: #e2e8f0;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Overview carousel */
+.overviewContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, #ffffff, #bbbbff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #bbbbff;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.carouselContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.carousel {
+  position: relative;
+  width: 80%;
+  height: 500px;
+  perspective: 1200px;
+  overflow: hidden;
+}
+
+.carouselItem {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.factionCard {
+  width: 100%;
+  max-width: 500px;
+  background-color: rgba(15, 23, 42, 0.7);
+  border: 1px solid;
+  border-radius: 1rem;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.factionEmblem {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.emblemInner {
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+}
+
+.factionName {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.factionDescription {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.factionTraits {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.traitBadge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  border: 1px solid;
+}
+
+.cardActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.3s ease;
+}
+
+.navButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.indicators {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.activeIndicator {
+  width: 14px;
+  height: 14px;
+}
+
+.alternateOptions {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.quizButton {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.quizButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Detail view */
+.detailContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
+}
+
+.detailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.backButton {
+  color: white;
+}
+
+.recommendationBadge {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  border-radius: 9999px;
+  color: #c084fc;
+  font-size: 0.875rem;
+}
+
+/* Quiz */
+.quizContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 800px;
+  padding: 2rem;
+}
+
+.quizHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.quizProgress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.progressText {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+
+.progressBar {
+  width: 200px;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #a855f7;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.questionContainer {
+  background-color: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.questionText {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.answerOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.answerOption {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.answerOption:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.answerNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  margin-right: 1rem;
+  font-weight: bold;
+}
+
+.answerText {
+  flex: 1;
+}
+
+/* Confirmation */
+.confirmationContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirmationContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 500px;
+  padding: 2rem;
+}
+
+.confirmationEmblem {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.confirmationTitle {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.confirmationText {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.loadingIndicator {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+.loadingCircle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .carousel {
+    height: 600px;
+  }
+
+  .factionCard {
+    padding: 1.5rem;
+  }
+
+  .cardActions {
+    flex-direction: column;
+  }
+
+  .questionText {
+    font-size: 1.25rem;
+  }
+}

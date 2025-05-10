@@ -1,0 +1,46 @@
+.navLink {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.navLink:hover {
+  color: rgba(255, 255, 255, 1);
+}
+
+.navLink.active {
+  color: #38bdf8;
+  font-weight: 500;
+}
+
+.navLink.active::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, #2563eb, #0891b2);
+  border-radius: 2px;
+}
+
+.navDropdown {
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+}
+
+.navDropdown:hover {
+  color: rgba(255, 255, 255, 1);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.activeDropdown {
+  color: #38bdf8;
+  font-weight: 500;
+}

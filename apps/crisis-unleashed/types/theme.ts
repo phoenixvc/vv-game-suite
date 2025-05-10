@@ -1,9 +1,9 @@
 export type Theme = "light" | "dark" | "system"
-export type FactionTheme = "cybernetic-nexus" | "primordial-ascendancy" | "eclipsed-order" | "celestial-dominion" | "titanborn" | "void-harbingers" | "default"
+export type FactionTheme = "cybernetic" | "primordial" | "eclipsed" | "celestial" | "titanborn" | "void" | "default"
 
 export interface ThemeContextType {
-  theme: Theme
+  readonly theme: Theme
   setTheme: (theme: Theme) => void
-  currentTheme: FactionTheme
+  readonly currentTheme: FactionTheme
   setCurrentTheme: (theme: FactionTheme) => void
 }

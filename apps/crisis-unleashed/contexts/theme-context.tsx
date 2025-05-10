@@ -1,6 +1,6 @@
 "use client"
 
-import { isValidFactionTheme } from "@/lib/theme-utils"
+import { isValidFactionTheme, isValidTheme } from "@/lib/theme-utils"
 import { FactionTheme, Theme, ThemeContextType } from "@/types/theme"
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 
@@ -12,10 +12,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   // Initialize theme from localStorage if available
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme")
-    const validTheme = storedTheme && ["dark", "light", "system"].includes(storedTheme) ? storedTheme as Theme : null
-    if (validTheme) {
-      setTheme(validTheme)
+    const storedTheme = localStorage.getItem("theme") as Theme | null
+    if (storedTheme && isValidTheme(storedTheme)) {
+      setTheme(storedTheme)
     } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       setTheme("dark")
     } else {
@@ -23,14 +22,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
 
     // Initialize faction theme from localStorage if available
-    const storedFactionTheme = localStorage.getItem("factionTheme")
-    const validFactionTheme = storedFactionTheme && isValidFactionTheme(storedFactionTheme) ? storedFactionTheme as FactionTheme : null
-
-    if (validFactionTheme) {
-      setCurrentTheme(validFactionTheme)
+    const storedFactionTheme = localStorage.getItem("factionTheme") as FactionTheme | null
+    if (storedFactionTheme && isValidFactionTheme(storedFactionTheme)) {
+      setCurrentTheme(storedFactionTheme)
     }
   }, [])
-
 
   // Update localStorage and document class when theme changes
   useEffect(() => {
@@ -46,22 +42,44 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       root.classList.add(theme)
     }
   }, [theme])
-
+ 
   // Update localStorage when faction theme changes
   useEffect(() => {
     localStorage.setItem("factionTheme", currentTheme)
+    
+    // Update faction theme classes on the document root
+    const root = window.document.documentElement
+    const themeClasses = ["default", "celestial", "void", "primordial", "titanborn", "eclipsed", "cybernetic"]
+      .map(t => `theme-${t}`)
+    
+    // Remove all faction theme classes
+    root.classList.remove(...themeClasses)
+    
+    // Add the current faction theme class
+    root.classList.add(`theme-${currentTheme}`)
   }, [currentTheme])
- 
-  return <ThemeContext.Provider value={{ theme, setTheme, currentTheme, setCurrentTheme }}>{children}</ThemeContext.Provider>
+
+  return (
+   <ThemeContext.Provider 
+     value={{ 
+       theme, 
+       setTheme, 
+       currentTheme, 
+       setCurrentTheme 
+     }}
+   >
+     {children}
+   </ThemeContext.Provider>
+ )
 }
 
 export function useTheme() {
   const context = useContext(ThemeContext)
   if (context === undefined) {
     return { 
-      theme: "dark", 
+      theme: "dark" as Theme, 
       setTheme: () => {}, 
-      currentTheme: "default", 
+      currentTheme: "default" as FactionTheme, 
       setCurrentTheme: () => {} 
     }
   }

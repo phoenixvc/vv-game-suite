@@ -1,7 +1,9 @@
 "use client"
 
 import { useTheme } from "@/contexts/theme-context"
+import { getRarityClass } from "@/lib/card-utils"
 import styles from "@/styles/card-backs.module.css"
+import { CardBackProps } from "@/types/card"
 import { CelestialCardBack } from "./card-backs/celestial-card-back"
 import { CyberneticCardBack } from "./card-backs/cybernetic-card-back"
 import { EclipsedCardBack } from "./card-backs/eclipsed-card-back"
@@ -9,38 +11,29 @@ import { PrimordialCardBack } from "./card-backs/primordial-card-back"
 import { TitanbornCardBack } from "./card-backs/titanborn-card-back"
 import { VoidCardBack } from "./card-backs/void-card-back"
 
-interface StandardizedCardBackProps {
-  card: any
-  darkMode?: boolean
-  className?: string
-}
-
-export function StandardizedCardBack({ card, darkMode = false, className = "" }: StandardizedCardBackProps) {
+export function StandardizedCardBack({ card, darkMode = false, className = "" }: CardBackProps) {
   const { currentTheme } = useTheme()
   const cardType = card.type?.toLowerCase() || "hero"
-  const factionClass = card.faction ? styles[`faction${card.faction}`] : ""
-  const rarityClass = card.rarity ? styles[`rarity${card.rarity}`] : ""
-
+  const rarityClass = getRarityClass(card.rarity, styles);
   // Render faction-specific card back based on the current theme
   switch (currentTheme) {
-    case "cybernetic-nexus":
+    case "cybernetic":
       return <CyberneticCardBack card={card} darkMode={darkMode} className={className} />
-    case "primordial-ascendancy":
+    case "primordial":
       return <PrimordialCardBack card={card} darkMode={darkMode} className={className} />
-    case "eclipsed-order":
+    case "eclipsed":
       return <EclipsedCardBack card={card} darkMode={darkMode} className={className} />
-    case "celestial-dominion":
+    case "celestial":
       return <CelestialCardBack card={card} darkMode={darkMode} className={className} />
     case "titanborn":
       return <TitanbornCardBack card={card} darkMode={darkMode} className={className} />
-    case "void-harbingers":
+    case "void":
       return <VoidCardBack card={card} darkMode={darkMode} className={className} />
     default:
-      // Fallback to the original card back
       return (
         <div
-          className={`${styles.cardBack} ${factionClass} ${rarityClass} ${darkMode ? styles.darkMode : ""} ${className}`}
-        >
+         className={`${styles.cardBack} ${styles.defaultCardBack} ${rarityClass} ${darkMode ? styles.darkMode : ""} ${className}`}
+     >
           <div className={styles.cardBackHeader}>
             <h3 className={styles.cardBackName}>{card.name}</h3>
             <div className={styles.cardBackType}>{card.type || "Hero"}</div>
@@ -118,5 +111,5 @@ export function StandardizedCardBack({ card, darkMode = false, className = "" }:
           </div>
         </div>
       )
-  }
+    }
 }

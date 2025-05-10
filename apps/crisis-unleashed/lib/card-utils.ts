@@ -78,5 +78,5 @@ export function getCyberneticCode(cardId: string | undefined): string {
   if (cardId) {
     return cardId.substring(0, 8);
   }
-  return "CN-" + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+  return "CN-0000"; // Static fallback
 }

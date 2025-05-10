@@ -11,7 +11,8 @@ export function getRarityClass(rarity: CardRarity | undefined, styles: Record<st
   if (!rarity || !validRarities.includes(rarity)) {
     return styles.rarityCommon; // Default rarity
   }
-  return styles[`rarity${rarity}`];
+  const key = `rarity${rarity}`;
+  return key in styles ? styles[key] : styles.rarityCommon;
 }
 
 /**

@@ -1,5 +1,6 @@
 "use client"
 
+import { isValidFactionTheme } from "@/lib/theme-utils"
 import { FactionTheme, Theme, ThemeContextType } from "@/types/theme"
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 
@@ -11,9 +12,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   // Initialize theme from localStorage if available
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme") as Theme | null
-    if (storedTheme) {
-      setTheme(storedTheme)
+    const storedTheme = localStorage.getItem("theme")
+    const validTheme = storedTheme && ["dark", "light", "system"].includes(storedTheme) ? storedTheme as Theme : null
+    if (validTheme) {
+      setTheme(validTheme)
     } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       setTheme("dark")
     } else {
@@ -21,9 +23,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
 
     // Initialize faction theme from localStorage if available
-    const storedFactionTheme = localStorage.getItem("factionTheme") as FactionTheme | null
-    if (storedFactionTheme) {
-      setCurrentTheme(storedFactionTheme)
+    const storedFactionTheme = localStorage.getItem("factionTheme")
+    const validFactionTheme = storedFactionTheme && isValidFactionTheme(storedFactionTheme) ? storedFactionTheme as FactionTheme : null
+
+    if (validFactionTheme) {
+      setCurrentTheme(validFactionTheme)
     }
   }, [])
 
@@ -57,7 +61,7 @@ export function useTheme() {
     return { 
       theme: "dark", 
       setTheme: () => {}, 
-      currentTheme: "default" as FactionTheme, 
+      currentTheme: "default", 
       setCurrentTheme: () => {} 
     }
   }

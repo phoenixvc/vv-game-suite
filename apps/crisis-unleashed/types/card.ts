@@ -1,5 +1,11 @@
 export type CardRarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary' | 'Mythic';
 
+export interface CardAbility {
+  name: string;
+  cost?: number;
+  description: string;
+}
+
 export interface Card {
   type: string;
   id: string;
@@ -7,7 +13,34 @@ export interface Card {
   set?: string;
   rarity?: CardRarity;
   faction?: string;
-  // Add other card properties
+
+    // Card stats
+  power?: number;
+  health?: number;
+  cost?: number;
+  energy?: number;
+    
+    // Card content
+  description?: string;
+  effect?: string;
+  lore?: string;
+  abilities?: CardAbility[]
+    
+    // Card metadata
+  artist?: string;
+  illustration?: string;
+  releaseDate?: string;
+  variant?: string;
+  isHolo?: boolean;
+  isPromo?: boolean;
+    
+    // Game mechanics
+  keywords?: string[];
+  requirements?: string;
+  impact?: string;
+  duration?: string;
+  synergies?: string[];
+  restrictions?: string[];
 }
 
 export interface CardBackProps {

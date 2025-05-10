@@ -49,8 +49,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     
     // Update faction theme classes on the document root
     const root = window.document.documentElement
-    const themeClasses = ["default", "celestial", "void", "primordial", "titanborn", "eclipsed", "cybernetic"]
-      .map(t => `theme-${t}`)
+    // Get all possible faction themes from the type to ensure this list stays up to date
+    const themeClasses = Object.values({
+      default: "default",
+      celestial: "celestial",
+      void: "void",
+      primordial: "primordial",
+      titanborn: "titanborn",
+      eclipsed: "eclipsed",
+      cybernetic: "cybernetic"
+    }).map(t => `theme-${t}`)
     
     // Remove all faction theme classes
     root.classList.remove(...themeClasses)

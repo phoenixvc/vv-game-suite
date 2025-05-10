@@ -28,6 +28,12 @@ public initialize(): void {
   console.log('Initializing BreakoutScene...');
   
   try {
+    // Check if we've already initialized to prevent infinite loops
+    if (this.scene.registry.get('sceneInitialized')) {
+      console.log('Scene already initialized, skipping initialization');
+      return;
+    }
+    
     // Initialize theme manager
     this.themeManager = new ThemeManager(this.scene);
     this.scene.setThemeManager(this.themeManager);
@@ -71,6 +77,9 @@ public initialize(): void {
     
     // Initialize gameplay (this will reset the ball position)
     this.initializeGameplay();
+    
+    // Mark scene as initialized
+    this.scene.registry.set('sceneInitialized', true);
     
     console.log('BreakoutScene initialization complete');
   } catch (error) {
@@ -119,16 +128,36 @@ private createPaddles(): void {
     return;
   }
   
-  // Set active paddles in registry
-  const activePaddles = ['bottom', 'top'];
+  // Check if paddles already exist to avoid infinite loop
+  const existingPaddles = paddleManager.getPaddles();
+  if (existingPaddles && existingPaddles.length > 0) {
+    console.log(`Paddles already exist (${existingPaddles.length}), skipping creation`);
+    return;
+  }
+  
+  // Set active paddles in registry - ONLY include 'bottom' for now
+  const activePaddles = ['bottom']; // Make sure we only create one paddle
   this.scene.registry.set('activePaddles', activePaddles);
   
   // Create paddles
-  paddleManager.createPaddles();
+  console.log('Calling paddleManager.createPaddles()');
+  const createdPaddles = paddleManager.createPaddles();
+  
+  // Mark paddles as created in registry to prevent multiple calls
+  this.scene.registry.set('paddlesCreated', true);
   
   // Verify paddles were created
-  const paddles = paddleManager.getPaddles();
-  console.log(`Created ${paddles.length} paddles`);
+  console.log(`Created ${createdPaddles.length} paddles`);
+  
+  // Debug log paddle properties
+  createdPaddles.forEach((paddle, index) => {
+    console.log(`Paddle ${index}:`, {
+      edge: paddle.getData('edge'),
+      isConcave: paddle.getData('isConcave'),
+      isConvex: paddle.getData('isConvex'),
+      position: { x: paddle.x, y: paddle.y }
+    });
+  });
 }
 
 /**
@@ -137,9 +166,16 @@ private createPaddles(): void {
 private initializeGameplay(): void {
   console.log('Initializing gameplay from initializer...');
   
+  // Check if gameplay is already initialized
+  if (this.scene.registry.get('gameplayInitialized')) {
+    console.log('Gameplay already initialized, skipping');
+    return;
+  }
+  
   // Use the gameplay component to initialize the gameplay
   if (this.scene.getGameplay() && typeof this.scene.getGameplay().initializeGameplay === 'function') {
     this.scene.getGameplay().initializeGameplay();
+    this.scene.registry.set('gameplayInitialized', true);
     return;
   }
   
@@ -171,6 +207,9 @@ private initializeGameplay(): void {
   } else {
     console.error('No paddles available to reset ball position');
   }
+  
+  // Mark gameplay as initialized
+  this.scene.registry.set('gameplayInitialized', true);
 }
   
   /**
@@ -206,38 +245,48 @@ private initializeGameplay(): void {
     this.scene.setBallManager(ballManager);
   }
   
-  /**
-   * Initialize paddle manager
-   */
-  private initializePaddleManager(): void {
-    console.log('Initializing paddle manager...');
+ /**
+ * Initialize paddle manager
+ */
+private initializePaddleManager(): void {
+  console.log('Initializing paddle manager...');
+  
+  try {
+    // Check if paddle manager already exists
+    const existingManager = this.scene.getPaddleManager();
+    if (existingManager) {
+      console.log('Paddle manager already exists, skipping initialization');
+      return;
+    }
     
-    try {
-      // Create a PaddleManager instance
-      const paddleManager = new PaddleManager(this.scene);
-      
-      // Store it directly on the scene for access
-      // This is important - we need to set it on the scene directly
-      (this.scene as any).paddleManager = paddleManager;
-      
-      // Connect it to the paddleSystem using the setPaddleManager method
-      const paddleSystem = (this.scene as any).paddleSystem;
-      if (paddleSystem && typeof paddleSystem.setPaddleManager === 'function') {
-        paddleSystem.setPaddleManager(paddleManager);
-        console.log('Connected paddle manager to paddle system');
-      } else {
-        console.warn('Could not connect paddle manager to paddle system');
-      }
-      
-      // Create default paddle controller
+    // Create a PaddleManager instance
+    const paddleManager = new PaddleManager(this.scene);
+    
+    // Store it directly on the scene for access
+    // This is important - we need to set it on the scene directly
+    (this.scene as any).paddleManager = paddleManager;
+    
+    // Connect it to the paddleSystem using the setPaddleManager method
+    const paddleSystem = (this.scene as any).paddleSystem;
+    if (paddleSystem && typeof paddleSystem.setPaddleManager === 'function') {
+      paddleSystem.setPaddleManager(paddleManager);
+      console.log('Connected paddle manager to paddle system');
+    } else {
+      console.warn('Could not connect paddle manager to paddle system');
+    }
+    
+    // Create default paddle controller only if it doesn't exist
+    // Fix: Use getPaddleControllerById instead of getPaddleController
+    if (!this.scene.getPaddleControllerById || !this.scene.getPaddleControllerById('default')) {
       const paddleController = new PaddleController(this.scene, 'default', 'horizontal');
       this.scene.addPaddleController('default', paddleController);
-      
-      console.log('Paddle manager initialized');
-    } catch (error) {
-      console.error('Error initializing paddle manager:', error);
     }
+    
+    console.log('Paddle manager initialized');
+  } catch (error) {
+    console.error('Error initializing paddle manager:', error);
   }
+}
   
   /**
    * Initialize brick manager

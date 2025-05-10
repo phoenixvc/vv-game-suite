@@ -10,9 +10,11 @@ export class ConcavePaddle extends Paddle {
     
     // Set data for identification
     this.setData('paddleType', 'concave');
+    this.setData('isConcave', true);
+    this.setData('isConvex', false);
     
-    // Set special property for concave paddle - better control
-    this.setData('controlFactor', 1.5); // 50% better ball control
+    // Set special property for concave paddle - ball control
+    this.setData('ballControlFactor', 0.8); // Higher value means more control
   }
   
   /**
@@ -32,14 +34,17 @@ export class ConcavePaddle extends Paddle {
     // Draw the concave paddle shape
     graphics.clear();
     
-    // Fill with gradient - blue colors for concave paddle
+    // Make the concave paddle visually different - use a curved inward shape
+    // and a blue/cyan color scheme
+    
+    // Fill with gradient - blue/cyan for concave paddle
     const gradientSteps = 5;
     for (let i = 0; i < gradientSteps; i++) {
       const ratio = i / gradientSteps;
       
-      // Fix: Use proper Phaser.Display.Color objects instead of plain objects
-      const color1 = new Phaser.Display.Color(0, 120, 255);
-      const color2 = new Phaser.Display.Color(0, 80, 200);
+      // Use blue/cyan colors for concave paddle
+      const color1 = new Phaser.Display.Color(0, 180, 255);  // Light blue
+      const color2 = new Phaser.Display.Color(0, 100, 180);  // Darker blue
       
       const color = Phaser.Display.Color.Interpolate.ColorWithColor(
         color1,
@@ -51,9 +56,9 @@ export class ConcavePaddle extends Paddle {
       const fillColor = Phaser.Display.Color.GetColor(color.r, color.g, color.b);
       graphics.fillStyle(fillColor);
       
-      // Draw concave shape with progressively smaller height
-      const depthRatio = 0.2; // Maximum depth of the concave curve
-      const currentHeight = height - (ratio * height * depthRatio);
+      // Draw concave shape with a curve inward
+      const heightRatio = 0.35; // How deep the concave curve goes
+      const currentHeight = height - (ratio * height * heightRatio);
       const yOffset = (height - currentHeight) / 2;
       
       // Draw a rounded rectangle with progressively deeper concave top
@@ -63,19 +68,19 @@ export class ConcavePaddle extends Paddle {
       graphics.fillRoundedRect(0, yOffset, width, currentHeight, cornerRadius);
       
       // Draw the concave top curve
-      const curveDepth = height * depthRatio * (1 - ratio);
-      if (curveDepth > 0) {
+      const curveHeight = height * heightRatio * (1 - ratio);
+      if (curveHeight > 0) {
         graphics.fillStyle(fillColor);
         graphics.beginPath();
         
         // Start at left corner
         graphics.moveTo(cornerRadius, yOffset);
         
-        // Draw the concave curve
+        // Draw the concave curve - use a sine curve but inverted
         for (let x = 0; x <= width; x++) {
           const normalizedX = x / width;
-          // Use sin function to create a smooth curve
-          const curveY = yOffset - curveDepth * Math.sin(Math.PI * normalizedX);
+          // Use inverted sin function to create concave curve
+          const curveY = yOffset + curveHeight * Math.pow(Math.sin(Math.PI * normalizedX), 0.8);
           graphics.lineTo(x, curveY);
         }
         
@@ -87,38 +92,30 @@ export class ConcavePaddle extends Paddle {
       }
     }
     
-    // Add a highlight at the bottom for 3D effect
+    // Add a highlight at the top for 3D effect
     graphics.fillStyle(0xffffff, 0.3);
-    graphics.fillRect(width * 0.1, height * 0.7, width * 0.8, height * 0.2);
+    graphics.fillRect(width * 0.1, height * 0.1, width * 0.8, height * 0.2);
     
     // Add glow lines on the concave surface
-    graphics.lineStyle(1, 0x00ffff, 0.5);
+    graphics.lineStyle(1, 0x00ccff, 0.6);
     graphics.beginPath();
     graphics.moveTo(width * 0.2, height * 0.3);
     graphics.lineTo(width * 0.8, height * 0.3);
     graphics.strokePath();
     
-    // Add "CONTROL" text to make it visually distinct
-    graphics.lineStyle(1, 0x00ffff, 0.8);
-    
     // Add a second glow line
-    graphics.lineStyle(1, 0x00aaff, 0.6);
+    graphics.lineStyle(1, 0x0088ff, 0.6);
     graphics.beginPath();
     graphics.moveTo(width * 0.15, height * 0.4);
     graphics.lineTo(width * 0.85, height * 0.4);
     graphics.strokePath();
     
     // Add a third glow line
-    graphics.lineStyle(1, 0x0088ff, 0.6);
+    graphics.lineStyle(1, 0x0066ff, 0.6);
     graphics.beginPath();
     graphics.moveTo(width * 0.1, height * 0.5);
     graphics.lineTo(width * 0.9, height * 0.5);
     graphics.strokePath();
-    
-    // Add control indicators at the edges
-    graphics.fillStyle(0x00aaff, 0.7);
-    graphics.fillCircle(width * 0.2, height * 0.85, height * 0.08);
-    graphics.fillCircle(width * 0.8, height * 0.85, height * 0.08);
     
     // Generate the texture
     graphics.generateTexture(textureName, width, height);
@@ -127,10 +124,10 @@ export class ConcavePaddle extends Paddle {
     // Apply the texture
     this.setTexture(textureName);
     
-    // Add a glow effect
+    // Add a glow effect for the concave paddle
     try {
       if (this.postFX) {
-        this.postFX.addGlow(0x0088ff, 2, 0, false, 0.1, 8);
+        this.postFX.addGlow(0x00aaff, 4, 0, false, 0.2, 10);
       }
     } catch (error) {
       console.warn('Failed to add glow effect to concave paddle:', error);
@@ -141,7 +138,10 @@ export class ConcavePaddle extends Paddle {
    * Calculate bounce angle based on where the ball hits the paddle
    * Concave paddles redirect the ball toward the center
    */
-  calculateBounceAngle(ballX: number): number {
+  calculateBounceAngle(hitPosition: { x: number, y: number }): number {
+    // Extract the x position from the hitPosition object
+    const ballX = hitPosition.x;
+    
     // Get the relative position of the ball on the paddle (-1 to 1)
     const relativePos = (ballX - this.x) / (this.width / 2);
     
@@ -149,70 +149,72 @@ export class ConcavePaddle extends Paddle {
     const baseAngle = -Math.PI / 2; // Straight up
     
     // For concave paddle, we want to redirect more toward the center
-    // The closer to the center, the more vertical the bounce
-    const maxAngleOffset = Math.PI / 4; // 45 degrees max
+    // The further from the center, the more angled the bounce toward center
+    const maxAngleOffset = Math.PI / 3; // 60 degrees max
     
-    // Use a cubic function to create stronger redirection from the sides
-    const angleOffset = maxAngleOffset * Math.pow(relativePos, 3);
+    // Use a cubic function to push toward center
+    // We use Math.sign to determine direction (left or right of center)
+    const angleOffset = -maxAngleOffset * Math.sign(relativePos) * 
+                        Math.pow(Math.abs(relativePos), 2);
     
     return baseAngle + angleOffset;
-}
-  
+  }
+
   /**
-   * Override the onBallHit method to provide better control
+   * Override the onBallHit method to provide better ball control
    * This is the special ability of the concave paddle
    */
   public onBallHit(ball: Phaser.Physics.Arcade.Body): void {
     // Call the parent method first
     super.onBallHit(ball);
     
-    // Get the control factor
-    const controlFactor = this.getData('controlFactor') || 1.5;
+    // Get the ball control factor
+    const ballControlFactor = this.getData('ballControlFactor') || 0.8;
     
-    // Calculate the relative position on the paddle (-1 to 1)
-    const relativePos = (ball.x - this.x) / (this.width / 2);
+    // Apply more predictable trajectory for concave paddle
+    // This simulates the ball being "guided" by the concave shape
+    const currentVelocity = new Phaser.Math.Vector2(ball.velocity.x, ball.velocity.y);
     
-    // Calculate how close to the center the hit was (0 = center, 1 = edge)
-    const centerProximity = Math.abs(relativePos);
-    
-    // If hit is close to center, reduce horizontal velocity for more control
-    if (centerProximity < 0.5) {
-      // Reduce horizontal velocity more when closer to center
-      const reductionFactor = 1 - ((0.5 - centerProximity) * controlFactor);
-      ball.velocity.x *= reductionFactor;
+    // Normalize the horizontal component based on the control factor
+    // Higher control factor means more vertical and less horizontal movement
+    if (Math.abs(currentVelocity.x) > 50) {
+      // Reduce horizontal velocity component
+      currentVelocity.x *= (1 - ballControlFactor * 0.5);
       
-      // Ensure minimum horizontal velocity to prevent straight up shots
-      const minHorizontalVelocity = 20;
-      if (Math.abs(ball.velocity.x) < minHorizontalVelocity) {
-        ball.velocity.x = Math.sign(ball.velocity.x) * minHorizontalVelocity;
+      // Ensure vertical component is strong enough
+      if (Math.abs(currentVelocity.y) < 200) {
+        // Boost vertical component
+        currentVelocity.y = -Math.abs(currentVelocity.y) * 1.2;
       }
       
-      // Visual feedback for control
-      this.showControlEffect(ball);
+      // Apply the adjusted velocity
+      ball.setVelocity(currentVelocity.x, currentVelocity.y);
     }
     
-    // Emit an event that the ball control was applied
+    // Visual feedback for ball control
+    this.showBallControlEffect(ball);
+    
+    // Emit an event that the ball trajectory was controlled
     const eventManager = this.scene.events;
-    eventManager.emit('ballControlApplied', { 
+    eventManager.emit('ballTrajectoryControlled', { 
       ball, 
-      controlFactor,
-      centerProximity
+      controlFactor: ballControlFactor
     });
   }
   
   /**
-   * Show visual effect when control is applied
+   * Show visual effect when ball control is applied
    */
-  private showControlEffect(ball: Phaser.Physics.Arcade.Body): void {
+  private showBallControlEffect(ball: Phaser.Physics.Arcade.Body): void {
+    // Create a particle emitter for control effect
     try {
-      // Create a particle emitter for control effect
       const particles = this.scene.add.particles(ball.x, ball.y, 'particle', {
-        speed: { min: 30, max: 60 },
-        angle: { min: -150, max: -30 },
+        speed: { min: 50, max: 100 },
+        angle: { min: 230, max: 310 },
         scale: { start: 0.4, end: 0 },
         blendMode: 'ADD',
         lifespan: 300,
-        tint: [0x0088ff, 0x00aaff, 0x00ffff],
+        tint: [0x00aaff, 0x0088ff, 0x0066ff],
         quantity: 8
       });
       
@@ -221,10 +223,10 @@ export class ConcavePaddle extends Paddle {
         particles.destroy();
       });
       
-      // Pulse the paddle briefly
+      // Flash the paddle briefly
       this.scene.tweens.add({
         targets: this,
-        alpha: 0.8,
+        alpha: 0.7,
         duration: 100,
         yoyo: true,
         repeat: 1
@@ -254,7 +256,7 @@ export class ConcavePaddle extends Paddle {
       });
       
     } catch (error) {
-      console.warn('Failed to create control effect:', error);
+      console.warn('Failed to create ball control effect:', error);
     }
   }
 }

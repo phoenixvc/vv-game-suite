@@ -13,6 +13,7 @@ import UIMessageDisplay from './UIMessageDisplay';
 import UIPauseMenu from './UIPauseMenu';
 import UIPowerUpDisplay from './UIPowerUpDisplay';
 import UIThemeIntegration from './UIThemeIntegration';
+import UIMultiplierDisplay from '@/ui/UIMultiplierDisplay';
 
 class UIManager {
   private scene: BreakoutScene;
@@ -25,6 +26,8 @@ class UIManager {
   private gameOverPanel: UIGameOverPanel;
   private powerUpDisplay: UIPowerUpDisplay;
   private themeIntegration: UIThemeIntegration;
+  private consecutiveHitsText: Phaser.GameObjects.Text | null = null;
+  private multiplierDisplay: UIMultiplierDisplay | null = null;
 
   constructor(scene: BreakoutScene) {
     this.scene = scene;
@@ -101,10 +104,52 @@ public updateInitialUI(): void {
   this.showMessage('Get Ready!', 2000);
 }
 
+public updateMultiplier(multiplier: number): void {
+  if (this.multiplierDisplay) {
+    this.multiplierDisplay.updateMultiplier(multiplier);
+  }
+}
+/**
+ * Update the consecutive hits display
+ * @param hits The number of consecutive hits
+ */
+public updateConsecutiveHits(hits: number): void {
+  if (this.consecutiveHitsText) {
+    // Only show if there are hits
+    if (hits > 0) {
+      this.consecutiveHitsText.setText(`Consecutive Hits: ${hits}`);
+      this.consecutiveHitsText.setAlpha(1);
+      
+      // Animate the text
+      this.scene.tweens.add({
+        targets: this.consecutiveHitsText,
+        scaleX: 1.2,
+        scaleY: 1.2,
+        duration: 100,
+        yoyo: true,
+        ease: 'Power2',
+        onComplete: () => {
+          if (this.consecutiveHitsText) {
+            this.consecutiveHitsText.setScale(1);
+          }
+        }
+      });
+    } else {
+      // Hide when hits are reset to 0
+      this.consecutiveHitsText.setAlpha(0);
+    }
+  }
+}
+
+
 /**
  * Initialize all UI components
  */
 private initializeUI(): void {
+  
+  const gameWidth = this.scene.scale.width;
+  const gameHeight = this.scene.scale.height;
+
   // Create UI components in order of layering (bottom to top)
   this.hudContainer = new UIHudContainer(this.scene);
   
@@ -128,7 +173,24 @@ private initializeUI(): void {
   // Initialize theme integration
   this.themeIntegration = new UIThemeIntegration(this.scene);
   this.themeIntegration.initialize(); // Make sure to initialize the theme integration
-  
+  this.consecutiveHitsText = this.scene.add.text(
+    gameWidth / 2, // Center horizontally
+    gameHeight - 40, // Near bottom of screen
+    'Consecutive Hits: 0',
+    {
+      fontFamily: 'Arial',
+      fontSize: '16px',
+      color: '#ffffff',
+      align: 'center'
+    }
+  );
+  this.consecutiveHitsText.setOrigin(0.5);
+  this.consecutiveHitsText.setAlpha(0);
+  this.multiplierDisplay = new UIMultiplierDisplay(
+    this.scene, 
+    gameWidth - 70, // Position from right edge
+    60 // Position from top edge
+  );
   // Set up event listeners
   this.setupEventListeners();
 }
@@ -281,6 +343,16 @@ private initializeUI(): void {
    * Clean up all UI resources
    */
   public destroy(): void {
+
+    
+  if (this.consecutiveHitsText) {
+    this.consecutiveHitsText.destroy();
+    this.consecutiveHitsText = null;
+  }  
+  if (this.multiplierDisplay) {
+    this.multiplierDisplay.destroy();
+    this.multiplierDisplay = null;
+  }
     // Clean up all components
     this.hudContainer.destroy();
     this.scoreDisplay.destroy();

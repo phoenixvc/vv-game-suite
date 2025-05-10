@@ -142,102 +142,102 @@ class CollisionManager {
     }
   }
 
-  /**
-   * Set up specialized collision handling for paddles
-   * This provides more advanced physics handling for paddle collisions
-   */
-  public setupPaddleCollisions(): void {
-    try {
-      // Import PaddlePhysics dynamically to avoid circular dependencies
-      import('../../utils/PaddlePhysics').then(({ PaddlePhysics }) => {
-        // This specialized handler will be called in addition to the regular handlers
-        // It provides more advanced physics calculations for paddle collisions
-        this.scene.matter.world.on('collisionstart', (event: Phaser.Physics.Matter.Events.CollisionStartEvent) => {
-          const pairs = event.pairs;
+  // /**
+  //  * Set up specialized collision handling for paddles
+  //  * This provides more advanced physics handling for paddle collisions
+  //  */
+  // public setupPaddleCollisions(): void {
+  //   try {
+  //     // Import PaddlePhysics dynamically to avoid circular dependencies
+  //     import('../../utils/PaddlePhysics').then(({ PaddlePhysics }) => {
+  //       // This specialized handler will be called in addition to the regular handlers
+  //       // It provides more advanced physics calculations for paddle collisions
+  //       this.scene.matter.world.on('collisionstart', (event: Phaser.Physics.Matter.Events.CollisionStartEvent) => {
+  //         const pairs = event.pairs;
           
-          for (let i = 0; i < pairs.length; i++) {
-            const bodyA = pairs[i].bodyA;
-            const bodyB = pairs[i].bodyB;
+  //         for (let i = 0; i < pairs.length; i++) {
+  //           const bodyA = pairs[i].bodyA;
+  //           const bodyB = pairs[i].bodyB;
             
-            // Use type assertion to access the label property
-            const bodyALabel = (bodyA as any).label;
-            const bodyBLabel = (bodyB as any).label;
+  //           // Use type assertion to access the label property
+  //           const bodyALabel = (bodyA as any).label;
+  //           const bodyBLabel = (bodyB as any).label;
             
-            // Check if the collision is between a ball and a paddle
-            const isPaddleCollision = 
-              (bodyALabel === 'ball' && bodyBLabel?.startsWith('paddle_')) ||
-              (bodyBLabel === 'ball' && bodyALabel?.startsWith('paddle_'));
+  //           // Check if the collision is between a ball and a paddle
+  //           const isPaddleCollision = 
+  //             (bodyALabel === 'ball' && bodyBLabel?.startsWith('paddle_')) ||
+  //             (bodyBLabel === 'ball' && bodyALabel?.startsWith('paddle_'));
             
-            if (isPaddleCollision) {
-              // Get the ball and paddle bodies
-              const ballBody = bodyALabel === 'ball' ? bodyA : bodyB;
-              const paddleBody = bodyALabel === 'ball' ? bodyB : bodyA;
+  //           if (isPaddleCollision) {
+  //             // Get the ball and paddle bodies
+  //             const ballBody = bodyALabel === 'ball' ? bodyA : bodyB;
+  //             const paddleBody = bodyALabel === 'ball' ? bodyB : bodyA;
               
-              // Find the corresponding game objects
-              const ball = this.ballManager?.getAllBalls().find(b => b.body === ballBody);
+  //             // Find the corresponding game objects
+  //             const ball = this.ballManager?.getAllBalls().find(b => b.body === ballBody);
               
-              // Get all paddles from the scene
-              let paddle;
-              if ('getAllPaddles' in this.scene && typeof this.scene.getAllPaddles === 'function') {
-                paddle = this.scene.getAllPaddles().find(p => p.body === paddleBody);
-              }
+  //             // Get all paddles from the scene
+  //             let paddle;
+  //             if ('getAllPaddles' in this.scene && typeof this.scene.getAllPaddles === 'function') {
+  //               paddle = this.scene.getAllPaddles().find(p => p.body === paddleBody);
+  //             }
               
-              if (ball && paddle) {
-                console.log(`Advanced physics handling for ball collision with paddle ${(paddleBody as any).label}`);
+  //             if (ball && paddle) {
+  //               console.log(`Advanced physics handling for ball collision with paddle ${(paddleBody as any).label}`);
                 
-                // Calculate the hit position
-                const hitPosition = {
-                  x: pairs[i].collision.supports[0].x,
-                  y: pairs[i].collision.supports[0].y
-                };
+  //               // Calculate the hit position
+  //               const hitPosition = {
+  //                 x: pairs[i].collision.supports[0].x,
+  //                 y: pairs[i].collision.supports[0].y
+  //               };
                 
-                // Calculate the new velocity using PaddlePhysics
-                const newVelocity = PaddlePhysics.calculateBallDeflection(
-                  ball, paddle, hitPosition
-                );
+  //               // Calculate the new velocity using PaddlePhysics
+  //               const newVelocity = PaddlePhysics.calculateBallDeflection(
+  //                 ball, paddle, hitPosition
+  //               );
                 
-                // Apply the new velocity - use type assertion to fix the TypeScript error
-                this.scene.matter.body.setVelocity(ball.body as MatterJS.BodyType, newVelocity);
+  //               // Apply the new velocity - use type assertion to fix the TypeScript error
+  //               this.scene.matter.body.setVelocity(ball.body as MatterJS.BodyType, newVelocity);
                 
-                // Play bounce sound if available
-                if (this.soundManager && typeof this.soundManager.playSound === 'function') {
-                  this.soundManager.playSound('bounce');
-                }
+  //               // Play bounce sound if available
+  //               if (this.soundManager && typeof this.soundManager.playSound === 'function') {
+  //                 this.soundManager.playSound('bounce');
+  //               }
                 
-                // Create particle effect at collision point
-                if (this.particleManager) {
-                  this.particleManager.createBounceEffect(
-                    hitPosition.x,
-                    hitPosition.y,
-                    0x00ffff
-                  );
-                }
+  //               // Create particle effect at collision point
+  //               if (this.particleManager) {
+  //                 this.particleManager.createBounceEffect(
+  //                   hitPosition.x,
+  //                   hitPosition.y,
+  //                   0x00ffff
+  //                 );
+  //               }
                 
-                // Add a flash effect to the paddle
-                const originalTint = paddle.tintTopLeft;
-                paddle.setTint(0xffffff);
-                this.scene.time.delayedCall(100, () => {
-                  paddle.setTint(originalTint);
-                });
-              }
-            }
-          }
-        });
+  //               // Add a flash effect to the paddle
+  //               const originalTint = paddle.tintTopLeft;
+  //               paddle.setTint(0xffffff);
+  //               this.scene.time.delayedCall(100, () => {
+  //                 paddle.setTint(originalTint);
+  //               });
+  //             }
+  //           }
+  //         }
+  //       });
         
-        console.log('Advanced paddle collision physics handler set up');
-      }).catch(error => {
-        console.error('Error importing PaddlePhysics:', error);
-        if (this.errorManager) {
-          this.errorManager.logError('Failed to import PaddlePhysics', error instanceof Error ? error.stack : undefined);
-        }
-      });
-    } catch (error) {
-      console.error('Error setting up paddle collisions:', error);
-      if (this.errorManager) {
-        this.errorManager.logError('Failed to set up paddle collisions', error instanceof Error ? error.stack : undefined);
-      }
-    }
-  }
+  //       console.log('Advanced paddle collision physics handler set up');
+  //     }).catch(error => {
+  //       console.error('Error importing PaddlePhysics:', error);
+  //       if (this.errorManager) {
+  //         this.errorManager.logError('Failed to import PaddlePhysics', error instanceof Error ? error.stack : undefined);
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error('Error setting up paddle collisions:', error);
+  //     if (this.errorManager) {
+  //       this.errorManager.logError('Failed to set up paddle collisions', error instanceof Error ? error.stack : undefined);
+  //     }
+  //   }
+  // }
 
   public cleanup(): void {
     try {

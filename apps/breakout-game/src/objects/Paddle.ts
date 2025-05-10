@@ -10,27 +10,11 @@ export interface PaddleOptions {
   collisionCategory: number;
   collidesWith: number[];
   texture: string;
-}
-
-// Define a type for objects that might have dimensions
-interface WithDimensions {
-  x: number;
-  y: number;
-  width?: number;
-  height?: number;
-  displayWidth?: number;
-  displayHeight?: number;
-  body?: {
-    label?: string;
-  };
-  getData?: (key: string) => any;
+  edge?: 'top' | 'bottom' | 'left' | 'right';
+  id?: string;
 }
 
 export class Paddle extends Phaser.Physics.Matter.Sprite {
-  private lastWallCollisionTime: number = 0;
-  private consecutivePaddleHits: number = 0;
-  private wallCollisionCooldown: number = 200; // ms
-  
   constructor(opts: PaddleOptions) {
     const { scene, x, y, texture } = opts;
     super(scene.matter.world, x, y, texture);
@@ -39,296 +23,156 @@ export class Paddle extends Phaser.Physics.Matter.Sprite {
     const width = opts.width;
     const height = opts.height;
 
+    // Set up the physics body
     this.setBody({ type: 'rectangle', width, height });
     this.setStatic(true);
     this.setCollisionCategory(opts.collisionCategory);
     this.setCollidesWith(opts.collidesWith);
     this.setFriction(0);
     this.setFrictionAir(0);
+    this.setBounce(1.1);
 
-    (this.body as MatterJS.BodyType).label = 'paddle';
+    // Determine paddle edge/position if not provided
+    const edge = opts.edge || this.determinePaddleEdge(opts.orientation, x, y, scene);
     
-    // Initialize data properties
+    // Set the body label with a unique identifier
+    const id = opts.id || edge || `paddle_${Date.now()}`;
+    (this.body as MatterJS.BodyType).label = `paddle_${id}`;
+    
+    // Store important properties in data for easy access by managers
+    this.setData('orientation', opts.orientation);
+    this.setData('isVertical', opts.orientation === 'vertical');
+    this.setData('edge', edge);
+    this.setData('id', id);
+    this.setData('width', width);
+    this.setData('height', height);
+    this.setData('originalTint', this.tintTopLeft);
+    
+    // Initialize with default properties
+    this.setData('sticky', false);
+    this.setData('isConcave', false);
+    this.setData('isConvex', true);
     this.setData('consecutivePaddleHits', 0);
+  }
+  
+  /**
+   * Determine which edge this paddle is on based on its position
+   */
+  private determinePaddleEdge(
+    orientation: 'horizontal' | 'vertical',
+    x: number,
+    y: number,
+    scene: Phaser.Scene
+  ): 'top' | 'bottom' | 'left' | 'right' {
+    const centerX = scene.scale.width / 2;
+    const centerY = scene.scale.height / 2;
     
-    // Set up update listener for wall collision detection
-    this.scene.events.on('update', this.checkWallCollision, this);
+    if (orientation === 'horizontal') {
+      return y < centerY ? 'top' : 'bottom';
+    } else {
+      return x < centerX ? 'left' : 'right';
+    }
+  }
+  
+  /**
+   * Calculate bounce angle based on where the ball hits the paddle
+   * This is a utility method that can be used by physics handlers
+   */
+  calculateBounceAngle(hitPosition: { x: number, y: number }): number {
+    const orientation = this.getData('orientation');
+    let relativePos: number;
+    
+    if (orientation === 'horizontal') {
+      // For horizontal paddles, use X position for angle calculation
+      relativePos = (hitPosition.x - this.x) / (this.displayWidth / 2);
+    } else {
+      // For vertical paddles, use Y position for angle calculation
+      relativePos = (hitPosition.y - this.y) / (this.displayHeight / 2);
+    }
+    
+    // Clamp relative position between -1 and 1
+    relativePos = Phaser.Math.Clamp(relativePos, -1, 1);
+    
+    // Base angle depends on orientation
+    const baseAngle = orientation === 'horizontal' ? -Math.PI / 2 : 0;
+    
+    // Max angle offset (60 degrees)
+    const maxAngleOffset = Math.PI / 3;
+    
+    return baseAngle + (relativePos * maxAngleOffset);
+  }
+  
+  /**
+   * Get the paddle's shape type (concave or convex)
+   */
+  getShapeType(): 'concave' | 'convex' {
+    return this.getData('isConcave') ? 'concave' : 'convex';
+  }
+  
+  /**
+   * Check if the paddle is sticky (from power-ups)
+   */
+  isSticky(): boolean {
+    return this.getData('sticky') === true;
+  }
+  
+  /**
+   * Set the paddle's sticky state
+   */
+  setSticky(isSticky: boolean): void {
+    this.setData('sticky', isSticky);
+  }
+  
+  /**
+   * Flash the paddle for visual feedback
+   */
+  flash(color: number = 0xffffff, duration: number = 100): void {
+    const originalTint = this.getData('originalTint') || this.tintTopLeft;
+    this.setTint(color);
+    this.scene.time.delayedCall(duration, () => {
+      this.setTint(originalTint);
+    });
+  }
+  
+  /**
+   * Increment the consecutive paddle hit counter
+   * This is used for scoring and game mechanics
+   */
+  incrementPaddleHitCounter(): void {
+    const currentHits = this.getData('consecutivePaddleHits') || 0;
+    this.setData('consecutivePaddleHits', currentHits + 1);
+    
+    // Emit an event that other systems can listen for
+    const eventManager = this.scene.events;
+    if (eventManager) {
+      eventManager.emit('paddleHit', {
+        paddle: this.getData('edge'),
+        hitPosition: this.x,
+        consecutiveHits: currentHits + 1
+      });
+    }
+    
+    // Visual feedback for hit
+    this.flash(0xffffff, 50);
   }
   
   /**
    * Handle ball hit event
-   * This is a base implementation that can be overridden by child classes
-   * @param ball The ball body that hit the paddle
+   * This is a base implementation that subclasses can override
    */
-  public onBallHit(ball: Phaser.Physics.Arcade.Body): void {
-    // Increment the paddle hit counter
+  onBallHit(ball: Phaser.Physics.Arcade.Body): void {
+    // Increment hit counter
     this.incrementPaddleHitCounter();
     
-    // Base implementation just emits an event
-    const eventManager = this.scene.events;
-    if (eventManager) {
-      eventManager.emit('paddleBallCollision', { 
-        paddle: this, 
-        ball,
-        paddleType: this.getData('paddleType') || 'default'
-      });
-    }
-  }
-    
-  /**
-   * Calculate bounce angle based on where the ball hits the paddle
-   * Base implementation for standard paddles
-   */
-  calculateBounceAngle(ballX: number): number {
-    // Get the relative position of the ball on the paddle (-1 to 1)
-    const relativePos = (ballX - this.x) / (this.width / 2);
-    
-    // Base angle (in radians)
-    const baseAngle = -Math.PI / 2; // Straight up
-    
-    // For standard paddle, we want a linear relationship between hit position and angle
-    const maxAngleOffset = Math.PI / 3; // 60 degrees max
-    
-    return baseAngle + (relativePos * maxAngleOffset);
-  }
-  /**
-   * Check if the paddle is colliding with walls
-   */
-  checkWallCollision() {
-    const now = Date.now();
-    // Only check if enough time has passed since last collision
-    if (now - this.lastWallCollisionTime < this.wallCollisionCooldown) {
-      return;
-    }
-  
-    // Get physics manager and wall manager
-    const physicsManager = (this.scene as any).getPhysicsManager?.();
-    const wallManager = (this.scene as any).getWallManager?.();
-    if (!physicsManager) return;
-    
-    // Try to get walls from both physics manager and wall manager
-    let walls: any[] = [];
-    
-    // Get walls from physics manager if available
-    if (physicsManager && typeof physicsManager.getWalls === 'function') {
-      const physicsWalls = physicsManager.getWalls();
-      if (physicsWalls && physicsWalls.length) {
-        walls = walls.concat(physicsWalls);
-      }
-    }
-  
-    // Get vault walls from wall manager if available
-    if (wallManager && typeof wallManager.getVaultWalls === 'function') {
-      const vaultWalls = wallManager.getVaultWalls();
-      if (vaultWalls && vaultWalls.length) {
-        walls = walls.concat(vaultWalls);
-      }
-    }
-    
-    if (walls.length === 0) return;
-    
-    // Get paddle bounds
-    const paddleX = this.x;
-    const paddleY = this.y;
-    const paddleWidth = this.width;
-    const paddleHeight = this.height;
-    const paddleLeft = paddleX - paddleWidth / 2;
-    const paddleRight = paddleX + paddleWidth / 2;
-    const paddleTop = paddleY - paddleHeight / 2;
-    const paddleBottom = paddleY + paddleHeight / 2;
-    
-    // Check collision with each wall
-    for (const wall of walls) {
-      // Ensure wall has the necessary properties
-      const wallObj = wall as WithDimensions;
-      
-      // Skip if wall doesn't have a position
-      if (typeof wallObj.x !== 'number' || typeof wallObj.y !== 'number') {
-        continue;
-      }
-      
-      // Get wall dimensions - try different properties based on the object type
-      let wallWidth = 0;
-      let wallHeight = 0;
-      let wallX = wallObj.x;
-      let wallY = wallObj.y;
-      
-      // Try to get wall dimensions
-      if (typeof wallObj.width === 'number' && typeof wallObj.height === 'number') {
-        wallWidth = wallObj.width;
-        wallHeight = wallObj.height;
-      } else if (typeof wallObj.displayWidth === 'number' && typeof wallObj.displayHeight === 'number') {
-        wallWidth = wallObj.displayWidth;
-        wallHeight = wallObj.displayHeight;
-      } else {
-        // Skip if we can't determine wall dimensions
-        continue;
-      }
-      
-      // Calculate wall bounds
-      const wallLeft = wallX - wallWidth / 2;
-      const wallRight = wallX + wallWidth / 2;
-      const wallTop = wallY - wallHeight / 2;
-      const wallBottom = wallY + wallHeight / 2;
-      
-      // Check for overlap
-      const overlaps = !(
-        paddleRight < wallLeft ||
-        paddleLeft > wallRight ||
-        paddleBottom < wallTop ||
-        paddleTop > wallBottom
-      );
-      
-      if (overlaps) {
-        this.handleWallCollision(wall);
-        this.lastWallCollisionTime = now;
-        
-        // Reset paddle hit counter when hitting a wall
-        this.resetPaddleHitCounter();
-        break;
-      }
-    }
-  }
-  /**
-   * Handle collision with a wall
-   */
-  handleWallCollision(wall: any) {
-    const wallObj = wall as WithDimensions;
-    
-    // Get the edge data from the wall or try to determine it
-    let edge: string | null = null;
-    
-    if (wallObj.getData && typeof wallObj.getData === 'function') {
-      edge = wallObj.getData('edge');
-    }
-    
-    if (!edge && wallObj.body && wallObj.body.label) {
-      const label = wallObj.body.label;
-      if (label === 'leftVaultWall') edge = 'left';
-      else if (label === 'rightVaultWall') edge = 'right';
-      else if (label === 'roofVaultWall') edge = 'top';
-      else if (label === 'bottomVaultWall') edge = 'bottom';
-    }
-    
-    // Get wall dimensions
-    let wallX = 0;
-    let wallY = 0;
-    let wallWidth = 0;
-    let wallHeight = 0;
-    
-    if (typeof wallObj.x === 'number' && typeof wallObj.y === 'number') {
-      wallX = wallObj.x;
-      wallY = wallObj.y;
-    }
-    
-    if (typeof wallObj.width === 'number' && typeof wallObj.height === 'number') {
-      wallWidth = wallObj.width;
-      wallHeight = wallObj.height;
-    } else if (typeof wallObj.displayWidth === 'number' && typeof wallObj.displayHeight === 'number') {
-      wallWidth = wallObj.displayWidth;
-      wallHeight = wallObj.displayHeight;
-    }
-    
-    // Calculate wall bounds
-    const wallLeft = wallX - wallWidth / 2;
-    const wallRight = wallX + wallWidth / 2;
-    const wallTop = wallY - wallHeight / 2;
-    const wallBottom = wallY + wallHeight / 2;
-    
-    // If edge is not determined, try to infer it based on position
-    if (!edge) {
-      // Determine which side of the wall we're hitting based on paddle position
-      const paddleX = this.x;
-      const paddleY = this.y;
-      
-      // Calculate distances to each wall edge
-      const distToLeft = Math.abs(paddleX - wallLeft);
-      const distToRight = Math.abs(paddleX - wallRight);
-      const distToTop = Math.abs(paddleY - wallTop);
-      const distToBottom = Math.abs(paddleY - wallBottom);
-      
-      // Find the minimum distance
-      const minDist = Math.min(distToLeft, distToRight, distToTop, distToBottom);
-      
-      // Set edge based on minimum distance
-      if (minDist === distToLeft) edge = 'left';
-      else if (minDist === distToRight) edge = 'right';
-      else if (minDist === distToTop) edge = 'top';
-      else edge = 'bottom';
-    }
-    
-    // Push the paddle away from the wall
-    if (edge === 'left') {
-      this.setX(wallRight + this.width/2 + 1);
-    } else if (edge === 'right') {
-      this.setX(wallLeft - this.width/2 - 1);
-    } else if (edge === 'top') {
-      this.setY(wallBottom + this.height/2 + 1);
-    } else if (edge === 'bottom') {
-      this.setY(wallTop - this.height/2 - 1);
-    }
-    
-    // Emit wall collision event
-    const eventManager = (this.scene as any).getEventManager?.();
-    if (eventManager) {
-      eventManager.emit('paddleWallCollision', { paddle: this, wall, edge });
-    }
-    
-    // Visual feedback for collision
-    this.scene.tweens.add({
-      targets: this,
-      alpha: 0.7,
-      duration: 50,
-      yoyo: true,
-      ease: 'Power2'
-    });
-  }
-  
-  /**
-   * Increment the consecutive paddle hits counter
-   */
-  incrementPaddleHitCounter() {
-    const currentHits = this.getData('consecutivePaddleHits') || 0;
-    this.setData('consecutivePaddleHits', currentHits + 1);
-    this.emitPaddleHitCounterUpdate();
-    
-    // Visual feedback for hits
-    this.scene.tweens.add({
-      targets: this,
-      scaleY: 1.1,
-      duration: 50,
-      yoyo: true,
-      ease: 'Power2'
-    });
-  }
-  
-  /**
-   * Reset the consecutive paddle hits counter
-   */
-  resetPaddleHitCounter() {
-    this.setData('consecutivePaddleHits', 0);
-    this.emitPaddleHitCounterUpdate();
-  }
-  
-  /**
-   * Emit an event to update the paddle hit counter in the HUD
-   */
-  emitPaddleHitCounterUpdate() {
-    const eventManager = (this.scene as any).getEventManager?.();
-    if (eventManager) {
-      eventManager.emit('consecutivePaddleHitUpdated', { 
-        hits: this.getData('consecutivePaddleHits') || 0 
-      });
-    }
+    // Base implementation just provides visual feedback
+    this.flash();
   }
   
   /**
    * Clean up resources when the paddle is destroyed
    */
-  destroy() {
-    // Remove update listener
-    this.scene.events.off('update', this.checkWallCollision, this);
-        // Call parent destroy method
-    super.destroy();
+  destroy(fromScene?: boolean): void {
+    // Call parent destroy method
+    super.destroy(fromScene);
   }
 }

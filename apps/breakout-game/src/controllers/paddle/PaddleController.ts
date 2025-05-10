@@ -159,48 +159,6 @@ class PaddleController {
   cleanup(): void {
     this.controller.cleanup();
   }
-  
-  /**
-   * Change the control type for this paddle
-   */
-  setControlType(
-    controlType: 'keyboard' | 'mouse' | 'touch' | 'ai',
-    options?: { difficulty?: number }
-  ): void {
-    const scene = (this.controller as any).scene;
-    const paddle = this.controller.getPaddle();
-    const orientation = (this.controller as any).orientation || 'horizontal';
-    const wasEnabled = this.controller.isControlEnabled();
-    
-    // Clean up the old controller
-    this.controller.cleanup();
-    
-    // Create a new controller of the specified type
-    switch (controlType) {
-      case 'mouse':
-      case 'touch':
-        this.controller = new MousePaddleController(scene, paddle, orientation);
-        break;
-      case 'ai':
-        this.controller = new AIPaddleController(
-          scene, 
-          paddle, 
-          orientation, 
-          options?.difficulty !== undefined ? options.difficulty : 0.5
-        );
-        break;
-      case 'keyboard':
-      default:
-        const paddleId = paddle?.getData('id') || 'default';
-        this.controller = new KeyboardPaddleController(scene, paddle, orientation, paddleId);
-        break;
-    }
-    
-    // Restore enabled state if it was enabled before
-    if (wasEnabled) {
-      this.controller.enableControl();
-    }
-  }
 }
 
 export default PaddleController;

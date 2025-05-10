@@ -6,6 +6,8 @@ class GameStateManager {
   private lives: number;
   private isGameStarted: boolean = false;
   private isGamePaused: boolean = false;
+  private consecutiveHits: Record<string, number> = {}; // Track consecutive hits per paddle
+  private totalConsecutiveHits: number = 0; // Track total consecutive hits across all paddles
   
   constructor(scene: BreakoutScene) {
     this.scene = scene;
@@ -20,6 +22,8 @@ class GameStateManager {
     this.lives = GAME_STATE.INITIAL_LIVES;
     this.isGameStarted = false;
     this.isGamePaused = false;
+    this.consecutiveHits = {};
+    this.totalConsecutiveHits = 0;
     
     // Set up event listeners
     const eventManager = this.scene.getEventManager();
@@ -29,6 +33,10 @@ class GameStateManager {
       eventManager.on('gameStarted', this.handleGameStarted, this);
       eventManager.on('gamePaused', this.handleGamePaused, this);
       eventManager.on('gameResumed', this.handleGameResumed, this);
+      
+      // Add listeners for paddle hits and wall hits
+      eventManager.on('paddleHit', this.handlePaddleHit, this);
+      eventManager.on('wallHit', this.handleWallHit, this);
     }
     
     // Update UI with initial lives
@@ -36,6 +44,76 @@ class GameStateManager {
     if (uiManager) {
       uiManager.updateLives(this.lives);
     }
+  }
+  
+  /**
+   * Handle paddle hit event
+   */
+  private handlePaddleHit(data: { paddle: string, hitPosition: number }): void {
+    // Increment consecutive hits for this paddle
+    const paddleId = data.paddle;
+    if (!this.consecutiveHits[paddleId]) {
+      this.consecutiveHits[paddleId] = 0;
+    }
+    this.consecutiveHits[paddleId]++;
+    
+    // Increment total consecutive hits
+    this.totalConsecutiveHits++;
+    
+    // Emit event for score tracking
+    const eventManager = this.scene.getEventManager();
+    if (eventManager) {
+      eventManager.emit('consecutiveHitUpdated', { 
+        hits: this.totalConsecutiveHits,
+        paddleHits: this.consecutiveHits,
+        paddle: paddleId
+      });
+    }
+    
+    // Update UI if needed
+    const uiManager = this.scene.getUIManager();
+    if (uiManager && typeof uiManager.updateConsecutiveHits === 'function') {
+      uiManager.updateConsecutiveHits(this.totalConsecutiveHits);
+    }
+  }
+  
+  /**
+   * Handle wall hit event - resets consecutive hits
+   */
+  private handleWallHit(): void {
+    // Reset consecutive hits when ball hits a wall
+    this.resetConsecutiveHits();
+  }
+  
+  /**
+   * Reset consecutive hit counters
+   */
+  public resetConsecutiveHits(): void {
+    // Reset all consecutive hit counters
+    this.consecutiveHits = {};
+    this.totalConsecutiveHits = 0;
+    
+    // Emit event for score tracking
+    const eventManager = this.scene.getEventManager();
+    if (eventManager) {
+      eventManager.emit('consecutiveHitReset');
+    }
+    
+    // Update UI if needed
+    const uiManager = this.scene.getUIManager();
+    if (uiManager && typeof uiManager.updateConsecutiveHits === 'function') {
+      uiManager.updateConsecutiveHits(0);
+    }
+  }
+  
+  /**
+   * Get consecutive hits for a specific paddle
+   */
+  public getConsecutiveHits(paddleId?: string): number {
+    if (paddleId && this.consecutiveHits[paddleId]) {
+      return this.consecutiveHits[paddleId];
+    }
+    return this.totalConsecutiveHits;
   }
   
   /**
@@ -65,6 +143,9 @@ class GameStateManager {
     if (uiManager) {
       uiManager.updateLives(this.lives);
     }
+    
+    // Reset consecutive hits when life is lost
+    this.resetConsecutiveHits();
     
     if (this.lives <= 0) {
       const eventManager = this.scene.getEventManager();
@@ -203,6 +284,8 @@ class GameStateManager {
       eventManager.off('gameStarted', this.handleGameStarted, this);
       eventManager.off('gamePaused', this.handleGamePaused, this);
       eventManager.off('gameResumed', this.handleGameResumed, this);
+      eventManager.off('paddleHit', this.handlePaddleHit, this);
+      eventManager.off('wallHit', this.handleWallHit, this);
     }
   }
 }

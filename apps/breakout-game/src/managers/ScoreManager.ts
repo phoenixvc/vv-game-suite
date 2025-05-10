@@ -8,12 +8,67 @@ class ScoreManager {
   private combo: number = 1;
   private comboTimer: Phaser.Time.TimerEvent | null = null;
   private comboTimeout: number = 2000; // 2 seconds to maintain combo
+  private consecutiveHitMultiplier: number = 1; // Multiplier based on consecutive paddle hits
   
   constructor(scene: BreakoutScene) {
     this.scene = scene;
     
     // Get high score from registry if available
     this.highScore = this.scene.registry.get('highScore') || 0;
+    
+    // Set up event listeners for consecutive hits
+    const eventManager = this.scene.getEventManager();
+    if (eventManager) {
+      eventManager.on('consecutiveHitUpdated', this.handleConsecutiveHitUpdated, this);
+      eventManager.on('consecutiveHitReset', this.handleConsecutiveHitReset, this);
+    }
+  }
+  
+  /**
+   * Handle consecutive hit updates
+   */
+  private handleConsecutiveHitUpdated(data: { hits: number }): void {
+    // Calculate multiplier based on consecutive hits
+    // Formula: Base multiplier + (hits * 0.1) capped at a reasonable maximum
+    this.consecutiveHitMultiplier = Math.min(1 + (data.hits * 0.1), 3);
+    
+    // Show visual feedback for multiplier
+    const uiManager = this.scene.getUIManager();
+    if (uiManager && typeof uiManager.updateMultiplier === 'function') {
+      uiManager.updateMultiplier(this.consecutiveHitMultiplier);
+    }
+    
+    // Emit event for other systems
+    const eventManager = this.scene.getEventManager();
+    if (eventManager) {
+      eventManager.emit('multiplierChanged', { 
+        multiplier: this.consecutiveHitMultiplier,
+        source: 'consecutiveHits'
+      });
+    }
+  }
+  
+  /**
+   * Handle consecutive hit reset
+   */
+  private handleConsecutiveHitReset(): void {
+    // Reset multiplier to base value
+    this.consecutiveHitMultiplier = 1;
+    
+    // Update UI
+    const uiManager = this.scene.getUIManager();
+    if (uiManager && typeof uiManager.updateMultiplier === 'function') {
+      uiManager.updateMultiplier(this.consecutiveHitMultiplier);
+    }
+    
+    // Emit event for other systems
+    const eventManager = this.scene.getEventManager();
+    if (eventManager) {
+      eventManager.emit('multiplierChanged', { 
+        multiplier: this.consecutiveHitMultiplier,
+        source: 'consecutiveHits'
+      });
+    }
   }
   
   /**
@@ -28,10 +83,26 @@ class ScoreManager {
    * Increase the player's score
    * @param points Base points to add
    * @param applyCombo Whether to apply combo multiplier
+   * @param applyConsecutiveHits Whether to apply consecutive hits multiplier
    */
-  public increaseScore(points: number, applyCombo: boolean = true): void {
-    // Apply combo multiplier if enabled
-    const finalPoints = applyCombo ? points * this.combo : points;
+  public increaseScore(
+    points: number, 
+    applyCombo: boolean = true, 
+    applyConsecutiveHits: boolean = true
+  ): void {
+    // Calculate multipliers
+    let totalMultiplier = 1;
+    
+    if (applyCombo) {
+      totalMultiplier *= this.combo;
+    }
+    
+    if (applyConsecutiveHits) {
+      totalMultiplier *= this.consecutiveHitMultiplier;
+    }
+    
+    // Apply multiplier to points
+    const finalPoints = Math.round(points * totalMultiplier);
     
     // Update score
     this.score += finalPoints;
@@ -48,14 +119,16 @@ class ScoreManager {
       eventManager.emit('scoreChanged', { 
         score: this.score, 
         points: finalPoints,
-        combo: this.combo
+        combo: this.combo,
+        consecutiveHitMultiplier: this.consecutiveHitMultiplier,
+        totalMultiplier: totalMultiplier
       });
     }
     
     // Update high score if needed
     if (this.score > this.highScore) {
       this.updateHighScore(this.score);
-  }
+    }
   
     // Increase combo and reset timer
     if (applyCombo) {
@@ -90,7 +163,7 @@ class ScoreManager {
     // Cap combo at a reasonable maximum
     if (this.combo > 10) {
       this.combo = 10;
-}
+    }
 
     // Reset combo timer
     if (this.comboTimer) {
@@ -146,16 +219,35 @@ class ScoreManager {
   }
   
   /**
+   * Get the consecutive hit multiplier
+   */
+  public getConsecutiveHitMultiplier(): number {
+    return this.consecutiveHitMultiplier;
+  }
+  
+  /**
+   * Get the total multiplier (combo * consecutive hits)
+   */
+  public getTotalMultiplier(): number {
+    return this.combo * this.consecutiveHitMultiplier;
+  }
+  
+  /**
    * Reset the score to zero
    */
   public resetScore(): void {
     this.score = 0;
     this.resetCombo();
+    this.consecutiveHitMultiplier = 1;
     
     // Update UI
     const uiManager = this.scene.getUIManager();
     if (uiManager) {
       uiManager.updateGameScore(this.score);
+      
+      if (typeof uiManager.updateMultiplier === 'function') {
+        uiManager.updateMultiplier(1);
+      }
     }
     
     // Emit score reset event
@@ -172,6 +264,13 @@ class ScoreManager {
     if (this.comboTimer) {
       this.comboTimer.remove();
       this.comboTimer = null;
+    }
+    
+    // Remove event listeners
+    const eventManager = this.scene.getEventManager();
+    if (eventManager) {
+      eventManager.off('consecutiveHitUpdated', this.handleConsecutiveHitUpdated, this);
+      eventManager.off('consecutiveHitReset', this.handleConsecutiveHitReset, this);
     }
   }
 }

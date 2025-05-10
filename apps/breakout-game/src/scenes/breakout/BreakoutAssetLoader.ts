@@ -134,12 +134,37 @@ class BreakoutAssetLoader {
     try {
       console.log('Forcing game initialization');
       
-      // Check if paddle exists and create it if not
-      const paddleManager = this.scene['paddleManager'];
-      if (paddleManager && (!paddleManager.getPaddles() || paddleManager.getPaddles().length === 0)) {
-        console.log('Creating paddles');
-        paddleManager.createPaddles();
-      }
+// Check if paddle exists and create it if not
+const paddleManager = this.scene['paddleManager'];
+if (paddleManager && (!paddleManager.getPaddles() || paddleManager.getPaddles().length === 0)) {
+  console.log('Creating paddles');
+  
+  // Use the new createPaddles method if it exists
+  if (typeof paddleManager.createPaddles === 'function') {
+    paddleManager.createPaddles();
+  } 
+  // Fall back to creating a basic bottom paddle
+  else {
+    const gameWidth = this.scene.scale.width;
+    const gameHeight = this.scene.scale.height;
+    
+    const paddle = paddleManager.createPaddle(
+      gameWidth / 2,      // x - center of screen
+      gameHeight - 50,    // y - 50px from bottom
+      150,                // width
+      20,                 // height
+      { isConcave: true } // options
+    );
+    
+    // Store edge information
+    paddle.setData('edge', 'bottom');
+    
+    // Create a controller if the method exists
+    if (typeof paddleManager.createControllerForPaddle === 'function') {
+      paddleManager.createControllerForPaddle(paddle, 'keyboard');
+    }
+  }
+}
       
       // Check if ball exists and create it if not
       const ballManager = this.scene['ballManager'];

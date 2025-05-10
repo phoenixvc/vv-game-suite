@@ -237,12 +237,24 @@ private playDestroyEffect(brick: Phaser.GameObjects.GameObject): void {
       // Get power-up manager
       const powerUpManager = this.scene.getPowerUpManager();
       if (powerUpManager && typeof powerUpManager.createPowerUp === 'function') {
-        // Get brick position
+        // Get brick position - improved to handle all types of game objects
         let x = 0, y = 0;
-        if (brick instanceof Phaser.GameObjects.Sprite) {
+        
+        // Try multiple ways to get the position
+        if (brick instanceof Phaser.GameObjects.Sprite || brick instanceof Phaser.Physics.Matter.Sprite) {
           x = brick.x;
           y = brick.y;
+        } else if ('x' in brick && 'y' in brick) {
+          // Handle other types of game objects with x and y properties
+          x = (brick as any).x;
+          y = (brick as any).y;
+        } else if (brick.body && 'position' in brick.body) {
+          // Try to get position from body if available
+          x = (brick.body as any).position.x;
+          y = (brick.body as any).position.y;
         }
+        
+        console.log(`Spawning power-up at position (${x}, ${y})`);
         
         // Spawn a power-up at the brick's position
         powerUpManager.createPowerUp(x, y);

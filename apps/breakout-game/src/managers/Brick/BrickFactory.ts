@@ -9,6 +9,7 @@ export class BrickFactory {
     this.scene = scene;
     this.bricks = bricks;
   }
+  
   /**
    * Create bricks for a level based on market signals
    * @param level Current game level
@@ -20,14 +21,14 @@ export class BrickFactory {
     signals?: MarketSignal[]
   ): void {
     const width = this.scene.scale.width;
-
+  
     const brickWidth = 80;
     const brickHeight = 30;
     const padding = 10;
     const rows = 3 + Math.min(level, 5);
     const cols = 8 + Math.min(level, 4);
     const startX = (width - (cols * (brickWidth + padding))) / 2 + brickWidth / 2;
-    const startY = 80 + (level * 5);
+    const startY = 160 + (level * 5); // Changed from 80 to 160 to move down 2 rows
 
     // Generate random signals if none provided
     if (!signals || signals.length < rows * cols) {

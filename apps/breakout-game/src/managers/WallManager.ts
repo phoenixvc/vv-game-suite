@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { ErrorManager } from '../managers/ErrorManager';
 import ParticleManager from './ParticleManager';
-import { PhysicsManager } from './PhysicsManager';
+import PhysicsManager from './Physics/PhysicsManager';
 
 export default class WallManager {
   private scene: Phaser.Scene;

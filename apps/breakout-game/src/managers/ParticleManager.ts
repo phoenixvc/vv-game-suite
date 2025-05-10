@@ -13,14 +13,12 @@ import { TrailEffectManager } from './particles/TrailEffectManager';
  * Restructured to use specialized effect managers
  */
 class ParticleManager {
-  updateParticleColors(particleColor: number) {
-    throw new Error('Method not implemented.');
-  }
   private scene: BreakoutScene;
   private phasorScene: Phaser.Scene;
   private particleControllers: ParticleController[] = [];
   private particleTextures: string[] = ['particle', 'square', 'circle'];
   private errorManager: ErrorManager;
+  private defaultParticleColor: number = 0xffffff;
   
   // Specialized effect managers
   private bounceEffectManager: BounceEffectManager;
@@ -50,7 +48,7 @@ class ParticleManager {
     if (!this.errorManager) {
       // Create our own instance if not available from scene
       this.errorManager = new ErrorManager(scene);
-      }
+    }
       
     // Create particle textures
     this.createParticleTextures();
@@ -61,14 +59,73 @@ class ParticleManager {
     this.explosionEffectManager = new ExplosionEffectManager(this);
     this.powerUpEffectManager = new PowerUpEffectManager(this);
     this.trailEffectManager = new TrailEffectManager(this);
+  }
+  
+  /**
+   * Update particle colors based on the current theme
+   * @param particleColor The color to apply to particles
+   */
+  public updateParticleColors(particleColor: number): void {
+    try {
+      // Store the new default particle color
+      this.defaultParticleColor = particleColor;
+      
+      // Update color for all active particle emitters
+      this.activeParticles.forEach(emitter => {
+        try {
+          if (emitter) {
+            // For new particles, update the configuration
+            if (emitter.config) {
+              emitter.config.tint = particleColor;
+            }
+            
+            // For existing particles, we can't change their color directly
+            // as Phaser doesn't support changing particle tint after creation
+            // But we can store the color for future particles
+          }
+        } catch (error) {
+          // Silently catch errors for individual emitters
+        }
+      });
+      
+      // Update all particle controllers
+      this.particleControllers.forEach(controller => {
+        try {
+          if (controller) {
+            // The controller has a setTint method but it only logs a warning
+            // We'll use it anyway to maintain the API consistency
+            controller.setTint(particleColor);
+          }
+        } catch (error) {
+          // Silently catch errors for individual controllers
+        }
+      });
+      
+      // Store the color in the registry for future particles
+      this.scene.registry.set('particleColor', particleColor);
+      
+      // Emit an event that particle colors have been updated
+      const eventManager = this.scene.getEventManager?.();
+      if (eventManager) {
+        eventManager.emit('particleColorsUpdated', { color: particleColor });
       }
       
+      console.log(`Updated particle colors to ${particleColor.toString(16)}`);
+    } catch (error) {
+      console.error('Error updating particle colors:', error);
+      if (this.errorManager) {
+        this.errorManager.logError('Failed to update particle colors', error instanceof Error ? error.stack : undefined);
+      }
+    }
+  }
+
   /**
    * Get the scene
    */
   getScene(): BreakoutScene {
     return this.scene;
   }
+  
   /**
    * Add a particle controller to be tracked
    */
@@ -76,11 +133,18 @@ class ParticleManager {
     this.particleControllers.push(controller);
   }
     
-/**
+  /**
    * Add an emitter to be tracked
- */
+   */
   trackEmitter(emitter: Phaser.GameObjects.Particles.ParticleEmitter): void {
-      this.activeParticles.add(emitter);
+    this.activeParticles.add(emitter);
+  }
+
+  /**
+   * Get the current default particle color
+   */
+  getDefaultParticleColor(): number {
+    return this.defaultParticleColor;
   }
 
   /**

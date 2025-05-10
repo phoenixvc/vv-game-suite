@@ -10,6 +10,8 @@ export class ConvexPaddle extends Paddle {
     
     // Set data for identification
     this.setData('paddleType', 'convex');
+    this.setData('isConvex', true);
+    this.setData('isConcave', false);
     
     // Set special property for convex paddle - speed boost on hit
     this.setData('speedBoostFactor', 1.15); // 15% speed increase per hit
@@ -142,7 +144,7 @@ export class ConvexPaddle extends Paddle {
     graphics.destroy();
     
     // Apply the texture
-          this.setTexture(textureName);
+    this.setTexture(textureName);
           
     // Add a stronger glow effect for the convex paddle
     try {
@@ -158,7 +160,10 @@ export class ConvexPaddle extends Paddle {
    * Calculate bounce angle based on where the ball hits the paddle
    * Convex paddles redirect the ball away from the center
    */
-  calculateBounceAngle(ballX: number): number {
+  calculateBounceAngle(hitPosition: { x: number, y: number }): number {
+    // Extract the x position from the hitPosition object
+    const ballX = hitPosition.x;
+    
     // Get the relative position of the ball on the paddle (-1 to 1)
     const relativePos = (ballX - this.x) / (this.width / 2);
     
@@ -175,7 +180,7 @@ export class ConvexPaddle extends Paddle {
                         (1 - Math.pow(Math.abs(relativePos) - 1, 2));
     
     return baseAngle + angleOffset;
-}
+  }
 
   /**
    * Override the onBallHit method to increase ball speed

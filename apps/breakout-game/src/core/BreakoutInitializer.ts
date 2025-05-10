@@ -1,4 +1,4 @@
-import { PaddleManager, UIManager } from '@/managers'; // This should work if barrel file is correct
+import { PaddleManager, PhysicsManager, UIManager } from '@/managers'; // This should work if barrel file is correct
 // Alternatively, use direct import if needed:
 // import PaddleManager from '@/managers/paddle/PaddleManager';
 import GameObjectManager from '@/managers/GameObjectManager';
@@ -11,7 +11,6 @@ import GameStateManager from '../managers/GameStateManager';
 import InputManager from '../managers/InputManager';
 import LevelManager from '../managers/LevelManager';
 import ParticleManager from '../managers/ParticleManager';
-import PhysicsManager from '../managers/PhysicsManager';
 import PowerUpManager from '../managers/PowerUpManager';
 import ScoreManager from '../managers/ScoreManager';
 import TimeManager from '../managers/TimeManager';
@@ -107,8 +106,7 @@ class BreakoutInitializer {
 
   /**
    * Create game objects in the correct order
-   */
-  private createGameObjects(): void {
+   */ private createGameObjects(): void {
     try {
       // Create walls/boundaries if they don't exist yet
       const physicsManager = this.scene.getPhysicsManager();
@@ -117,13 +115,15 @@ class BreakoutInitializer {
         physicsManager.createWalls();
       }
       
-      // Create paddles first
-      const paddleManager = this.scene.getPaddleManager();
-      if (paddleManager && typeof paddleManager.createPaddles === 'function') {
-        console.log('Creating paddles');
-        paddleManager.createPaddles();
-      }
-      
+// Create paddles first
+const paddleManager = this.scene.getPaddleManager();
+if (paddleManager) {
+  console.log('Creating paddles');
+  
+  // Use the new createPaddles method if it exists
+  if (typeof paddleManager.createPaddles === 'function') {
+    paddleManager.createPaddles();
+  } }
       // Create balls
       const ballManager = this.scene.getBallManager();
       if (ballManager) {

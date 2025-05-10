@@ -15,11 +15,6 @@ import BallUIManager from './BallUIManager';
  * Manages all balls in the game
  */
 class BallManager {
-  updateBallColors /**
- * Create a ball
- */(ballColor: number) {
-    throw new Error('Method not implemented.');
-  }
   private scene: BreakoutScene;
   
   // Speed settings
@@ -67,6 +62,45 @@ class BallManager {
     
     // Set initial ball speed
     this.ballLauncher.setInitialBallSpeed(this.initialBallSpeed);
+  }
+  
+  /**
+   * Update ball colors based on the current theme
+   * @param color The color to apply to balls
+   */
+  public updateBallColors(color: number): void {
+    try {
+      // Apply the color to all balls
+      const balls = this.ballStateManager.getAllBalls();
+      
+      balls.forEach(ball => {
+        // Store the original color in data if not already stored
+        if (!ball.getData('originalTint')) {
+          ball.setData('originalTint', ball.tintTopLeft);
+        }
+        
+        // Apply the new tint color
+        ball.setTint(color);
+      });
+      
+      // Store the current ball color for future balls
+      this.scene.registry.set('ballColor', color);
+      
+      // Emit an event that ball colors have been updated
+      const eventManager = this.scene.getEventManager();
+      if (eventManager) {
+        eventManager.emit('ballColorsUpdated', { color });
+      }
+      
+      console.log(`Updated ball colors to ${color.toString(16)}`);
+    } catch (error) {
+      console.error('Error updating ball colors:', error);
+      // Log error if error manager exists
+      const errorManager = this.scene['getErrorManager']?.();
+      if (errorManager && typeof errorManager.logError === 'function') {
+        errorManager.logError('Failed to update ball colors', error instanceof Error ? error.stack : undefined);
+      }
+    }
   }
   
   /**

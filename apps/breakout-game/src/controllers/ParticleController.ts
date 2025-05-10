@@ -32,7 +32,24 @@ class ParticleController {
       });
     }
   }
-
+  /**
+   * Update the particle color for new particles
+   * @param color The new color to use for particles
+   */
+  public updateColor(color: number): void {
+    if (this.active && this.particles) {
+      // For Phaser 3.60+, try to update the particle config
+      if (this.particles.config) {
+        this.particles.config.tint = color;
+      }
+      
+      // Store the color for reference
+      this.particles.setData('tintColor', color);
+      
+      // Note: This won't affect already emitted particles
+      console.log(`Updated particle color to ${color.toString(16)}`);
+    }
+  }
   /**
    * Update the particle effect position
    * @param x New x position

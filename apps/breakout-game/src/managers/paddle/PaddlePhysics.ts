@@ -7,6 +7,8 @@ import BreakoutScene from '@/scenes/breakout/BreakoutScene';
 export class PaddlePhysics {
   private scene: BreakoutScene;
   private debugGraphics: Phaser.GameObjects.Graphics | null = null;
+  private visualEffects: any = null;
+  private errorManager: any = null;
 
   constructor(scene: BreakoutScene) {
     this.scene = scene;
@@ -15,6 +17,16 @@ export class PaddlePhysics {
     if (this.scene.registry.get('debugMode')) {
       this.debugGraphics = this.scene.add.graphics();
     }
+    
+    // Try to get visual effects manager
+    this.visualEffects = 'getVisualEffectsManager' in this.scene && 
+      typeof this.scene.getVisualEffectsManager === 'function' ? 
+      this.scene.getVisualEffectsManager() : null;
+      
+    // Try to get error manager
+    this.errorManager = 'getErrorManager' in this.scene && 
+      typeof this.scene.getErrorManager === 'function' ? 
+      this.scene.getErrorManager() : null;
   }
 
   /**
@@ -59,13 +71,21 @@ export class PaddlePhysics {
               y: pairs[i].collision.supports.length > 0 ? pairs[i].collision.supports[0].y : ball.position.y
             };
             
+            // Calculate spin based on hit position and paddle movement
+            const spin = this.calculateBallSpin(ballObject, paddleObject, collisionPoint);
+            
+            // Apply the spin effect
+            this.applyBallSpin(ballObject, spin);
+            
+            // Apply appropriate physics effect based on paddle shape
             if (paddleObject.getData('isConcave')) {
-              // Apply concave physics effect
               this.applyConcavePhysicsEffect(ballObject, paddleObject, collisionPoint);
-            } else if (paddleObject.getData('isConvex')) {
-              // Apply convex physics effect
+            } else {
               this.applyConvexPhysicsEffect(ballObject, paddleObject, collisionPoint);
             }
+            
+            // Increment paddle hit counter
+            this.incrementPaddleHitCounter(paddleObject);
           }
         }
 
@@ -88,6 +108,111 @@ export class PaddlePhysics {
   }
 
   /**
+   * Calculate ball spin based on hit position and paddle movement
+   */
+  calculateBallSpin(
+    ball: Phaser.Physics.Matter.Sprite, 
+    paddle: Phaser.Physics.Matter.Sprite,
+    collisionPoint: { x: number, y: number }
+  ): number {
+    try {
+      // Get paddle velocity (if available from controller)
+      const paddleVelocity = paddle.getData('currentVelocity') || { x: 0, y: 0 };
+      const isVertical = paddle.getData('isVertical');
+      
+      // Calculate relative position on paddle (-1 to 1)
+      let relativePos;
+      if (isVertical) {
+        relativePos = (collisionPoint.y - paddle.y) / (paddle.height / 2);
+      } else {
+        relativePos = (collisionPoint.x - paddle.x) / (paddle.width / 2);
+      }
+      
+      // Clamp relative position
+      relativePos = Phaser.Math.Clamp(relativePos, -1, 1);
+      
+      // Calculate spin based on hit position and paddle movement
+      let spin = 0;
+      
+      if (isVertical) {
+        // For vertical paddles, spin is based on Y movement and X hit position
+        spin = (paddleVelocity.y * 0.05) + (relativePos * 0.5);
+      } else {
+        // For horizontal paddles, spin is based on X movement and X hit position
+        spin = (paddleVelocity.x * 0.05) + (relativePos * 0.5);
+      }
+      
+      // Clamp spin value
+      spin = Phaser.Math.Clamp(spin, -1, 1);
+      
+      // Store spin value on the ball for later use
+      ball.setData('spin', spin);
+      
+      return spin;
+    } catch (error) {
+      console.error('Error calculating ball spin:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Apply spin effect to the ball's trajectory
+   */
+  applyBallSpin(ball: Phaser.Physics.Matter.Sprite, spin: number): void {
+    try {
+      // Get current ball velocity
+      const currentVelocity = {
+        x: ball.body.velocity.x,
+        y: ball.body.velocity.y
+      };
+      
+      // Calculate perpendicular vector to create curve effect
+      // This creates a Magnus effect where spin causes the ball to curve
+      const speed = Math.sqrt(currentVelocity.x * currentVelocity.x + currentVelocity.y * currentVelocity.y);
+      const normalizedVelocity = {
+        x: currentVelocity.x / speed,
+        y: currentVelocity.y / speed
+      };
+      
+      // Perpendicular vector (rotate 90 degrees)
+      const perpVector = {
+        x: -normalizedVelocity.y,
+        y: normalizedVelocity.x
+      };
+      
+      // Apply spin effect to velocity (max 10% deflection)
+      const spinEffect = Math.min(Math.abs(spin) * 0.05, 0.1);
+      const spinDirection = spin > 0 ? 1 : -1;
+      
+      // Update velocity with curve effect
+      const newVelocity = {
+        x: currentVelocity.x + perpVector.x * spinEffect * spinDirection * speed,
+        y: currentVelocity.y + perpVector.y * spinEffect * spinDirection * speed
+      };
+      
+      // Apply the new velocity
+      this.scene.matter.body.setVelocity(ball.body as MatterJS.BodyType, newVelocity);
+      
+      // Log spin effect if in debug mode
+      if (this.scene.registry.get('debugMode')) {
+        console.log(`Applied spin: ${spin.toFixed(2)}, causing ${(spinEffect * 100).toFixed(1)}% curve`);
+      }
+      
+      // Create a visual effect to show the spin
+      if (Math.abs(spin) > 0.5 && this.visualEffects) {
+        // If we have visual effects available, show spin effect
+        const spinColor = spin > 0 ? 0x00ffff : 0xff00ff;
+        this.visualEffects.createSpinEffect(ball, spinColor, Math.abs(spin));
+      }
+    } catch (error) {
+      console.error('Error applying ball spin:', error);
+      if (this.errorManager) {
+        this.errorManager.logError('Failed to apply ball spin', error instanceof Error ? error.stack : undefined);
+      }
+    }
+  }
+
+  /**
    * Apply physics effect to simulate concave paddle collision
    */
   applyConcavePhysicsEffect(
@@ -98,8 +223,8 @@ export class PaddlePhysics {
     try {
       const edge = paddle.getData('edge');
       const isVertical = paddle.getData('isVertical');
-      const paddleWidth = paddle.getData('width');
-      const paddleHeight = paddle.getData('height');
+      const paddleWidth = paddle.displayWidth;
+      const paddleHeight = paddle.displayHeight;
       
       // Calculate relative position of ball on paddle (0 to 1)
       let hitPosition;
@@ -178,7 +303,7 @@ export class PaddlePhysics {
       
       // Add extra speed boost for center hits (concave effect)
       // Center hits should be faster than edge hits
-      const centerBoost = 1.0 + (1.0 - Math.abs(normalizedPos)) * 0.2;
+      const centerBoost = 1.0 + (1.0 - Math.abs(normalizedPos)) * 0.3;
       newSpeed *= centerBoost;
       
       // Set new velocity
@@ -191,7 +316,7 @@ export class PaddlePhysics {
       // Visual feedback - flash paddle
       paddle.setTint(0xffffff);
       this.scene.time.delayedCall(100, () => {
-        paddle.setTint(paddle.getData('originalTint'));
+        paddle.setTint(paddle.getData('originalTint') || 0xffffff);
       });
       
       // Emit event for other systems to react to
@@ -205,6 +330,9 @@ export class PaddlePhysics {
       }
     } catch (error) {
       console.error('Error applying concave physics effect:', error);
+      if (this.errorManager) {
+        this.errorManager.logError('Failed to apply concave physics', error instanceof Error ? error.stack : undefined);
+      }
     }
   }
 
@@ -219,8 +347,8 @@ export class PaddlePhysics {
     try {
       const edge = paddle.getData('edge');
       const isVertical = paddle.getData('isVertical');
-      const paddleWidth = paddle.getData('width');
-      const paddleHeight = paddle.getData('height');
+      const paddleWidth = paddle.displayWidth;
+      const paddleHeight = paddle.displayHeight;
       
       // Calculate relative position of ball on paddle (0 to 1)
       let hitPosition;
@@ -301,7 +429,7 @@ export class PaddlePhysics {
       
       // Add extra speed boost for hits near the edges (convex effect)
       // Edge hits should be faster than center hits (opposite of concave)
-      const edgeBoost = 1.0 + Math.abs(normalizedPos) * 0.2;
+      const edgeBoost = 1.0 + Math.abs(normalizedPos) * 0.3;
       newSpeed *= edgeBoost;
       
       // Set new velocity
@@ -314,7 +442,7 @@ export class PaddlePhysics {
       // Visual feedback - flash paddle
       paddle.setTint(0xffffff);
       this.scene.time.delayedCall(100, () => {
-        paddle.setTint(paddle.getData('originalTint'));
+        paddle.setTint(paddle.getData('originalTint') || 0xffffff);
       });
       
       // Emit event for other systems to react to
@@ -328,6 +456,9 @@ export class PaddlePhysics {
       }
     } catch (error) {
       console.error('Error applying convex physics effect:', error);
+      if (this.errorManager) {
+        this.errorManager.logError('Failed to apply convex physics', error instanceof Error ? error.stack : undefined);
+      }
     }
   }
 
@@ -405,7 +536,7 @@ export class PaddlePhysics {
   handleWallCollision(ball: Phaser.Physics.Matter.Sprite, wallLabel: string): void {
     try {
       // Determine which wall was hit
-      const wallType = wallLabel.split('_')[1]; // Assuming format "wall_top", "wall_left", etc.
+      const wallType = wallLabel.includes('_') ? wallLabel.split('_')[1] : wallLabel; // Assuming format "wall_top", "wall_left", etc.
       
       // Apply slight speed increase on wall hits to keep game dynamic
       const velocity = new Phaser.Math.Vector2(ball.body.velocity.x, ball.body.velocity.y);
@@ -419,6 +550,9 @@ export class PaddlePhysics {
       // Apply the new speed while maintaining the current angle
       velocity.normalize().scale(cappedSpeed);
       ball.setVelocity(velocity.x, velocity.y);
+      
+      // Reset paddle hit counter when ball hits a wall
+      this.resetPaddleHitCounter();
       
       // Visual feedback - flash the ball
       const originalTint = ball.getData('originalTint') || 0xffffff;
@@ -437,6 +571,257 @@ export class PaddlePhysics {
       }
     } catch (error) {
       console.error('Error handling wall collision:', error);
+      if (this.errorManager) {
+        this.errorManager.logError('Failed to handle wall collision', error instanceof Error ? error.stack : undefined);
+      }
+    }
+  }
+
+  /**
+   * Increment the consecutive paddle hits counter
+   */
+  incrementPaddleHitCounter(paddle: Phaser.Physics.Matter.Sprite): void {
+    try {
+      const currentHits = paddle.getData('consecutivePaddleHits') || 0;
+      paddle.setData('consecutivePaddleHits', currentHits + 1);
+      
+      // Emit event for score tracking
+      const eventManager = this.scene.getEventManager();
+      if (eventManager) {
+        eventManager.emit('consecutivePaddleHitUpdated', { 
+          hits: currentHits + 1,
+          paddle: paddle.getData('edge')
+        });
+      }
+      
+      // Visual feedback for hits
+      this.scene.tweens.add({
+        targets: paddle,
+        scaleY: paddle.getData('isVertical') ? paddle.scaleY * 1.1 : paddle.scaleY,
+        scaleX: !paddle.getData('isVertical') ? paddle.scaleX * 1.1 : paddle.scaleX,
+        duration: 50,
+        yoyo: true,
+        ease: 'Power2'
+      });
+    } catch (error) {
+      console.error('Error incrementing paddle hit counter:', error);
+    }
+  }
+
+  /**
+   * Reset the consecutive paddle hits counter
+   */
+  resetPaddleHitCounter(): void {
+    // Get all paddles through the paddle manager
+    const paddleManager = 'getPaddleManager' in this.scene && 
+      typeof this.scene.getPaddleManager === 'function' ? 
+      this.scene.getPaddleManager() : null;
+      
+    if (!paddleManager) return;
+    
+    const paddles = paddleManager.getPaddles();
+    
+    // Reset counter for each paddle
+    paddles.forEach(paddle => {
+      paddle.setData('consecutivePaddleHits', 0);
+    });
+    
+    // Emit event
+    const eventManager = this.scene.getEventManager();
+    if (eventManager) {
+      eventManager.emit('consecutivePaddleHitReset');
+    }
+  }
+
+  /**
+   * Create a proper concave or convex paddle shape
+   */
+  createPaddlePhysicsShape(paddle: Phaser.Physics.Matter.Sprite, isConcave: boolean): void {
+    try {
+      // Get paddle dimensions
+      const width = paddle.displayWidth;
+      const height = paddle.displayHeight;
+      const isVertical = paddle.getData('isVertical');
+      
+      // Get the label from the body before removing it
+      const bodyLabel = (paddle.body as any).label;
+      
+      // Remove existing physics body
+      this.scene.matter.world.remove(paddle.body);
+      
+      let paddleBody;
+      
+      if (isConcave) {
+        // Create a concave paddle (curved inward)
+        if (isVertical) {
+          // Vertical concave paddle
+          const parts = [];
+          const segments = 5; // Number of segments to create the curve
+          const segmentWidth = width;
+          const segmentHeight = height / segments;
+          const curveFactor = width * 0.3; // How much the curve bends inward
+          
+          for (let i = 0; i < segments; i++) {
+            // Calculate the x-offset for this segment (creates the curve)
+            const progress = i / (segments - 1);
+            const curveAmount = Math.sin(progress * Math.PI) * curveFactor;
+            
+            // Create a rectangle segment with appropriate position
+            const segment = this.scene.matter.bodies.rectangle(
+              curveAmount, // X offset creates the curve
+              (i - segments/2 + 0.5) * segmentHeight, // Y position
+              segmentWidth * 0.8, // Slightly narrower segments
+              segmentHeight * 0.9, // Slightly shorter segments with gap
+              { label: 'paddle_segment' }
+            );
+            
+            parts.push(segment);
+          }
+          
+          // Combine all segments into a compound body
+          paddleBody = this.scene.matter.body.create({
+            parts: parts,
+            isStatic: true,
+            label: bodyLabel // Use the saved label
+          });
+          
+        } else {
+          // Horizontal concave paddle
+          const parts = [];
+          const segments = 5; // Number of segments to create the curve
+          const segmentWidth = width / segments;
+          const segmentHeight = height;
+          const curveFactor = height * 0.3; // How much the curve bends inward
+          
+          for (let i = 0; i < segments; i++) {
+            // Calculate the y-offset for this segment (creates the curve)
+            const progress = i / (segments - 1);
+            const curveAmount = Math.sin(progress * Math.PI) * curveFactor;
+            
+            // Create a rectangle segment with appropriate position
+            const segment = this.scene.matter.bodies.rectangle(
+              (i - segments/2 + 0.5) * segmentWidth, // X position
+              curveAmount, // Y offset creates the curve
+              segmentWidth * 0.9, // Slightly narrower segments with gap
+              segmentHeight * 0.8, // Slightly shorter segments
+              { label: 'paddle_segment' }
+            );
+            
+            parts.push(segment);
+          }
+          
+          // Combine all segments into a compound body
+          paddleBody = this.scene.matter.body.create({
+            parts: parts,
+            isStatic: true,
+            label: bodyLabel // Use the saved label
+          });
+        }
+        
+      } else {
+        // Create a convex paddle (curved outward)
+        if (isVertical) {
+          // Vertical convex paddle
+          const parts = [];
+          const segments = 5; // Number of segments to create the curve
+          const segmentWidth = width;
+          const segmentHeight = height / segments;
+          const curveFactor = width * 0.3; // How much the curve bends outward
+          
+          for (let i = 0; i < segments; i++) {
+            // Calculate the x-offset for this segment (creates the curve)
+            const progress = i / (segments - 1);
+            const curveAmount = -Math.sin(progress * Math.PI) * curveFactor;
+            
+            // Create a rectangle segment with appropriate position
+            const segment = this.scene.matter.bodies.rectangle(
+              curveAmount, // X offset creates the curve
+              (i - segments/2 + 0.5) * segmentHeight, // Y position
+              segmentWidth * 0.8, // Slightly narrower segments
+              segmentHeight * 0.9, // Slightly shorter segments with gap
+              { label: 'paddle_segment' }
+            );
+            
+            parts.push(segment);
+          }
+          
+          // Combine all segments into a compound body
+          paddleBody = this.scene.matter.body.create({
+            parts: parts,
+            isStatic: true,
+            label: bodyLabel // Use the saved label
+          });
+          
+        } else {
+          // Horizontal convex paddle
+          const parts = [];
+          const segments = 5; // Number of segments to create the curve
+          const segmentWidth = width / segments;
+          const segmentHeight = height;
+          const curveFactor = height * 0.3; // How much the curve bends outward
+          
+          for (let i = 0; i < segments; i++) {
+            // Calculate the y-offset for this segment (creates the curve)
+            const progress = i / (segments - 1);
+            const curveAmount = -Math.sin(progress * Math.PI) * curveFactor;
+            
+            // Create a rectangle segment with appropriate position
+            const segment = this.scene.matter.bodies.rectangle(
+              (i - segments/2 + 0.5) * segmentWidth, // X position
+              curveAmount, // Y offset creates the curve
+              segmentWidth * 0.9, // Slightly narrower segments with gap
+              segmentHeight * 0.8, // Slightly shorter segments
+              { label: 'paddle_segment' }
+            );
+            
+            parts.push(segment);
+          }
+          
+          // Combine all segments into a compound body
+          paddleBody = this.scene.matter.body.create({
+            parts: parts,
+            isStatic: true,
+            label: bodyLabel // Use the saved label
+          });
+        }
+      }
+      
+      // Set the new body on the paddle
+      paddle.setExistingBody(paddleBody);
+      
+      // Set the paddle position
+      paddle.setPosition(paddle.x, paddle.y);
+      
+      // Set physics properties
+      paddle.setFriction(0.01);
+      paddle.setBounce(1.1);
+      
+      // Set collision categories if physics manager is available
+      const physicsManager = 'getPhysicsManager' in this.scene && 
+        typeof this.scene.getPhysicsManager === 'function' ? 
+        this.scene.getPhysicsManager() : null;
+        
+      if (physicsManager) {
+        paddle.setCollisionCategory(physicsManager.paddleCategory);
+        paddle.setCollidesWith([
+          physicsManager.ballCategory,
+          physicsManager.powerUpCategory
+        ]);
+      }
+      
+      // Store shape information
+      paddle.setData('isConcave', isConcave);
+      paddle.setData('isConvex', !isConcave);
+      
+      if (this.scene.registry.get('debugMode')) {
+        console.log(`Created ${isConcave ? 'concave' : 'convex'} paddle physics shape`);
+      }
+      
+    } catch (error) {
+      console.error('Error creating paddle physics shape:', error);
+      if (this.errorManager) {
+        this.errorManager.logError('Failed to create paddle physics shape', error instanceof Error ? error.stack : undefined);
+      }
     }
   }
 }

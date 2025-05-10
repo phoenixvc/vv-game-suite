@@ -8,6 +8,13 @@ import { TitanbornButton } from "../../../components/faction-themes/titanborn-bu
 import { SharedNavigation } from "../../../components/shared-navigation"
 import styles from "../../../styles/animations.module.css"
 
+/**
+ * Renders the Titanborn Forge page, an interactive themed interface for selecting, crafting, and managing Titanborn artifacts.
+ *
+ * The page features forge temperature controls, artifact selection, simulated crafting progress, and detailed faction lore. Users can adjust forge settings, choose artifacts to craft, and monitor crafting progress with animated feedback. The interface also showcases Titanborn-themed controls and provides information about the Titanborn faction's traits and history.
+ *
+ * @returns The complete Titanborn Forge React page component.
+ */
 export default function TitanbornPage() {
   const [forgeLevel, setForgeLevel] = useState(75)
   const [selectedArtifact, setSelectedArtifact] = useState<string | null>(null)

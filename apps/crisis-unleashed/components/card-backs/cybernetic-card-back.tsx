@@ -3,6 +3,17 @@ import { getCyberneticCode, getRarityClass } from "@/lib/card-utils";
 import styles from "@/styles/card-backs.module.css";
 import { CardBackProps } from "@/types/card";
 
+/**
+ * Renders a stylized cybernetic-themed card back for a given card.
+ *
+ * Displays the card's name, type, set, and a generated cybernetic code, with visual elements themed for the Cybernetic faction. Supports optional dark mode and custom CSS classes.
+ *
+ * @param card - The card object containing details to display on the card back.
+ * @param darkMode - If true, applies dark mode styling.
+ * @param className - Additional CSS class names to apply to the card back.
+ *
+ * @returns A React element representing the cybernetic card back.
+ */
 export function CyberneticCardBack({ card, darkMode = false, className = "" }: CardBackProps) {
   const rarityClass = getRarityClass(card.rarity, styles);
 

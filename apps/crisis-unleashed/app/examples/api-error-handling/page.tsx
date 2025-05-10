@@ -6,6 +6,11 @@ import { ApiDataDisplay } from "@/components/api-data-display"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+/**
+ * Displays an interactive demonstration of API error handling using the `ApiErrorBoundary` component.
+ *
+ * Renders a UI with tabs to showcase both basic and advanced examples of handling API errors, including successful and failed requests, retry logic, and error simulation. Also provides usage instructions and code examples for integrating `ApiErrorBoundary` in other components.
+ */
 export default function ApiErrorHandlingDemo() {
   const [key, setKey] = useState(0)
 

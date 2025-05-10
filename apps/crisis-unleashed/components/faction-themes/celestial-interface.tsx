@@ -13,6 +13,19 @@ interface CelestialInterfaceProps {
   className?: string
 }
 
+/**
+ * Renders a themed UI container with celestial and cosmic motifs, including an animated cosmic map, time controls, and a cosmic energy indicator.
+ *
+ * Displays a header with a cosmic pattern and energy level, a main content area, and a footer with optional time controls and a rotating cosmic map visualization. Time controls allow switching between normal, accelerated, reversed, and paused time flows, affecting the displayed time and cosmic date.
+ *
+ * @param title - The title displayed in the header.
+ * @param children - The content to render within the main area.
+ * @param showTimeControls - Whether to display time controls in the footer. Defaults to true.
+ * @param showCosmicMap - Whether to display the cosmic map visualization. Defaults to true.
+ * @param className - Additional CSS classes for the container.
+ *
+ * @returns The rendered celestial interface component.
+ */
 export function CelestialInterface({
   title,
   children,

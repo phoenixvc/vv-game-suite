@@ -22,6 +22,15 @@ import { SharedFooter } from "@/components/shared-footer"
 // Import from the consolidated structure
 import { LogoVariant } from "@/components/logo-system"
 
+/**
+ * Renders the main landing page for the Crisis Unleashed strategic card game, featuring interactive onboarding, educational sections, and calls to action.
+ *
+ * The page adapts its layout and content for first-time and returning visitors, displaying a welcome modal and animated background for new users, and a navigation bar for returning users. It includes multiple scroll-animated sections covering gameplay, card types, factions, blockchain-based card ownership, and development roadmap, each with interactive components, contextual FAQs, and feedback widgets.
+ *
+ * @returns The complete landing page React element for the Crisis Unleashed web application.
+ *
+ * @remark Uses localStorage to detect first-time visitors and conditionally display onboarding content.
+ */
 export default function Home() {
   const [isFirstVisit, setIsFirstVisit] = useState(false)
   const [showNewUserWelcome, setShowNewUserWelcome] = useState(false)

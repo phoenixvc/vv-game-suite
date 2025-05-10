@@ -80,6 +80,11 @@ const milestones = [
   },
 ]
 
+/**
+ * Displays an interactive development roadmap timeline with animated milestones and game victory condition cards.
+ *
+ * Users can view project milestones, expand or collapse milestone details, and see key features for each milestone. The component visually distinguishes milestone status and allows toggling between expanded and collapsed views for all milestones. Game victory conditions are presented in styled cards below the timeline.
+ */
 export default function DevelopmentProgressVisual() {
   const [activeMilestone, setActiveMilestone] = useState(2) // Default to the in-progress milestone
   const [showAllFeatures, setShowAllFeatures] = useState(false)

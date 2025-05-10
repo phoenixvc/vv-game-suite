@@ -103,6 +103,13 @@ const factions = [
   },
 ]
 
+/**
+ * Displays an interactive, animated UI for comparing detailed information about multiple factions.
+ *
+ * Presents a tabbed interface allowing users to explore each faction's overview, strengths and weaknesses, resource distribution, and playstyle. Faction selection and tab navigation dynamically update the displayed content with smooth transitions and faction-specific styling.
+ *
+ * @returns A React component rendering the faction comparison interface.
+ */
 export default function FactionComparisonVisual() {
   const [selectedFaction, setSelectedFaction] = useState(factions[0])
 

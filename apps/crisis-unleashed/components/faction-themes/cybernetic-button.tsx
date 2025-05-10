@@ -5,6 +5,19 @@ import type React from "react"
 import { useState } from "react"
 import styles from "@/styles/animations.module.css"
 
+/**
+ * Renders a customizable button with animated cybernetic-themed visual effects and variant-based styling.
+ *
+ * The button displays animated borders and a scan line effect on hover, and visually responds to press and disabled states. Styling and animations adapt based on the selected variant ("primary", "secondary", or "danger").
+ *
+ * @param children - Content to display inside the button.
+ * @param onClick - Optional handler for button click events.
+ * @param className - Optional additional CSS class names.
+ * @param variant - Visual style variant of the button. Defaults to "primary".
+ * @param disabled - If true, disables the button and its interactive effects. Defaults to false.
+ *
+ * @returns A React element representing the animated button.
+ */
 export default function CyberneticButton({
   children,
   onClick,

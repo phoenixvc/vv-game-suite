@@ -2,6 +2,13 @@ import { NextResponse } from "next/server"
 import fs from "fs"
 import path from "path"
 
+/**
+ * Handles a GET request to check the existence and validity of the "crisis-unleashed-logo.png" file in the public directory.
+ *
+ * Returns a JSON response indicating whether the logo file exists, if its size exceeds 100 bytes, its size in bytes, and its last modification timestamp. If the file is missing, responds with a 404 status. If an error occurs during the check, responds with a 500 status and an error message.
+ *
+ * @returns A JSON response with logo file status and metadata.
+ */
 export async function GET() {
   try {
     const publicDir = path.join(process.cwd(), "public")

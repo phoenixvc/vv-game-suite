@@ -13,6 +13,15 @@ interface CardPreviewErrorBoundaryProps {
   onReset?: () => void
 }
 
+/**
+ * Wraps child components with an error boundary for card preview rendering, displaying a fallback UI and logging error details if a rendering error occurs.
+ *
+ * If an error is caught, logs contextual information including card type, ID, and name (if available), and displays a user-friendly error message with an option to retry.
+ *
+ * @param children - The React nodes to render within the error boundary.
+ * @param cardData - Optional card data used for error logging and fallback display.
+ * @param onReset - Optional callback invoked when the user clicks "Retry"; if not provided, the page reloads.
+ */
 export function CardPreviewErrorBoundary({ children, cardData, onReset }: CardPreviewErrorBoundaryProps) {
   const handleError = (error: Error) => {
     logError({

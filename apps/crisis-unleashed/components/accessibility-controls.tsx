@@ -7,6 +7,11 @@ import { Switch } from "@/components/ui/switch"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Settings, Eye, Zap } from "lucide-react"
 
+/**
+ * Renders a floating accessibility controls popover with toggles for reduced motion and high contrast modes.
+ *
+ * Provides users with quick access to accessibility options, allowing them to minimize animations and increase text contrast. Preferences are persisted for future visits.
+ */
 export function AccessibilityControls() {
   const [open, setOpen] = useState(false)
   const { reducedMotion, toggleReducedMotion, highContrast, toggleHighContrast } = useAccessibility()

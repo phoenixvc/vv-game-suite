@@ -11,6 +11,15 @@ interface ContentErrorBoundaryProps {
   contentName?: string
 }
 
+/**
+ * Wraps child components with an error boundary that logs errors and displays a fallback UI if rendering fails.
+ *
+ * @param children - The React nodes to render within the error boundary.
+ * @param contentName - Optional name for the content section; used in error logging and fallback UI.
+ *
+ * @remark
+ * When an error occurs in the children, the error is logged with a severity of "medium" and a user-friendly fallback UI is shown, offering options to reload the page or go back.
+ */
 export function ContentErrorBoundary({ children, contentName = "Content" }: ContentErrorBoundaryProps) {
   const handleError = (error: Error) => {
     logError({

@@ -2,6 +2,11 @@ import SharedNavigation from "@/components/shared-navigation"
 import ErrorPageDemo from "./error-page-demo"
 import ParallaxDemo from "./parallax-demo"
 
+/**
+ * Renders the examples page showcasing custom components with styled layouts.
+ *
+ * Displays a navigation bar, a heading, a description, and two example sections: a styled error page and a parallax element demo.
+ */
 export default function ExamplesPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">

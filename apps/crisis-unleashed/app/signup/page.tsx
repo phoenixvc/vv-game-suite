@@ -4,6 +4,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 
+/**
+ * Renders a full-page, styled signup interface for user registration.
+ *
+ * Displays a registration form with fields for username, email, and password, a terms agreement checkbox, and a submit button. Also provides alternative sign-up options via Google and Discord, and a link for existing users to log in.
+ *
+ * @remark This component is purely presentational and does not handle form submission, validation, or state management.
+ */
 export default function SignupPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center p-4">

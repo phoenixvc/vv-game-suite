@@ -16,12 +16,23 @@ interface ErrorLog {
   userAgent?: string
 }
 
-// Validate the error log structure
+/**
+ * Determines whether the provided data conforms to the required structure of an {@link ErrorLog}.
+ *
+ * @param data - The object to validate.
+ * @returns True if {@link data} contains at least the required `message` and `source` string fields; otherwise, false.
+ */
 function isValidErrorLog(data: any): data is ErrorLog {
   return data && typeof data.message === "string" && typeof data.source === "string"
 }
 
-// Write error to file system
+/**
+ * Appends an error log entry to a daily JSON file in the designated log directory.
+ *
+ * If the log directory does not exist, it is created. The function reads existing logs for the current day, appends the new entry, and writes the updated array back to the file.
+ *
+ * @param errorLog - The error log entry to record.
+ */
 async function writeErrorToFile(errorLog: ErrorLog): Promise<void> {
   const logDir = process.env.ERROR_LOG_DIR || path.join(process.cwd(), "logs")
 
@@ -52,6 +63,13 @@ async function writeErrorToFile(errorLog: ErrorLog): Promise<void> {
   fs.writeFileSync(logFile, JSON.stringify(logs, null, 2))
 }
 
+/**
+ * Handles POST requests to log error information sent by clients.
+ *
+ * Parses and validates the incoming error log, enriches it with request metadata, and writes it to a daily log file if configured. Returns a JSON response indicating success or failure.
+ *
+ * @returns A JSON response indicating whether the error log was successfully processed.
+ */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // Parse the request body
@@ -93,7 +111,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 }
 
-// Also handle GET requests for checking if the error logging system is working
+/**
+ * Handles GET requests to verify the operational status of the error logging system.
+ *
+ * @returns A JSON response indicating the system is operational, including the current environment and timestamp.
+ */
 export async function GET(): Promise<NextResponse> {
   return NextResponse.json({
     status: "operational",

@@ -11,6 +11,11 @@ import { Switch } from "@/components/ui/switch"
 import { useTheme } from "@/contexts/theme-context"
 import { factionThemes } from "@/lib/faction-themes"
 
+/**
+ * Displays an interactive UI for previewing and customizing the enhanced faction logo.
+ *
+ * Provides controls to select faction theme, display mode, logo size, animation duration, text visibility, interactivity, and automatic theme rotation. Includes a live preview and implementation code examples.
+ */
 export default function LogoShowcase() {
   const { currentTheme, setCurrentTheme, mode, setMode } = useTheme()
   const [size, setSize] = useState(300)

@@ -6,7 +6,14 @@ import ErrorBoundary from "@/components/error-boundary"
 import StyledErrorPage from "@/components/styled-error-page"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-// This component will throw an error when the button is clicked
+/**
+ * Renders a UI for selecting and triggering different types of JavaScript errors for testing error boundaries.
+ *
+ * When the button is clicked, throws an error of the selected type on the next render cycle.
+ *
+ * @remark
+ * The thrown error type is determined by user selection and may include basic, reference, type, syntax, or custom errors.
+ */
 function ErrorThrower() {
   const [shouldThrow, setShouldThrow] = useState(false)
   const [errorType, setErrorType] = useState("basic")
@@ -57,6 +64,11 @@ function ErrorThrower() {
   )
 }
 
+/**
+ * Demonstrates error handling in a React application by allowing users to trigger various errors and view a styled error page with selectable themes.
+ *
+ * Renders a UI for selecting an error page theme, triggering errors, and resetting the error boundary. When an error is thrown, a themed error page is displayed as a fallback.
+ */
 export default function ErrorPageDemo() {
   const [theme, setTheme] = useState<"dark" | "light" | "game">("dark")
   const [key, setKey] = useState(0)

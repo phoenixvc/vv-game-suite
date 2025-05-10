@@ -2,6 +2,17 @@
 
 import { useEffect, useRef } from "react"
 
+/**
+ * Renders an animated cybernetic circuit background on a full-size canvas.
+ *
+ * The background features dynamically generated nodes, lines, and corners arranged in a grid, with pulsing and glowing effects to simulate a futuristic circuit. The animation adapts to window resizing and can be customized via color and density props.
+ *
+ * @param className - Optional CSS class for the container.
+ * @param color - Hex color string for the circuit elements. Defaults to "#0ea5e9".
+ * @param density - Controls the amount of circuit elements. Defaults to 1.
+ *
+ * @returns A React element containing the animated background.
+ */
 export default function CyberneticBackground({
   className = "",
   color = "#0ea5e9",

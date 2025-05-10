@@ -20,6 +20,21 @@ interface Path {
   width: number
 }
 
+/**
+ * Renders an animated circuit board background using an HTML canvas, with customizable colors and particle effects.
+ *
+ * The component generates a dynamic network of circuit paths and animates particles moving along them, creating a visually engaging background. Particle count, colors, glow strength, and background color can be customized via props.
+ *
+ * @param className - Optional additional CSS classes for the container.
+ * @param particleCount - Number of animated particles to display.
+ * @param particleColor - Color of the moving particles.
+ * @param lineColor - Color of the circuit lines and nodes.
+ * @param glowColor - Color of the particle glow effect.
+ * @param glowStrength - Intensity of the glow effect for glowing particles.
+ * @param backgroundColor - Background color of the canvas.
+ *
+ * @returns A React element rendering the animated circuit background.
+ */
 export default function CircuitBackground({
   className = "",
   particleCount = 50,

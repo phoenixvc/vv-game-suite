@@ -11,6 +11,13 @@ interface NavigationErrorBoundaryProps {
   children: React.ReactNode
 }
 
+/**
+ * Provides an error boundary for navigation-related UI, displaying a custom fallback and logging errors with high severity.
+ *
+ * Wraps its children in an error boundary that catches navigation errors, logs them, and shows a user-friendly fallback UI with a reload option.
+ *
+ * @param children - The React nodes to be wrapped by the navigation error boundary.
+ */
 export function NavigationErrorBoundary({ children }: NavigationErrorBoundaryProps) {
   const handleError = (error: Error) => {
     logError({

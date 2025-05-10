@@ -7,6 +7,14 @@ interface DesignerHeaderProps {
   onToggleDarkMode: () => void
 }
 
+/**
+ * Renders the header for the Designer page with navigation links and a theme toggle button.
+ *
+ * Displays a logo, navigation menu, and a button to switch between dark and light modes. The appearance and ARIA labels update based on the current theme.
+ *
+ * @param darkMode - Indicates whether dark mode is active.
+ * @param onToggleDarkMode - Callback invoked when the theme toggle button is clicked.
+ */
 export function DesignerHeader({ darkMode, onToggleDarkMode }: DesignerHeaderProps) {
   return (
     <header className={`${styles.header} ${darkMode ? styles.darkHeader : styles.lightHeader}`}>

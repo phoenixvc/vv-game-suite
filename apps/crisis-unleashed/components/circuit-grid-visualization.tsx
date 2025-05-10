@@ -2,6 +2,13 @@
 
 import { useEffect, useRef } from "react"
 
+/**
+ * Renders an animated circuit grid visualization on a full-window canvas.
+ *
+ * The component displays a grid of nodes connected by lines, with dynamic connections and pulsing effects that respond to mouse movement. Nodes near the mouse pointer connect to their immediate neighbors with animated lines whose opacity and thickness vary based on distance and time.
+ *
+ * @returns A React element containing a fixed-position canvas covering the viewport.
+ */
 export function CircuitGridVisualization() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 

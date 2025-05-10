@@ -12,6 +12,17 @@ interface AnimationErrorBoundaryProps {
   fallbackStatic?: React.ReactNode
 }
 
+/**
+ * Wraps animation components with an error boundary that logs errors and displays a fallback UI if an error occurs.
+ *
+ * If an error is caught in the animation children, logs the error details and renders either a provided static fallback or a default message with a reload option.
+ *
+ * @param children - The animation components to be wrapped by the error boundary.
+ * @param animationName - Optional name to identify the animation in error logs and UI. Defaults to "Animation".
+ * @param fallbackStatic - Optional static fallback UI to display if an error occurs.
+ *
+ * @returns The wrapped children with error boundary protection and fallback UI.
+ */
 export function AnimationErrorBoundary({
   children,
   animationName = "Animation",

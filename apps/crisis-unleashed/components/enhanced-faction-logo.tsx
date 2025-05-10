@@ -14,6 +14,23 @@ interface EnhancedFactionLogoProps {
   className?: string
 }
 
+/**
+ * Displays an animated faction logo with optional interactivity and text label.
+ *
+ * Renders a skeleton placeholder until the component is mounted to prevent hydration mismatches. When mounted, shows an animated logo for the specified faction, with optional scaling on hover if interactivity is enabled. Optionally displays the formatted faction name below the logo.
+ *
+ * @param faction - The faction identifier to display. Defaults to "cybernetic-nexus".
+ * @param width - The width of the logo in pixels. Defaults to 64.
+ * @param height - The height of the logo in pixels. Defaults to 64.
+ * @param animationDuration - Duration of the logo animation in seconds. Defaults to 0.8.
+ * @param interactive - Enables hover scaling and pointer cursor if true. Defaults to false.
+ * @param showText - If true, displays the formatted faction name below the logo. Defaults to false.
+ * @param className - Additional CSS classes for the container.
+ *
+ * @returns A React element displaying the animated faction logo and optional text.
+ *
+ * @remark The component only renders its content after mounting to avoid hydration issues in server-side rendering environments.
+ */
 export function EnhancedFactionLogo({
   faction = "cybernetic-nexus",
   width = 64,

@@ -19,6 +19,18 @@ interface CardCollectionProps {
   onCardClick?: (card: CardData) => void
 }
 
+/**
+ * Displays a searchable, sortable, and paginated grid of card items with selectable layouts.
+ *
+ * Renders a collection of cards with interactive search, sorting, and grid view toggles. Supports card selection, optional card click handling, and responsive pagination. If no cards match the current filters, an empty state is shown with an option to clear the search.
+ *
+ * @param cards - The array of card data to display.
+ * @param onCardSelect - Callback invoked with the selected card's ID.
+ * @param selectedCardId - (Optional) ID of the currently selected card.
+ * @param title - (Optional) Title for the collection. Defaults to "Card Collection".
+ * @param showFilters - (Optional) Whether to display search and sorting controls. Defaults to true.
+ * @param onCardClick - (Optional) Callback invoked with the full card data when a card is clicked.
+ */
 export default function CardCollection({
   cards,
   onCardSelect,

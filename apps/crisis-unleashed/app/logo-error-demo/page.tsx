@@ -7,7 +7,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BugIcon, RefreshCw } from "lucide-react"
 
-// A component that will intentionally throw an error
+/**
+ * Renders an animated interactive logo, or intentionally throws an error for testing error boundaries.
+ *
+ * @param shouldError - If true, the component throws an error instead of rendering the logo.
+ * @returns The animated interactive logo if {@link shouldError} is false.
+ *
+ * @throws {Error} If {@link shouldError} is true, to simulate a rendering failure.
+ */
 function BuggyLogo({ shouldError = false }: { shouldError?: boolean }) {
   if (shouldError) {
     throw new Error("This is an intentional error to demonstrate the error boundary")
@@ -16,6 +23,11 @@ function BuggyLogo({ shouldError = false }: { shouldError?: boolean }) {
   return <LogoVariant variant="animated" size="xl" className="mx-auto" interactive={true} />
 }
 
+/**
+ * Demonstrates error boundary handling for logo components with interactive controls and usage instructions.
+ *
+ * Renders a UI with tabs to showcase an error boundary demo for logo components, allowing users to trigger and reset errors, and view different logo variants. Also provides a usage guide for implementing the `LogoErrorBoundary` component.
+ */
 export default function LogoErrorDemo() {
   const [shouldError, setShouldError] = useState(false)
   const [key, setKey] = useState(0)

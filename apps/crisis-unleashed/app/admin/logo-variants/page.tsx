@@ -34,6 +34,11 @@ const variants: LogoVariant[] = [
 
 const sizes: LogoSize[] = ["xs", "sm", "md", "lg", "xl", "2xl"]
 
+/**
+ * Renders an interactive page for previewing, customizing, and comparing all logo variants, sizes, and factions with live theme toggling and usage guidelines.
+ *
+ * The interface allows users to select a faction, toggle logo properties (animation, interactivity, monochrome, inverted colors, tagline), and switch between light and dark themes. Tabs provide views for all logo variants, size comparisons, faction comparisons, and detailed usage guidelines.
+ */
 export default function LogoVariantsPage() {
   const { theme, setTheme } = useTheme()
   const [selectedFaction, setSelectedFaction] = useState<string>("cybernetic-nexus")
@@ -201,6 +206,11 @@ export default function LogoVariantsPage() {
   )
 }
 
+/**
+ * Displays detailed guidelines and visual examples for each logo variant.
+ *
+ * Provides usage recommendations and large previews for standard, compact, horizontal, vertical, icon-only, text-only, footer, mobile, print, and watermark logo variants to guide appropriate application in different contexts.
+ */
 function LogoUsageGuide() {
   return (
     <Card>

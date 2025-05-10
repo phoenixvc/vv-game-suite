@@ -55,6 +55,11 @@ const roadmapItems: RoadmapItem[] = [
   },
 ]
 
+/**
+ * Displays a vertical timeline of project development milestones with interactive expansion for details.
+ *
+ * Renders a styled roadmap where each phase is represented as a timeline node with status-based coloring and icons. Users can expand items to view key features and additional links.
+ */
 export function DevelopmentRoadmap() {
   const [expandedItem, setExpandedItem] = useState<number | null>(1) // Default to showing Beta Release details
 

@@ -11,6 +11,16 @@ interface EclipsedBackgroundProps {
   ambientShadows?: boolean
 }
 
+/**
+ * Renders a full-screen animated background with moving ambient shadows and optional dagger silhouettes.
+ *
+ * The background includes animated radial shadows and, if enabled, dagger-shaped silhouettes that appear and disappear over time. Shadow intensity, dagger visibility, and ambient shadow effects can be customized via props. The component ensures the canvas resizes responsively and overlays the animated effects beneath its children.
+ *
+ * @param children - React nodes to display above the animated background.
+ * @param shadowIntensity - Controls the opacity, count, and speed of ambient shadows; accepts "low", "medium", or "high". Defaults to "medium".
+ * @param showDaggers - Whether to display animated dagger silhouettes. Defaults to true.
+ * @param ambientShadows - Whether to render moving ambient shadows. Defaults to true.
+ */
 export function EclipsedBackground({
   children,
   shadowIntensity = "medium",

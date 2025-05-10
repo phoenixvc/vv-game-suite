@@ -1,5 +1,6 @@
 "use client"
 
+import { VALID_FACTION_THEMES } from "@/constants/themes"
 import { isValidFactionTheme, isValidTheme } from "@/lib/theme-utils"
 import { FactionTheme, Theme, ThemeContextType } from "@/types/theme"
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
@@ -49,16 +50,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     
     // Update faction theme classes on the document root
     const root = window.document.documentElement
-    // Get all possible faction themes from the type to ensure this list stays up to date
-    const themeClasses = Object.values({
-      default: "default",
-      celestial: "celestial",
-      void: "void",
-      primordial: "primordial",
-      titanborn: "titanborn",
-      eclipsed: "eclipsed",
-      cybernetic: "cybernetic"
-    }).map(t => `theme-${t}`)
+    // Use the VALID_FACTION_THEMES constant to ensure this list stays up to date
+    const themeClasses = VALID_FACTION_THEMES.map(theme => `theme-${theme}`)
     
     // Remove all faction theme classes
     root.classList.remove(...themeClasses)
@@ -81,15 +74,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
  )
 }
 
+const DEFAULT_THEME_CONTEXT: ThemeContextType = {
+  theme: "dark" as Theme,
+  setTheme: () => {},
+  currentTheme: "default" as FactionTheme,
+  setCurrentTheme: () => {}
+};
+
 export function useTheme() {
   const context = useContext(ThemeContext)
   if (context === undefined) {
-    return { 
-      theme: "dark" as Theme, 
-      setTheme: () => {}, 
-      currentTheme: "default" as FactionTheme, 
-      setCurrentTheme: () => {} 
-    }
+    return DEFAULT_THEME_CONTEXT;
   }
   return context
 }

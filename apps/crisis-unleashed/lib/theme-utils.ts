@@ -7,7 +7,7 @@ import { FactionTheme, Theme } from "@/types/theme";
  * @returns Type guard for FactionTheme
  */
 export function isValidFactionTheme(theme: string): theme is FactionTheme {
-  return VALID_FACTION_THEMES.includes(theme as any);
+  return VALID_FACTION_THEMES.includes(theme as FactionTheme);
 }
 
 /**
@@ -16,10 +16,10 @@ export function isValidFactionTheme(theme: string): theme is FactionTheme {
  * @returns Boolean indicating if the theme is valid
  */
 export function isValidTheme(theme: string): theme is Theme {
-  return ["dark", "light", "system"].includes(theme as any);
+  return ["dark", "light", "system"].includes(theme as Theme);
 }
 
-const FACTION_THEME_DISPLAY_NAMES = {
+const FACTION_THEME_DISPLAY_NAMES: Record<FactionTheme, string> = {
   default: "Default",
   celestial: "Celestial Dominion",
   void: "Void Harbingers",
@@ -38,7 +38,7 @@ export function getFactionThemeDisplayName(theme: FactionTheme): string {
   return FACTION_THEME_DISPLAY_NAMES[theme];
 }
 
-const FACTION_THEME_CLASS_NAMES = {
+const FACTION_THEME_CLASS_NAMES: Record<FactionTheme, string> = {
   default: "theme-default",
   celestial: "theme-celestial",
   void: "theme-void",

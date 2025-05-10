@@ -1,6 +1,6 @@
 import { CardRarity } from "@/types/card";
 
-export const VALID_RARITIES: CardRarity[] = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic'] as const;
+export const VALID_RARITIES: readonly CardRarity[] = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic'] as const;
 
 /**
  * Get CSS class name for a card rarity
@@ -8,12 +8,25 @@ export const VALID_RARITIES: CardRarity[] = ['Common', 'Uncommon', 'Rare', 'Epic
  * @param styles The CSS module styles object
  * @returns CSS class name for the rarity
  */
-export function getRarityClass(rarity: CardRarity | undefined, styles: Record<string, string>): string {
+export function getRarityClass(
+  rarity: CardRarity | undefined,
+  styles: Record<`rarity${CardRarity}` | 'rarityCommon', string>
+): string {
   if (!rarity || !VALID_RARITIES.includes(rarity)) {
     return styles.rarityCommon; // Default rarity
   }
-  const key = `rarity${rarity}`;
-  return key in styles ? styles[key] : styles.rarityCommon;
+  
+  // Create the key with proper type assertion
+  const key = `rarity${rarity}` as keyof typeof styles;
+  return styles[key] || styles.rarityCommon;
+}
+
+/**
+ * Pick a symbol from a list based on the first char of `cardId`.
+ */
+function getSymbolFromList<T>(list: readonly T[], cardId?: string): T {
+  const index = cardId ? cardId.charCodeAt(0) % list.length : 0;
+  return list[index];
 }
 
 export const VOID_GLYPHS = ["⌀", "∅", "⊖", "⊘", "⦵", "⊝", "⊗", "⊛", "⊜", "⊕"] as const;
@@ -23,9 +36,8 @@ export const VOID_GLYPHS = ["⌀", "∅", "⊖", "⊘", "⦵", "⊝", "⊗", "�
  * @param cardId The card ID
  * @returns A void-themed glyph character
  */
-export function getVoidGlyph(cardId: string | undefined): string {
-  const glyphIndex = cardId ? cardId.charCodeAt(0) % VOID_GLYPHS.length : 0;
-  return VOID_GLYPHS[glyphIndex];
+export function getVoidGlyph(cardId?: string): string {
+  return getSymbolFromList(VOID_GLYPHS, cardId);
 }
 
 /**
@@ -33,55 +45,52 @@ export function getVoidGlyph(cardId: string | undefined): string {
  * @param cardId The card ID
  * @returns A primordial-themed rune character
  */
-export function getPrimordialRune(cardId: string | undefined): string {
+export function getPrimordialRune(cardId?: string): string {
+  // Special case for primordial runes since they use a character code range
   const runeIndex = cardId ? cardId.charCodeAt(0) % 20 : 0;
   return String.fromCharCode(8448 + runeIndex);
 }
 
-export const CELESTIAL_SYMBOLS = ["✧", "★", "☆", "✦", "✴", "✷", "✸", "✹", "✺", "✻", "✼", "❋", "❊", "❉", "❈"];
-
+export const CELESTIAL_SYMBOLS = ["✧", "★", "☆", "✦", "✴", "✷", "✸", "✹", "✺", "✻", "✼", "❋", "❊", "❉", "❈"] as const;
 /**
  * Get a celestial-themed symbol based on card ID
  * @param cardId The card ID
  * @returns A celestial-themed symbol character
  */
-export function getCelestialSymbol(cardId: string | undefined): string {
-  const symbolIndex = cardId ? cardId.charCodeAt(0) % CELESTIAL_SYMBOLS.length : 0;
-  return CELESTIAL_SYMBOLS[symbolIndex];
+export function getCelestialSymbol(cardId?: string): string {
+  return getSymbolFromList(CELESTIAL_SYMBOLS, cardId);
 }
 
-export const TITANBORN_MARKS = ["⚒", "⚔", "⛏", "⛰", "⛓", "⚙", "⚖", "⚓", "⚡"];
+export const TITANBORN_MARKS = ["⚒", "⚔", "⛏", "⛰", "⛓", "⚙", "⚖", "⚓", "⚡"] as const;
 
 /**
  * Get a titanborn-themed mark based on card ID
  * @param cardId The card ID
  * @returns A titanborn-themed mark character
  */
-export function getTitanbornMark(cardId: string | undefined): string {
-  const markIndex = cardId ? cardId.charCodeAt(0) % TITANBORN_MARKS.length : 0;
-  return TITANBORN_MARKS[markIndex];
+export function getTitanbornMark(cardId?: string): string {
+  return getSymbolFromList(TITANBORN_MARKS, cardId);
 }
 
-export const ECLIPSED_MARKS = ["◑", "◐", "◓", "◒", "◕", "◖", "◗", "◔", "◙", "◚", "◛"];
+export const ECLIPSED_MARKS = ["◑", "◐", "◓", "◒", "◕", "◖", "◗", "◔", "◙", "◚", "◛"] as const;
 
 /**
  * Get an eclipsed-themed mark based on card ID
  * @param cardId The card ID
  * @returns An eclipsed-themed mark character
  */
-export function getEclipsedMark(cardId: string | undefined): string {
-  const markIndex = cardId ? cardId.charCodeAt(0) % ECLIPSED_MARKS.length : 0;
-  return ECLIPSED_MARKS[markIndex];
-}
+export function getEclipsedMark(cardId?: string): string {
+  return getSymbolFromList(ECLIPSED_MARKS, cardId);
+  }
 
 /**
  * Get a cybernetic-themed code based on card ID
  * @param cardId The card ID
  * @returns A formatted cybernetic code
  */
-export function getCyberneticCode(cardId: string | undefined): string {
+export function getCyberneticCode(cardId?: string): string {
   if (cardId) {
     return cardId.substring(0, 8);
-  }
+}
   return "CN-0000"; // Static fallback
 }

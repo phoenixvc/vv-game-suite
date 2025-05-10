@@ -1,0 +1,17 @@
+{
+  "name": "@vv-game-suite/utils",
+  "version": "0.1.0",
+  "description": "Shared utility functions for VV Game Suite",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src/**/*.ts",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.4",
+    "rimraf": "^3.0.2"
+  }
+}

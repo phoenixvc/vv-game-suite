@@ -7,7 +7,7 @@ import { FactionTheme, Theme } from "@/types/theme";
  * @returns Type guard for FactionTheme
  */
 export function isValidFactionTheme(theme: string): theme is FactionTheme {
-  return VALID_FACTION_THEMES.includes(theme as FactionTheme);
+  return (VALID_FACTION_THEMES as readonly string[]).includes(theme);
 }
 
 /**
@@ -18,8 +18,8 @@ export function isValidFactionTheme(theme: string): theme is FactionTheme {
 const VALID_THEMES: readonly Theme[] = ["dark", "light", "system"] as const;
 
 export function isValidTheme(theme: string): theme is Theme {
-   return VALID_THEMES.includes(theme as Theme);
- }
+  return VALID_THEMES.includes(theme as Theme);
+}
 
 /**
  * Get the display name for a faction theme

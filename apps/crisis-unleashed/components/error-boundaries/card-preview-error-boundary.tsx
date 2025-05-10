@@ -1,11 +1,11 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import type { CardData } from "@/lib/card-data"
+import { logError } from "@/lib/error-logger"
+import { FileWarning, RefreshCw } from "lucide-react"
 import type React from "react"
 import ErrorBoundary from "../error-boundary"
-import { Button } from "@/components/ui/button"
-import { FileWarning, RefreshCw } from "lucide-react"
-import { logError } from "@/lib/error-logger"
-import type { CardData } from "@/lib/card-data"
 
 interface CardPreviewErrorBoundaryProps {
   children: React.ReactNode
@@ -19,8 +19,8 @@ export function CardPreviewErrorBoundary({ children, cardData, onReset }: CardPr
       message: error.message,
       stack: error.stack,
       componentName: "CardPreview",
-      severity: "medium",
-      metadata: {
+      additionalInfo: {
+        severity: "medium",
         cardType: cardData?.type || cardData?.cardType || "Unknown",
         cardId: cardData?.id || "Unknown",
         cardName: cardData?.name || "Unknown",

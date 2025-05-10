@@ -80,12 +80,12 @@ export function StandardizedCardBack({ card, darkMode = false, className = "" }:
               <div className={styles.artifactBackContent}>
                 <div className={styles.artifactEffect}>
                   <h4 className={styles.sectionTitle}>Effect</h4>
-                  <p>{card.effect || "No effect description available."}</p>
+                  <p>{card.content?.effect || "No effect description available."}</p>
                 </div>
 
                 <div className={styles.artifactRequirements}>
                   <h4 className={styles.sectionTitle}>Requirements</h4>
-                  <p>{card.requirements || "No special requirements."}</p>
+                  <p>{card.mechanics?.requirements || "No special requirements."}</p>
                 </div>
               </div>
             )}
@@ -94,19 +94,19 @@ export function StandardizedCardBack({ card, darkMode = false, className = "" }:
               <div className={styles.crisisBackContent}>
                 <div className={styles.crisisImpact}>
                   <h4 className={styles.sectionTitle}>Impact</h4>
-                  <p>{card.impact || "No impact description available."}</p>
+                  <p>{card.mechanics?.impact || "No impact description available."}</p>
                 </div>
 
                 <div className={styles.crisisDuration}>
                   <h4 className={styles.sectionTitle}>Duration</h4>
-                  <p>{card.duration || "Until resolved"}</p>
+                  <p>{card.mechanics?.duration || "Until resolved"}</p>
                 </div>
               </div>
             )}
           </div>
 
           <div className={styles.cardBackFooter}>
-            <div className={styles.cardLore}>{card.lore || "No lore available for this card."}</div>
+            <div className={styles.cardLore}>{card.content?.lore || "No lore available for this card."}</div>
             <div className={styles.cardSet}>{card.set || "Core Set"}</div>
           </div>
         </div>

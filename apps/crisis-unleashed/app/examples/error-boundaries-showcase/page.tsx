@@ -1,16 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { AnimationErrorBoundary } from "@/components/error-boundaries/animation-error-boundary"
+import { CardCollectionErrorBoundary } from "@/components/error-boundaries/card-collection-error-boundary"
+import { CardPreviewErrorBoundary } from "@/components/error-boundaries/card-preview-error-boundary"
+import { ContentErrorBoundary } from "@/components/error-boundaries/content-error-boundary"
+import { FactionThemeErrorBoundary } from "@/components/error-boundaries/faction-theme-error-boundary"
+import { ImageLoadingErrorBoundary } from "@/components/error-boundaries/image-loading-error-boundary"
+import { ErrorSafeImage } from "@/components/error-safe-image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CardPreviewErrorBoundary } from "@/components/error-boundaries/card-preview-error-boundary"
-import { AnimationErrorBoundary } from "@/components/error-boundaries/animation-error-boundary"
-import { CardCollectionErrorBoundary } from "@/components/error-boundaries/card-collection-error-boundary"
-import { FactionThemeErrorBoundary } from "@/components/error-boundaries/faction-theme-error-boundary"
-import { ImageLoadingErrorBoundary } from "@/components/error-boundaries/image-loading-error-boundary"
-import { ContentErrorBoundary } from "@/components/error-boundaries/content-error-boundary"
-import { ErrorSafeImage } from "@/components/error-safe-image"
+import { useState } from "react"
 
 // Component that will throw an error when the button is clicked
 function ErrorThrower({ errorMessage = "Test error", throwOnRender = false }) {
@@ -122,7 +122,7 @@ export default function ErrorBoundariesShowcase() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <CardPreviewErrorBoundary cardData={{ id: "test", name: "Test Card", type: "Hero" }}>
+              <CardPreviewErrorBoundary cardData={{ id: "test", name: "Test Card", type: "Hero", description: "A test hero card for error boundary demonstration" }}>
                 <BrokenCardPreview />
               </CardPreviewErrorBoundary>
             </CardContent>

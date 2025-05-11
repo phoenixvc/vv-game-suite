@@ -18,7 +18,7 @@ export interface LogoVariantProps {
   /**
    * The variant of the logo to display
    */
-  variant?: "standard" | "icon" | "horizontal" | "vertical" | "minimal";
+  variant?: LogoVariant;
   /**
    * The size of the logo
    */

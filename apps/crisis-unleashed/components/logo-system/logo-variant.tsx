@@ -5,13 +5,14 @@ import { FactionId, getFactionColor, getFactionSecondaryColor } from "./utils"
 
 // Define types
 export type LogoSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "full"
+
 export type LogoVariant = 
-  | "standard" 
-  | "icon-only" 
-  | "wordmark" 
-  | "horizontal" 
-  | "vertical" 
-  | "badge" 
+  | "standard"
+  | "icon"
+  | "wordmark"
+  | "horizontal"
+  | "vertical"
+  | "badge"
   | "minimal"
 
 export interface LogoVariantProps {

@@ -18,7 +18,7 @@ export interface LogoSystemProps {
 // Map LogoVariant to ResponsiveAnimatedLogo variant
 const mapVariantToResponsiveVariant = (
   variant: LogoVariant
-): "standard" | "compact" | "horizontal" | "vertical" | "icon-only" | "text-only" | "footer" | "mobile" | "print" | "watermark" | "animated" => {
+): "standard" | "icon-only" | "horizontal" | "vertical" | "animated" | "compact" | "text-only" | "footer" | "mobile" | "print" | "watermark" => {
   switch (variant) {
     case "standard":
       return "standard"

@@ -132,8 +132,9 @@ export default function LogoVariant({
       case "minimal":
         return renderMinimalVariant(faction, primaryColor, secondaryColor, pixelSize);
       
-      case "standard":
-      default:
+-      case "standard":
+-      default:
++      default:
         return renderStandardVariant(
           faction, 
           primaryColor, 

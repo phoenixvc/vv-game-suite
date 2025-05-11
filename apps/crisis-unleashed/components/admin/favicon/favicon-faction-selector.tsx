@@ -52,7 +52,7 @@ export function FaviconFactionSelector({
 
         <div className="mt-4 flex items-center justify-center">
           <LogoVariant
-            variant="icon"
+            variant="icon-only"
             size="lg"
             faction={selectedFaction}
             monochrome={monochrome}

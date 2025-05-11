@@ -6,7 +6,7 @@ import { FaviconSettings } from "@/components/admin/favicon/favicon-settings"
 import { FaviconUsageInstructions } from "@/components/admin/favicon/favicon-usage-instructions"
 import { getFactionColor } from "@/components/admin/favicon/favicon-utils"
 import { FaviconRenderers } from "@/components/admin/favicon/renderers"
-import { getAllFactions } from "@/components/logo-system/utils"
+import { FactionId, getAllFactions } from "@/components/logo-system/utils"
 import { useEffect, useRef, useState } from "react"
 
 /**
@@ -19,7 +19,7 @@ import { useEffect, useRef, useState } from "react"
  * @remark The "Generate All Sizes" feature is currently a placeholder and does not produce multiple favicon files.
  */
 export default function FaviconGeneratorPage() {
-  const [selectedFaction, setSelectedFaction] = useState<string>("cybernetic-nexus")
+  const [selectedFaction, setSelectedFaction] = useState<FactionId>("cybernetic-nexus")
   const [backgroundColor, setBackgroundColor] = useState<string>("#ffffff")
   const [padding, setPadding] = useState<number>(10)
   const [borderRadius, setBorderRadius] = useState<number>(0)

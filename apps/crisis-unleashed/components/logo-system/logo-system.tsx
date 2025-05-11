@@ -1,6 +1,7 @@
 "use client"
 
 import { ResponsiveAnimatedLogo } from "@/components/responsive-animated-logo"
+import { useMemo } from "react"
 import type { LogoSize, LogoVariant } from "./logo-variant"
 
 export interface LogoSystemProps {
@@ -42,8 +43,11 @@ export default function LogoSystem({
   withTagline = false,
   className,
 }: LogoSystemProps) {
-  // Map the variant to a compatible ResponsiveAnimatedLogo variant
-  const responsiveVariant = mapVariantToResponsiveVariant(variant)
+  
+const responsiveVariant = useMemo(
+  () => mapVariantToResponsiveVariant(variant),
+  [variant],
+)
   
   return (
     <ResponsiveAnimatedLogo

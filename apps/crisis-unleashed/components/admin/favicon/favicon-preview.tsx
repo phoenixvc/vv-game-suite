@@ -26,7 +26,7 @@ export function FaviconPreview({
     if (canvasRef.current) {
       renderFavicon()
     }
-  }, [renderFavicon, canvasRef.current])
+  }, [renderFavicon])
 
   return (
     <Card>

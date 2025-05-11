@@ -54,17 +54,17 @@ export const physicsConfig = {
  */
 export function getGameConfig(gameId: string) {
   const configs: Record<string, any> = {
-    'breakout': {
+    'breakout': structuredClone({
       ...gameDefaults,
-      title: 'Breakout Game',
-      physics: {
-        ...physicsConfig,
-        matter: {
-          ...physicsConfig.matter,
-          gravity: { y: 0.2 }
-        }
-      }
-    }
+       title: 'Breakout Game',
+       physics: {
+         ...physicsConfig,
+         matter: {
+           ...physicsConfig.matter,
+           gravity: { y: 0.2 }
+         }
+       }
+    }),
   };
   
   return configs[gameId] || gameDefaults;

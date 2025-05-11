@@ -27,15 +27,22 @@ export const StandardFaviconRenderer: FaviconRenderer = {
       const centerX = size / 2;
       const centerY = size / 2;
 
-      ctx.beginPath();
-      for (let i = 0; i < 5; i++) {
-        const x = centerX + radius * Math.cos(Math.PI / 2 + (i * 2 * Math.PI) / 5);
-        const y = centerY - radius * Math.sin(Math.PI / 2 + (i * 2 * Math.PI) / 5);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      ctx.fill();
+const points: Array<{x: number; y: number}> = [];
+for (let i = 0; i < 5; i++) {
+  points.push({
+    x: centerX + radius * Math.cos(Math.PI / 2 + (i * 2 * Math.PI) / 5),
+    y: centerY - radius * Math.sin(Math.PI / 2 + (i * 2 * Math.PI) / 5),
+  });
+}
+
+ctx.beginPath();
+for (let i = 0; i < 5; i++) {
+  const idx = (i * 2) % 5;           // skip one vertex each time
+  const { x, y } = points[idx];
+  i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+}
+ctx.closePath();
+ctx.fill();
     } else if (selectedFaction === "primordial-ascendancy") {
       // Draw a leaf-like pattern
       const centerX = size / 2;

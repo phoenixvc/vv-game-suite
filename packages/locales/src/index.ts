@@ -130,9 +130,7 @@ export function getString(key: string, lang: string = defaultLanguage): string {
 export function formatString(key: string, params: Record<string, any>, lang: string = defaultLanguage): string {
   let text = getString(key, lang);
   
-  Object.keys(params).forEach(param => {
-    text = text.replace(new RegExp(`{${param}}`, 'g'), params[param].toString());
-  });
-  
-  return text;
+  return Object.keys(params).reduce((result, param) => {
+    return result.replace(new RegExp(`{${param}}`, 'g'), params[param].toString());
+  }, text);
 }

@@ -93,11 +93,10 @@ const DEFAULT_FACTION_DATA = {
  * @param inverted Whether to invert the colors
  * @returns Hex color code
  */
-export function getFactionColor(faction: string, monochrome = false, inverted = false): string {
-  if (monochrome) return inverted ? "#ffffff" : "#000000";
-  
-  return (FACTION_DATA[faction as FactionId]?.primaryColor || DEFAULT_FACTION_DATA.primaryColor);
-}
+export function getFactionColor(faction: FactionId, monochrome = false, inverted = false): string {
+   if (monochrome) return inverted ? "#ffffff" : "#000000";
+  return FACTION_DATA[faction].primaryColor;
+ }
 
 /**
  * Get faction secondary color
@@ -133,7 +132,9 @@ export function getFactionFaviconUrl(faction: string, size = 32): string {
  * @returns Array of faction identifiers
  */
 export function getAllFactions(): FactionId[] {
-  return Object.keys(FACTION_DATA) as FactionId[];
+  return (Object.keys(FACTION_DATA) as Array<keyof typeof FACTION_DATA>).map(
+    (k) => k as FactionId,
+  );
 }
 
 /**

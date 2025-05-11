@@ -26,7 +26,7 @@ export default function FaviconGeneratorPage() {
   const [monochrome, setMonochrome] = useState<boolean>(false)
   const [inverted, setInverted] = useState<boolean>(false)
   const [size, setSize] = useState<number>(32)
-  const [faviconType, setFaviconType] = useState<string>("standard")
+  const [faviconType, setFaviconType] = useState<"standard" | "letter" | "icon">("standard")
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const factions = getAllFactions()
@@ -39,17 +39,17 @@ export default function FaviconGeneratorPage() {
   const renderFavicon = () => {
     const canvas = canvasRef.current
     if (!canvas) return
+    
+    // Set dimensions first
+    canvas.width = size
+    canvas.height = size
 
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    // Clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    // Set canvas dimensions
-    canvas.width = size
-    canvas.height = size
-
+    // Clear
+    ctx.clearRect(0, 0, size, size)
+    
     // Draw background
     ctx.fillStyle = backgroundColor
     if (borderRadius > 0) {
@@ -89,6 +89,7 @@ export default function FaviconGeneratorPage() {
       })
     }
   }
+  
   const downloadFavicon = () => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -97,9 +98,13 @@ export default function FaviconGeneratorPage() {
     const link = document.createElement("a")
     link.download = `${selectedFaction}-favicon-${size}x${size}.png`
     link.href = canvas.toDataURL("image/png")
+    
+    // Append to body, click, and remove safely using requestAnimationFrame
     document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
+    requestAnimationFrame(() => {
+      document.body.removeChild(link)
+    })
   }
 
   // Function to generate all standard favicon sizes

@@ -1,9 +1,10 @@
 "use client"
 
-import { useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Download } from "lucide-react"
+import { useEffect, useRef } from "react"
+import styles from "./favicon.module.css"
 
 interface FaviconPreviewProps {
   size: number
@@ -25,7 +26,7 @@ export function FaviconPreview({
     if (canvasRef.current) {
       renderFavicon()
     }
-  }, [renderFavicon])
+  }, [renderFavicon, canvasRef.current])
 
   return (
     <Card>
@@ -34,21 +35,17 @@ export function FaviconPreview({
         <CardDescription>Current favicon preview</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center">
-        <div className="mb-8 p-8 bg-grid-pattern rounded-lg">
+        <div className={styles.previewContainer}>
           <canvas
             ref={canvasRef}
             width={size}
             height={size}
-            className="border border-muted shadow-md"
-            style={{
-              width: Math.min(256, size),
-              height: Math.min(256, size),
-              imageRendering: "pixelated",
-            }}
+            className={styles.previewCanvas}
+            style={{ width: Math.min(256, size), height: Math.min(256, size) }}
           />
         </div>
 
-        <div className="flex flex-col gap-4 w-full max-w-xs">
+        <div className={styles.buttonsContainer}>
           <Button onClick={downloadFavicon}>
             <Download className="mr-2 h-4 w-4" />
             Download Favicon ({size}px)

@@ -1,8 +1,8 @@
 "use client"
 
+import LogoVariant from "@/components/logo-system/logo-variant"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import LogoVariant from "@/components/logo-system/logo-variant"
 
 interface FaviconFactionSelectorProps {
   selectedFaction: string
@@ -12,6 +12,9 @@ interface FaviconFactionSelectorProps {
   inverted: boolean
 }
 
+              <SelectItem key={faction} value={faction}>
+                {formatFactionDisplayName(faction)}
+              </SelectItem>
 export function FaviconFactionSelector({
   selectedFaction,
   setSelectedFaction,
@@ -33,10 +36,7 @@ export function FaviconFactionSelector({
           <SelectContent>
             {factions.map((faction) => (
               <SelectItem key={faction} value={faction}>
-                {faction
-                  .split("-")
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")}
+                {formatFactionDisplayName(faction)}
               </SelectItem>
             ))}
           </SelectContent>

@@ -1,6 +1,6 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface FaviconUsageInstructionsProps {
   selectedFaction: string
@@ -11,6 +11,9 @@ export function FaviconUsageInstructions({
   selectedFaction,
   getFactionColor
 }: FaviconUsageInstructionsProps) {
+  // Calculate the Safari pinned tab color outside of the template literal
+  const safariColor = getFactionColor(selectedFaction, false, false);
+  
   return (
     <Card>
       <CardHeader>
@@ -42,7 +45,7 @@ export function FaviconUsageInstructions({
 <link rel="manifest" href="/site.webmanifest">
 
 <!-- Safari pinned tab icon -->
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="${getFactionColor(selectedFaction, false, false)}">`}</code>
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="${safariColor}">`}</code>
         </pre>
       </CardContent>
     </Card>

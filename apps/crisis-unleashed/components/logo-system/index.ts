@@ -13,6 +13,15 @@ export type { LogoSize, LogoVariant as LogoVariantType } from "./logo-variant"
 
 // Export utilities
 export {
-  formatFactionName, getAllFactions, getFactionColor, getFactionDescription, getFactionFaviconUrl, getFactionFont,
-  getFactionGradient, getFactionIconName, getFactionKeywords, getFactionName, getFactionSecondaryColor
+  // Faction name utilities
+  formatFactionName,
+  // Faction data accessors
+  getAllFactions,
+  getFactionColor, getFactionDescription,
+  // URL utilities
+  getFactionFaviconUrl, getFactionFont,
+  getFactionGradient,
+  getFactionIconName,
+  getFactionKeywords, getFactionName, getFactionSecondaryColor
 } from "./utils"
+

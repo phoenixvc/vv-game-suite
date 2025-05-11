@@ -202,13 +202,21 @@ export function formatDate(date: Date, format: string = 'YYYY-MM-DD'): string {
   const minutes = date.getMinutes().toString().padStart(2, '0');
   const seconds = date.getSeconds().toString().padStart(2, '0');
   
-  return format
-    .replace('YYYY', year)
-    .replace('MM', month)
-    .replace('DD', day)
-    .replace('HH', hours)
-    .replace('mm', minutes)
-    .replace('ss', seconds);
+  // Use a map of tokens to values and perform replacements in order from longest to shortest
+  const tokens = {
+    'YYYY': year,
+    'MM': month,
+    'DD': day,
+    'HH': hours,
+    'mm': minutes,
+    'ss': seconds
+  };
+  
+  return Object.entries(tokens)
+    .sort((a, b) => b[0].length - a[0].length) // Sort by token length (longest first)
+    .reduce((result, [token, value]) => {
+      return result.replace(new RegExp(token, 'g'), value);
+    }, format);
 }
 
 /**
@@ -229,13 +237,12 @@ export function deepClone<T>(obj: T): T {
     return obj.map(item => deepClone(item)) as any;
   }
   
-  if (obj instanceof Object) {
-    const copy: Record<string, any> = {};
-    Object.keys(obj).forEach(key => {
-      copy[key] = deepClone((obj as any)[key]);
-    });
-    return copy as T;
-  }
+if (obj instanceof Object) {
+  return Object.keys(obj).reduce((copy: Record<string, any>, key) => {
+    copy[key] = deepClone((obj as any)[key]);
+    return copy;
+  }, {}) as T;
+}
   
   throw new Error(`Unable to copy object: ${obj}`);
 }

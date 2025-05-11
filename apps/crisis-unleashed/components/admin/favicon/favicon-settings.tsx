@@ -1,10 +1,9 @@
 "use client"
 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface FaviconSettingsProps {
@@ -20,8 +19,8 @@ interface FaviconSettingsProps {
   setMonochrome: (value: boolean) => void
   inverted: boolean
   setInverted: (value: boolean) => void
-  faviconType: string
-  setFaviconType: (value: string) => void
+  faviconType: "standard" | "letter" | "icon"
+  setFaviconType: (value: "standard" | "letter" | "icon") => void
 }
 
 export function FaviconSettings({
@@ -49,7 +48,7 @@ export function FaviconSettings({
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label>Favicon Type</Label>
-          <Tabs defaultValue="standard" value={faviconType} onValueChange={setFaviconType}>
+          <Tabs defaultValue="standard" value={faviconType} onValueChange={(value) => setFaviconType(value as "standard" | "letter" | "icon")}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="standard">Standard</TabsTrigger>
               <TabsTrigger value="letter">Letter</TabsTrigger>
@@ -67,6 +66,8 @@ export function FaviconSettings({
               value={backgroundColor}
               onChange={(e) => setBackgroundColor(e.target.value)}
               className="h-8 w-8 rounded border"
+              aria-label="Background Color"
+              title="Choose background color"
             />
             <span className="text-sm font-mono">{backgroundColor}</span>
           </div>

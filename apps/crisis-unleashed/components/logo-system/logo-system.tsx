@@ -16,28 +16,20 @@ export interface LogoSystemProps {
 }
 
 // Map LogoVariant to ResponsiveAnimatedLogo variant
-const mapVariantToResponsiveVariant = (
-  variant: LogoVariant
-): "standard" | "icon-only" | "horizontal" | "vertical" | "animated" | "compact" | "text-only" | "footer" | "mobile" | "print" | "watermark" => {
-  switch (variant) {
-    case "standard":
-      return "standard"
-    case "icon-only":
-      return "icon-only"
-    case "horizontal":
-      return "horizontal"
-    case "vertical":
-      return "vertical"
-    case "wordmark":
-      return "text-only"
-    case "badge":
-      return "icon-only" // Best match
-    case "minimal":
-      return "compact" // Best match
-    default:
-      return "standard"
-  }
-}
+const variantMap = {
+  standard:  "standard",
+  "icon-only": "icon-only",
+  horizontal: "horizontal",
+  vertical:   "vertical",
+  wordmark:   "text-only",
+  badge:      "icon-only",
+  minimal:    "compact",
+} as const
+
+type ResponsiveVariant = typeof variantMap[keyof typeof variantMap]
+
+const mapVariantToResponsiveVariant = (v: LogoVariant): ResponsiveVariant =>
+  variantMap[v] ?? "standard";
 
 export default function LogoSystem({
   variant = "standard",

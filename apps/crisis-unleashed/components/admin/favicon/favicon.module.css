@@ -1,0 +1,21 @@
+.previewCanvas {
+  image-rendering: pixelated;
+  border: 1px solid var(--muted);
+  box-shadow: var(--shadow-md);
+}
+
+.previewContainer {
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background-image: var(--grid-pattern, linear-gradient(to right, #f0f0f0 1px, transparent 1px), linear-gradient(to bottom, #f0f0f0 1px, transparent 1px));
+  background-size: 20px 20px;
+  border-radius: 0.5rem;
+}
+
+.buttonsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 20rem;
+}

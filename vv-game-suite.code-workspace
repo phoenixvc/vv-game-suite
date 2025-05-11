@@ -1,7 +1,7 @@
 {
 "folders": [
   {
-    "name": "Crisis Unleashed App",
+      "path": "."
     "path": "apps/crisis-unleashed"
   },
   {
@@ -14,7 +14,10 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.requireConfig": true,
   "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true
+  "files.insertFinalNewline": true,   
+  "files.exclude": {
+    "**/.git": false
+  },
 },
   "extensions": {
     "recommendations": [

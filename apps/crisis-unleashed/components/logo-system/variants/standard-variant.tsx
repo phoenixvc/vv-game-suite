@@ -20,10 +20,12 @@ export function renderStandardVariant(
   tagline: string | null
 ) {
   // Convert size to number for calculations if it's not a percentage
-  const numSize = typeof size === "string" && size.includes("%") 
-    ? parseInt(size) 
-    : Number(size);
-  
+  const numSize =
+    typeof size === "number"
+      ? size
+      : typeof size === "string"
+        ? parseFloat(size) || 0   // handles "80", "80px", "80%"
+        : 0;
   return (
     <div className="logo-standard flex flex-col items-center">
       {/* Logo content - placeholder for actual logo implementation */}

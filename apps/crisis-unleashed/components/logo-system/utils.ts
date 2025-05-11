@@ -87,40 +87,50 @@ const DEFAULT_FACTION_DATA = {
   fontFamily: "'Inter', sans-serif",
 };
 /**
- * Get faction theme color
- * @param faction Faction identifier
- * @param monochrome Whether to use monochrome colors
- * @param inverted Whether to invert the colors
- * @returns Hex color code
- */
+  * Returns the primary color hex code for the specified faction.
+  *
+  * If {@link monochrome} is true, returns black or white depending on {@link inverted}. Otherwise, returns the faction's primary color.
+  *
+  * @param faction - The faction identifier.
+  * @param monochrome - If true, returns a monochrome color instead of the faction color.
+  * @param inverted - If true and {@link monochrome} is set, returns white; otherwise, returns black.
+  * @returns The hex color code for the faction's primary color or the selected monochrome color.
+  */
 export function getFactionColor(faction: FactionId, monochrome = false, inverted = false): string {
    if (monochrome) return inverted ? "#ffffff" : "#000000";
   return FACTION_DATA[faction].primaryColor;
  }
 
 /**
- * Get faction secondary color
- * @param faction Faction identifier
- * @returns Hex color code
+ * Returns the secondary color hex code for the specified faction.
+ *
+ * If the faction is not recognized, returns the default secondary color.
+ *
+ * @param faction - The identifier of the faction.
+ * @returns The secondary color hex code for the faction or the default if unknown.
  */
 export function getFactionSecondaryColor(faction: string): string {
   return (FACTION_DATA[faction as FactionId]?.secondaryColor || DEFAULT_FACTION_DATA.secondaryColor);
 }
 
 /**
- * Get faction name
- * @param faction Faction identifier
- * @returns Full faction name
+ * Returns the formatted display name for a given faction identifier.
+ *
+ * Converts the faction's identifier into a user-friendly name with proper capitalization and spacing.
+ *
+ * @param faction - The faction identifier to format.
+ * @returns The display name of the faction.
  */
 export function getFactionName(faction: FactionId): string {
   return formatFactionName(faction);
 }
 
 /**
- * Generate a favicon URL for a specific faction
- * @param faction Faction identifier
- * @param size Size of the favicon in pixels
- * @returns URL to the faction favicon
+ * Constructs a URL for the favicon associated with a given faction and size.
+ *
+ * @param faction - The identifier of the faction.
+ * @param size - The desired favicon size in pixels.
+ * @returns The URL string for the faction's favicon.
  */
 export function getFactionFaviconUrl(faction: string, size = 32): string {
   // In a real implementation, this would point to actual generated favicons
@@ -128,8 +138,9 @@ export function getFactionFaviconUrl(faction: string, size = 32): string {
 }
 
 /**
- * Get all available faction names
- * @returns Array of faction identifiers
+ * Returns an array of all defined faction identifiers.
+ *
+ * @returns An array containing every {@link FactionId} present in the faction data.
  */
 export function getAllFactions(): FactionId[] {
   return (Object.keys(FACTION_DATA) as Array<keyof typeof FACTION_DATA>).map(
@@ -138,9 +149,12 @@ export function getAllFactions(): FactionId[] {
 }
 
 /**
- * Convert faction name to display format
- * @param faction Faction identifier
- * @returns Formatted faction name for display
+ * Converts a faction identifier string to a display-friendly name.
+ *
+ * Splits a hyphen-separated faction identifier into words, capitalizes each word, and joins them with spaces.
+ *
+ * @param faction - The hyphen-separated faction identifier.
+ * @returns The formatted faction name suitable for display.
  */
 export function formatFactionName(faction: string): string {
   return faction
@@ -150,46 +164,59 @@ export function formatFactionName(faction: string): string {
 }
 
 /**
- * Get faction description
- * @param faction Faction identifier
- * @returns Description of the faction
+ * Returns the description for the specified faction.
+ *
+ * If the faction is not recognized, returns a default description.
+ *
+ * @param faction - The identifier of the faction.
+ * @returns The description string associated with the faction.
  */
 export function getFactionDescription(faction: string): string {
   return FACTION_DATA[faction as FactionId]?.description || DEFAULT_FACTION_DATA.description;
 }
 
 /**
- * Get faction ability keywords
- * @param faction Faction identifier
- * @returns Array of ability keywords associated with the faction
+ * Returns the list of ability keywords associated with a faction.
+ *
+ * If the faction is not recognized, returns the default set of keywords.
+ *
+ * @param faction - The identifier of the faction.
+ * @returns An array of keywords for the specified faction.
  */
 export function getFactionKeywords(faction: string): string[] {
   return FACTION_DATA[faction as FactionId]?.keywords || DEFAULT_FACTION_DATA.keywords;
 }
 
 /**
- * Get faction icon name
- * @param faction Faction identifier
- * @returns Icon name for the faction
+ * Returns the icon name associated with the specified faction.
+ *
+ * If the faction is not recognized, a default icon name is returned.
+ *
+ * @param faction - The identifier of the faction.
+ * @returns The icon name for the given faction, or a default if unknown.
  */
 export function getFactionIconName(faction: string): string {
   return FACTION_DATA[faction as FactionId]?.iconName || DEFAULT_FACTION_DATA.iconName;
 }
 
 /**
- * Get faction font family
- * @param faction Faction identifier
- * @returns Font family name for the faction
+ * Returns the font family associated with the specified faction.
+ *
+ * If the faction is not recognized, returns the default font family.
+ *
+ * @param faction - The identifier of the faction.
+ * @returns The font family name for the faction, or the default if unknown.
  */
 export function getFactionFont(faction: string): string {
   return FACTION_DATA[faction as FactionId]?.fontFamily || DEFAULT_FACTION_DATA.fontFamily;
 }
 
 /**
- * Generate a CSS gradient for a faction
- * @param faction Faction identifier
- * @param direction Direction of the gradient (default: 'to right')
- * @returns CSS gradient string
+ * Generates a CSS linear gradient using a faction's primary and secondary colors.
+ *
+ * @param faction - The faction identifier.
+ * @param options - Optional settings for gradient direction, monochrome mode, and color inversion.
+ * @returns A CSS linear-gradient string representing the faction's color scheme.
  */
 export function getFactionGradient(
   faction: FactionId,

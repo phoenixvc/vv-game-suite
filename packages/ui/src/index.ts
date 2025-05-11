@@ -16,7 +16,10 @@ export interface ButtonProps {
 }
 
 /**
- * Example function to demonstrate package functionality
+ * Checks whether the provided ButtonProps object has a non-empty label and a valid onClick function.
+ *
+ * @param props - The ButtonProps object to validate.
+ * @returns True if {@link props.label} is truthy and {@link props.onClick} is a function; otherwise, false.
  */
 export function isValidButtonProps(props: ButtonProps): boolean {
   return !!props.label && typeof props.onClick === 'function';

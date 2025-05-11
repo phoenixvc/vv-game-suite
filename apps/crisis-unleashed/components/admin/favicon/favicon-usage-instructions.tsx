@@ -7,6 +7,14 @@ interface FaviconUsageInstructionsProps {
   getFactionColor: (faction: string, mono: boolean, invert: boolean) => string
 }
 
+/**
+ * Displays usage instructions for adding favicons to a website, including basic and advanced HTML examples.
+ *
+ * Renders a card with step-by-step guidance and code snippets for implementing favicon support, dynamically inserting the Safari pinned tab icon color based on the selected faction.
+ *
+ * @param selectedFaction - The identifier for the current faction, used to determine the Safari pinned tab icon color.
+ * @param getFactionColor - Function that returns a color string for the given faction and style options.
+ */
 export function FaviconUsageInstructions({
   selectedFaction,
   getFactionColor

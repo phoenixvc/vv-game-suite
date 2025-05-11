@@ -18,7 +18,7 @@ export interface LogoVariantProps {
   /**
    * The variant of the logo to display
    */
-  variant?: LogoVariant;
+  variant?: "standard" | "icon" | "horizontal" | "vertical" | "minimal";
   /**
    * The size of the logo
    */
@@ -80,7 +80,11 @@ const sizeToPixels = {
   full: 100, // percentage
 }
 
-// The actual component
+/**
+ * Renders a stylized logo for a specified faction with customizable variant, size, color scheme, animation, and interaction options.
+ *
+ * Supports multiple visual variants and optional tagline display, adapting colors and layout based on the selected faction and props.
+ */
 export default function LogoVariant({
   variant = "standard",
   size = "md",
@@ -160,9 +164,10 @@ export default function LogoVariant({
 }
 
 /**
- * Gets the tagline for a specific faction
- * @param faction The faction ID
- * @returns The faction's tagline
+ * Returns the tagline associated with the specified faction.
+ *
+ * @param faction - The unique identifier of the faction.
+ * @returns The tagline string for the given faction, or an empty string if the faction is unrecognized.
  */
 function getFactionTagline(faction: FactionId): string {
   switch (faction) {
@@ -184,7 +189,16 @@ function getFactionTagline(faction: FactionId): string {
 }
 
 /**
- * Renders the standard logo variant
+ * Renders the standard logo variant with the faction name and an optional tagline.
+ *
+ * Displays the faction name in a styled block using the provided primary and secondary colors, with the tagline shown below if specified.
+ *
+ * @param faction - The faction identifier to display.
+ * @param primaryColor - The primary color for text and accents.
+ * @param secondaryColor - The background color for the logo block.
+ * @param size - The overall size of the logo, in pixels or percentage.
+ * @param tagline - Optional tagline text to display below the logo.
+ * @returns A React element representing the standard logo variant.
  */
 function renderStandardVariant(
   faction: FactionId, 
@@ -237,7 +251,15 @@ function renderStandardVariant(
 }
 
 /**
- * Renders the horizontal logo variant
+ * Renders a horizontal logo variant with an icon, faction name, and optional tagline.
+ *
+ * @param faction - The faction identifier to display.
+ * @param primaryColor - The primary color used for text and icon foreground.
+ * @param secondaryColor - The secondary color used for the icon background.
+ * @param size - The overall size of the logo in pixels or percentage.
+ * @param tagline - Optional tagline text to display below the faction name.
+ *
+ * @returns A React element representing the horizontal logo variant.
  */
 function renderHorizontalVariant(
   faction: FactionId, 
@@ -306,7 +328,15 @@ function renderHorizontalVariant(
 }
 
 /**
- * Renders the vertical logo variant
+ * Renders a vertical logo variant with an icon, faction name, and optional tagline.
+ *
+ * @param faction - The faction identifier to display.
+ * @param primaryColor - The primary color used for text and icon foreground.
+ * @param secondaryColor - The secondary color used for the icon background.
+ * @param size - The overall size of the logo, in pixels or percentage.
+ * @param tagline - Optional tagline text to display below the faction name.
+ *
+ * @returns A React element representing the vertical logo variant.
  */
 function renderVerticalVariant(
   faction: FactionId, 
@@ -372,7 +402,9 @@ function renderVerticalVariant(
 }
 
 /**
- * Renders the icon-only logo variant
+ * Renders a square icon logo displaying the first letter of the specified faction.
+ *
+ * The icon uses the provided primary color for the letter and secondary color for the background, with size and styling determined by the input parameters.
  */
 function renderIconVariant(
   faction: FactionId, 
@@ -401,7 +433,13 @@ function renderIconVariant(
 }
 
 /**
- * Renders the minimal logo variant
+ * Renders a minimal logo variant displaying the first letter of the faction in the primary color.
+ *
+ * @param faction - The faction identifier whose initial is shown.
+ * @param primaryColor - The main color used for the letter.
+ * @param secondaryColor - Unused in this variant.
+ * @param size - The width and height of the logo, as a number (pixels) or string (e.g., percentage).
+ * @returns A React element representing the minimal logo.
  */
 function renderMinimalVariant(
   faction: FactionId, 

@@ -1,5 +1,12 @@
 import { FaviconRendererProps } from "../favicon-renderer";
 
+/**
+ * Renders a filled pentagram (five-pointed star) centered on a canvas.
+ *
+ * @param ctx - The canvas rendering context to draw on.
+ * @param size - The total size of the canvas area.
+ * @param innerSize - The diameter of the circle in which the pentagram is inscribed.
+ */
 export function renderVoidHarbingers({ ctx, size, innerSize }: FaviconRendererProps) {
   // Draw a pentagram
   const radius = innerSize / 2;

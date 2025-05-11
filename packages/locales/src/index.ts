@@ -110,10 +110,13 @@ export const languages: LanguageData = {
 };
 
 /**
- * Get a localized string
- * @param key The string key
- * @param lang The language code (defaults to 'en')
- * @returns The localized string or the key if not found
+ * Retrieves a localized string for the given key and language.
+ *
+ * If the specified language or key is not found, falls back to the default language or returns the key itself.
+ *
+ * @param key - The identifier for the localized string.
+ * @param lang - The language code to use (defaults to English).
+ * @returns The localized string, or the key if no translation is available.
  */
 export function getString(key: string, lang: string = defaultLanguage): string {
   const langData = languages[lang] || languages[defaultLanguage];
@@ -121,11 +124,15 @@ export function getString(key: string, lang: string = defaultLanguage): string {
 }
 
 /**
- * Format a localized string with variables
- * @param key The string key
- * @param params Object containing variable values
- * @param lang The language code (defaults to 'en')
- * @returns The formatted localized string
+ * Retrieves a localized string by key and language, replacing placeholders with provided parameter values.
+ *
+ * Replaces all occurrences of `{param}` in the localized string with the corresponding value from {@link params}.
+ * If the key or language is not found, falls back to the default language or returns the key itself.
+ *
+ * @param key - The localization key to retrieve.
+ * @param params - An object mapping placeholder names to their replacement values.
+ * @param lang - The language code to use (defaults to 'en').
+ * @returns The formatted localized string with placeholders replaced.
  */
 export function formatString(key: string, params: Record<string, any>, lang: string = defaultLanguage): string {
   let text = getString(key, lang);

@@ -48,9 +48,12 @@ export const physicsConfig = {
 };
 
 /**
- * Get the configuration for a specific game
- * @param gameId The ID of the game to get configuration for
- * @returns The game configuration
+ * Returns the configuration object for a given game ID.
+ *
+ * If a specific configuration exists for the provided {@link gameId}, a deep-cloned copy is returned; otherwise, the default game configuration is returned.
+ *
+ * @param gameId - The unique identifier of the game.
+ * @returns The configuration object for the specified game, or the default configuration if not found.
  */
 export function getGameConfig(gameId: string) {
   const configs: Record<string, any> = {

@@ -1,5 +1,15 @@
 import { FaviconRendererProps } from "../favicon-renderer";
 
+/**
+ * Draws a stylized mountain-shaped polygon on the provided canvas context.
+ *
+ * @param ctx - The canvas rendering context to draw on.
+ * @param size - The total size of the canvas area.
+ * @param innerSize - The size used to determine the mountain's proportions.
+ *
+ * @remark
+ * The shape is filled using the current fill style of the canvas context.
+ */
 export function renderTitanborn({ ctx, size, innerSize }: FaviconRendererProps) {
   // Draw a mountain-like shape
   const centerX = size / 2;

@@ -30,6 +30,19 @@ interface LogoAnimationPresetsProps {
   onAnimationComplete?: () => void
 }
 
+/**
+ * Renders an animated logo with configurable animation presets and playback controls.
+ *
+ * Displays the {@link LogoSystem} component with a selected animation preset, speed, and optional looping or auto-play behavior. The animation can be customized by variant, size, and faction, with sensible defaults based on the chosen preset. An optional callback is invoked when the animation completes.
+ *
+ * @param preset - The animation preset to apply to the logo.
+ * @param speed - Controls the speed of the animation; higher values play the animation faster.
+ * @param autoPlay - If true, the animation starts automatically.
+ * @param loop - If true, the animation repeats indefinitely.
+ * @param onAnimationComplete - Callback invoked when the animation completes (once per cycle if looping).
+ *
+ * @returns A React element displaying the animated logo.
+ */
 export default function LogoAnimationPresets({
   variant = "standard",
   size = "md",

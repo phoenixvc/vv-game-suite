@@ -1,8 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { LogoSystem, type LogoVariant, type LogoSize } from "@/components/logo-system" // Correct import
+import { useEffect, useState } from "react"
+import LogoSystem from "./logo-system"
+// Update import to use the renamed type
 import { cn } from "@/lib/utils"
+import type { LogoSize, LogoVariant } from "./logo-variant"
 
 interface LogoLoadingProps {
   variant?: LogoVariant
@@ -56,5 +58,4 @@ export function LogoLoading({
   )
 }
 
-// Also export as default for backward compatibility
 export default LogoLoading

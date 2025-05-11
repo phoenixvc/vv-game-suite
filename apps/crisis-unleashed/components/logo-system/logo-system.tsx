@@ -1,7 +1,8 @@
 "use client"
 
 import { ResponsiveAnimatedLogo } from "@/components/responsive-animated-logo"
-import type { LogoVariant, LogoSize } from "./logo-variant"
+import { useMemo } from "react"
+import type { LogoSize, LogoVariant } from "./logo-variant"
 
 export interface LogoSystemProps {
   variant?: LogoVariant
@@ -15,7 +16,23 @@ export interface LogoSystemProps {
   className?: string
 }
 
-function LogoSystem({
+// Map LogoVariant to ResponsiveAnimatedLogo variant
+const variantMap = {
+  standard:  "standard",
+  "icon-only": "icon-only",
+  horizontal: "horizontal",
+  vertical:   "vertical",
+  wordmark:   "text-only",
+  badge:      "icon-only",
+  minimal:    "compact",
+} as const
+
+type ResponsiveVariant = typeof variantMap[keyof typeof variantMap]
+
+const mapVariantToResponsiveVariant = (v: LogoVariant): ResponsiveVariant =>
+  variantMap[v] ?? "standard";
+
+export default function LogoSystem({
   variant = "standard",
   size = "md",
   faction = "cybernetic-nexus",
@@ -26,9 +43,15 @@ function LogoSystem({
   withTagline = false,
   className,
 }: LogoSystemProps) {
+  
+const responsiveVariant = useMemo(
+  () => mapVariantToResponsiveVariant(variant),
+  [variant],
+)
+  
   return (
     <ResponsiveAnimatedLogo
-      variant={variant}
+      variant={responsiveVariant}
       size={size}
       faction={faction}
       interactive={interactive}
@@ -41,5 +64,3 @@ function LogoSystem({
     />
   )
 }
-
-export default LogoSystem

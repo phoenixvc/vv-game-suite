@@ -1,14 +1,28 @@
 {
-  "folders": [
-    {
+"folders": [
+  {
       "path": "."
-    }
-  ],
-  "settings": {
-    "files.exclude": {
-      "**/.git": false
-    },
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "path": "apps/crisis-unleashed"
+  },
+  {
+    "name": "Shared UI Package",
+    "path": "packages/ui"
+  }
+ ],
+"settings": {
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.requireConfig": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,   
+  "files.exclude": {
+    "**/.git": false
+  },
+},
+  "extensions": {
+    "recommendations": [
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint"
+    ]
   }
 }

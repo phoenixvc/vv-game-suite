@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { LogoSystem, type LogoVariant, type LogoSize } from "@/components/logo-system"
+import LogoSystem from "./logo-system"
+// Update import to use the renamed type
+import type { LogoVariant, LogoSize } from "./logo-variant"
 import { cn } from "@/lib/utils"
 
 export type LogoAnimationPreset =

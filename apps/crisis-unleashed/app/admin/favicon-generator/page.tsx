@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
-import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { LogoSystem } from "@/components/logo-system/logo-variant"
+import { useEffect, useRef, useState } from "react"
+// Fix: Import LogoVariant from the correct location
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Download } from "lucide-react"
 
@@ -369,11 +369,10 @@ export default function FaviconGeneratorPage() {
               </Select>
 
               <div className="mt-4 flex items-center justify-center">
-                <LogoSystem
+                <LogoVariant
                   variant="icon-only"
                   size="lg"
                   faction={selectedFaction}
-                  animated={false}
                   monochrome={monochrome}
                   inverted={inverted}
                 />

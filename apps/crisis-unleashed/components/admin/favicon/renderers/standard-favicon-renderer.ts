@@ -35,13 +35,14 @@ export const StandardFaviconRenderer: FaviconRenderer = {
       case "celestial-dominion":
         renderCelestialDominion(props);
         break;
-      default:
+      default: {
         // Default fallback - draw a simple circle
         const { size, innerSize } = props;
         ctx.beginPath();
         ctx.arc(size / 2, size / 2, innerSize / 2, 0, Math.PI * 2);
         ctx.fill();
         break;
+      }
     }
   }
 };

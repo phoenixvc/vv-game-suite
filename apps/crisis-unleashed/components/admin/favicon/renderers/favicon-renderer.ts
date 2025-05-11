@@ -1,3 +1,5 @@
+import { FactionId } from "@/components/logo-system/utils";
+
 export interface FaviconRendererProps {
   ctx: CanvasRenderingContext2D;
   size: number;
@@ -5,7 +7,7 @@ export interface FaviconRendererProps {
   padding: number;
   backgroundColor: string;
   factionColor: string;
-  selectedFaction: string;
+  selectedFaction: FactionId;
 }
 
 export interface FaviconRenderer {

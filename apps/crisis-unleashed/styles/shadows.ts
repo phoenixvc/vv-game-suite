@@ -4,6 +4,9 @@
  * Heavy shadows (like neon, complex drop shadows, etc.) are computed only when accessed,
  * reducing initial bundle size and improving performance.
  */
+
+import { getFactionShadow, factionShadows } from './shadows/faction-shadows';
+
 export const shadows = {
   // Light shadows defined eagerly since they're commonly used
   sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -37,22 +40,15 @@ export const shadows = {
     return '0 0 10px rgba(0, 168, 255, 0.7), 0 0 20px rgba(0, 168, 255, 0.5), 0 0 30px rgba(0, 168, 255, 0.3)';
   },
   
-  // Function to generate faction-specific shadows dynamically
-  getFactionShadow(factionColor: string, intensity: 'low' | 'medium' | 'high' = 'medium'): string {
-    const color = factionColor.replace('#', '');
-    const rgba = `rgba(${parseInt(color.substring(0, 2), 16)}, ${parseInt(color.substring(2, 4), 16)}, ${parseInt(color.substring(4, 6), 16)}`;
-    
-    switch (intensity) {
-      case 'low':
-        return `0 0 10px ${rgba}, 0.3)`;
-      case 'high':
-        return `0 0 10px ${rgba}, 0.7), 0 0 20px ${rgba}, 0.5), 0 0 30px ${rgba}, 0.3)`;
-      case 'medium':
-      default:
-        return `0 0 15px ${rgba}, 0.5), 0 0 25px ${rgba}, 0.3)`;
-    }
-  }
+  // Re-export faction shadow function
+  getFactionShadow,
+  
+  // Re-export faction shadows
+  ...factionShadows
 } as const;
+
+// Export the faction shadows and function directly for more explicit imports
+export { getFactionShadow, factionShadows };
 
 // Usage example:
 // import { shadows } from '@/styles/shadows';

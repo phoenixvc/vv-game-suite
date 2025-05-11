@@ -2,9 +2,10 @@ import { FACTION_THEME_CLASS_NAMES, FACTION_THEME_DISPLAY_NAMES, VALID_FACTION_T
 import { FactionTheme, Theme } from "@/types/theme";
 
 /**
- * Check if a string is a valid faction theme
- * @param theme The theme string to check
- * @returns Type guard for FactionTheme
+ * Determines whether the given string is a valid faction theme.
+ *
+ * @param theme - The string to validate as a faction theme.
+ * @returns True if {@link theme} is a valid {@link FactionTheme}; otherwise, false.
  */
 export function isValidFactionTheme(theme: string): theme is FactionTheme {
   return (VALID_FACTION_THEMES as readonly string[]).includes(theme);
@@ -17,6 +18,11 @@ export function isValidFactionTheme(theme: string): theme is FactionTheme {
  */
 const VALID_THEMES: readonly Theme[] = ["dark", "light", "system"] as const;
 
+/**
+ * Determines whether the provided string is a valid theme mode.
+ *
+ * @returns True if {@link theme} is one of the recognized theme modes; otherwise, false.
+ */
 export function isValidTheme(theme: string): theme is Theme {
   return VALID_THEMES.includes(theme as Theme);
 }

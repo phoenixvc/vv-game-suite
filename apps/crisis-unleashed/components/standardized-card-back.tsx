@@ -11,6 +11,17 @@ import { PrimordialCardBack } from "./card-backs/primordial-card-back"
 import { TitanbornCardBack } from "./card-backs/titanborn-card-back"
 import { VoidCardBack } from "./card-backs/void-card-back"
 
+/**
+ * Renders a standardized card back UI based on the card data and the current theme.
+ *
+ * Displays a faction-specific card back component if the theme matches a known faction; otherwise, renders a default card back layout with card details such as name, type, stats, abilities, effects, requirements, impact, duration, lore, and set. Handles missing or incomplete card data gracefully with fallback values.
+ *
+ * @param card - The card object containing data to display.
+ * @param darkMode - Whether to render the card back in dark mode. Defaults to false.
+ * @param className - Additional CSS class names to apply to the card back container.
+ *
+ * @returns The rendered card back component for the specified card and theme.
+ */
 export function StandardizedCardBack({ card, darkMode = false, className = "" }: CardBackProps) {
   const { currentTheme } = useTheme()
   const cardType = card.type?.toLowerCase() || "hero"

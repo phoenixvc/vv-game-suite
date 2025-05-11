@@ -115,9 +115,9 @@ function BrokenImage() {
 }
 
 /**
- * Demonstrates various error boundaries in the application using interactive UI examples.
+ * Renders an interactive showcase of error boundaries, allowing users to trigger and observe error handling for different UI sections.
  *
- * Renders a tabbed interface where each tab showcases a different error boundary component, allowing users to trigger and observe error handling for card previews, animations, collections, themes, and images. Also includes a content section wrapped in an error boundary to illustrate graceful error recovery in content areas.
+ * Displays a tabbed interface where each tab demonstrates a specific error boundary—covering card previews, animations, collections, themes, and images—with interactive components that intentionally throw errors. Also includes a content section wrapped in an error boundary to illustrate graceful recovery from content-related errors.
  */
 export default function ErrorBoundariesShowcase() {
   return (

@@ -5,21 +5,23 @@
  */
 
 /**
- * Generate a random integer between min and max (inclusive)
- * @param min Minimum value
- * @param max Maximum value
- * @returns Random integer between min and max
+ * Returns a random integer between the specified minimum and maximum values, inclusive.
+ *
+ * @param min - The lower bound of the range, inclusive.
+ * @param max - The upper bound of the range, inclusive.
+ * @returns A random integer between {@link min} and {@link max}.
  */
 export function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 /**
- * Generate a random float between min and max
- * @param min Minimum value
- * @param max Maximum value
- * @param decimals Number of decimal places (default: 2)
- * @returns Random float between min and max
+ * Returns a random floating-point number between the specified minimum and maximum, rounded to a given number of decimal places.
+ *
+ * @param min - The lower bound of the range, inclusive.
+ * @param max - The upper bound of the range, inclusive.
+ * @param decimals - Number of decimal places to round the result to (default is 2).
+ * @returns A random float between {@link min} and {@link max}, rounded to {@link decimals} decimal places.
  */
 export function randomFloat(min: number, max: number, decimals: number = 2): number {
   const value = Math.random() * (max - min) + min;
@@ -28,16 +30,18 @@ export function randomFloat(min: number, max: number, decimals: number = 2): num
 }
 
 /**
- * Generate a random hex color
- * @returns Random hex color string
+ * Generates a random hexadecimal color string in the format #RRGGBB.
+ *
+ * @returns A random hex color string.
  */
 export function randomColor(): string {
   return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
 }
 
 /**
- * Generate a UUID v4
- * @returns UUID string
+ * Generates a random UUID version 4 string.
+ *
+ * @returns A UUID v4 string in the format xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx.
  */
 export function uuid(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -48,74 +52,81 @@ export function uuid(): string {
 }
 
 /**
- * Clamp a value between min and max
- * @param value Value to clamp
- * @param min Minimum value
- * @param max Maximum value
- * @returns Clamped value
+ * Restricts a number to be within the specified minimum and maximum bounds.
+ *
+ * @param value - The number to clamp.
+ * @param min - The lower bound.
+ * @param max - The upper bound.
+ * @returns The value constrained between {@link min} and {@link max}.
  */
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
 /**
- * Linear interpolation between two values
- * @param a Start value
- * @param b End value
- * @param t Interpolation factor (0-1)
- * @returns Interpolated value
+ * Returns the value at a given interpolation factor between two numbers.
+ *
+ * @param a - The starting value.
+ * @param b - The ending value.
+ * @param t - The interpolation factor, clamped between 0 and 1.
+ * @returns The interpolated value between {@link a} and {@link b}.
  */
 export function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * clamp(t, 0, 1);
 }
 
 /**
- * Calculate the distance between two points
- * @param x1 First point x coordinate
- * @param y1 First point y coordinate
- * @param x2 Second point x coordinate
- * @param y2 Second point y coordinate
- * @returns Distance between the points
+ * Calculates the Euclidean distance between two points in 2D space.
+ *
+ * @param x1 - X coordinate of the first point.
+ * @param y1 - Y coordinate of the first point.
+ * @param x2 - X coordinate of the second point.
+ * @param y2 - Y coordinate of the second point.
+ * @returns The distance between the two points.
  */
 export function distance(x1: number, y1: number, x2: number, y2: number): number {
   return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }
 
 /**
- * Calculate the angle between two points (in radians)
- * @param x1 First point x coordinate
- * @param y1 First point y coordinate
- * @param x2 Second point x coordinate
- * @param y2 Second point y coordinate
- * @returns Angle in radians
+ * Returns the angle in radians between two points.
+ *
+ * @param x1 - X coordinate of the first point.
+ * @param y1 - Y coordinate of the first point.
+ * @param x2 - X coordinate of the second point.
+ * @param y2 - Y coordinate of the second point.
+ * @returns The angle in radians from the first point to the second point, measured counterclockwise from the positive X-axis.
  */
 export function angle(x1: number, y1: number, x2: number, y2: number): number {
   return Math.atan2(y2 - y1, x2 - x1);
 }
 
 /**
- * Convert radians to degrees
- * @param radians Angle in radians
- * @returns Angle in degrees
+ * Converts an angle from radians to degrees.
+ *
+ * @param radians - The angle in radians.
+ * @returns The equivalent angle in degrees.
  */
 export function toDegrees(radians: number): number {
   return radians * (180 / Math.PI);
 }
 
 /**
- * Convert degrees to radians
- * @param degrees Angle in degrees
- * @returns Angle in radians
+ * Converts an angle from degrees to radians.
+ *
+ * @param degrees - The angle in degrees.
+ * @returns The equivalent angle in radians.
  */
 export function toRadians(degrees: number): number {
   return degrees * (Math.PI / 180);
 }
 
 /**
- * Debounce a function
- * @param func Function to debounce
- * @param wait Wait time in milliseconds
- * @returns Debounced function
+ * Returns a debounced version of a function that delays its execution until after a specified wait time has elapsed since the last call.
+ *
+ * @param func - The function to debounce.
+ * @param wait - The delay in milliseconds to wait after the last call before invoking {@link func}.
+ * @returns A debounced function that postpones execution of {@link func} until after {@link wait} milliseconds have passed since the last invocation.
  */
 export function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | null = null;
@@ -134,10 +145,11 @@ export function debounce<T extends (...args: any[]) => any>(func: T, wait: numbe
 }
 
 /**
- * Throttle a function
- * @param func Function to throttle
- * @param limit Limit in milliseconds
- * @returns Throttled function
+ * Returns a throttled version of a function that ensures it is called at most once every specified number of milliseconds.
+ *
+ * @param func - The function to throttle.
+ * @param limit - The minimum time interval in milliseconds between allowed calls.
+ * @returns A throttled function that invokes {@link func} at most once per {@link limit} milliseconds.
  */
 export function throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
   let inThrottle = false;
@@ -152,9 +164,10 @@ export function throttle<T extends (...args: any[]) => any>(func: T, limit: numb
 }
 
 /**
- * Shuffle an array (Fisher-Yates algorithm)
- * @param array Array to shuffle
- * @returns Shuffled array
+ * Returns a new array with the elements randomly shuffled using the Fisher-Yates algorithm.
+ *
+ * @param array - The array to shuffle.
+ * @returns A new array containing the shuffled elements of {@link array}.
  */
 export function shuffle<T>(array: T[]): T[] {
   const result = [...array];
@@ -166,11 +179,12 @@ export function shuffle<T>(array: T[]): T[] {
 }
 
 /**
- * Format a number as a currency string
- * @param value Number to format
- * @param currency Currency code (default: 'USD')
- * @param locale Locale (default: 'en-US')
- * @returns Formatted currency string
+ * Formats a number as a currency string using the specified currency code and locale.
+ *
+ * @param value - The numeric value to format.
+ * @param currency - The ISO 4217 currency code to use (defaults to 'USD').
+ * @param locale - The BCP 47 locale string to use for formatting (defaults to 'en-US').
+ * @returns The formatted currency string.
  */
 export function formatCurrency(value: number, currency: string = 'USD', locale: string = 'en-US'): string {
   return new Intl.NumberFormat(locale, {
@@ -180,19 +194,23 @@ export function formatCurrency(value: number, currency: string = 'USD', locale: 
 }
 
 /**
- * Format a number with commas
- * @param value Number to format
- * @returns Formatted number string
+ * Formats a number with commas as thousand separators.
+ *
+ * @param value - The number to format.
+ * @returns The formatted number string with commas.
  */
 export function formatNumber(value: number): string {
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 /**
- * Format a date
- * @param date Date to format
- * @param format Format string (default: 'YYYY-MM-DD')
- * @returns Formatted date string
+ * Formats a Date object into a string using custom tokens.
+ *
+ * Supported tokens in the format string are: `YYYY` (year), `MM` (month), `DD` (day), `HH` (hours), `mm` (minutes), and `ss` (seconds).
+ *
+ * @param date - The date to format.
+ * @param format - The format string containing tokens to be replaced. Defaults to `'YYYY-MM-DD'`.
+ * @returns The formatted date string with tokens replaced by corresponding date values.
  */
 export function formatDate(date: Date, format: string = 'YYYY-MM-DD'): string {
   const year = date.getFullYear().toString();
@@ -220,9 +238,12 @@ export function formatDate(date: Date, format: string = 'YYYY-MM-DD'): string {
 }
 
 /**
- * Deep clone an object
- * @param obj Object to clone
- * @returns Cloned object
+ * Creates a deep clone of the provided value, recursively copying arrays, plain objects, and Date instances.
+ *
+ * @param obj - The value to clone.
+ * @returns A deep copy of {@link obj}.
+ *
+ * @throws {Error} If the value cannot be cloned (e.g., unsupported object types).
  */
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') {
@@ -248,9 +269,12 @@ if (obj instanceof Object) {
 }
 
 /**
- * Check if an object is empty
- * @param obj Object to check
- * @returns True if the object is empty
+ * Determines whether a value is empty.
+ *
+ * Returns true for null, undefined, empty strings, empty arrays, or objects with no own properties.
+ *
+ * @param obj - The value to check for emptiness.
+ * @returns True if {@link obj} is considered empty; otherwise, false.
  */
 export function isEmpty(obj: any): boolean {
   if (obj === null || obj === undefined) {

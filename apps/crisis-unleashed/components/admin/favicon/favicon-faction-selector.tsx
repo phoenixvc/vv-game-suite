@@ -20,6 +20,17 @@ const formatFactionDisplayName = (faction: string): string => {
     .join(" ");
 };
 
+/**
+ * Renders a card UI for selecting a faction from a list and previewing its logo variant.
+ *
+ * Displays a dropdown menu populated with available factions, allowing the user to select one. The selected faction's logo is shown below the selector, styled according to the `monochrome` and `inverted` flags.
+ *
+ * @param selectedFaction - The currently selected faction ID.
+ * @param setSelectedFaction - Callback to update the selected faction.
+ * @param factions - Array of available faction IDs to choose from.
+ * @param monochrome - If true, displays the logo in monochrome style.
+ * @param inverted - If true, displays the logo with inverted colors.
+ */
 export function FaviconFactionSelector({
   selectedFaction,
   setSelectedFaction,

@@ -15,6 +15,20 @@ interface LogoLoadingProps {
   loadingType?: "pulse" | "spin" | "bounce" | "fade"
 }
 
+/**
+ * Displays a loading animation with an animated logo and optional loading text.
+ *
+ * Renders a logo with configurable style, size, and animation type, along with a loading message. If the loading text contains an ellipsis ("..."), the component animates the dots to indicate ongoing activity.
+ *
+ * @param variant - The visual style of the logo.
+ * @param size - The size of the logo.
+ * @param faction - The logo's faction or theme.
+ * @param className - Additional CSS classes for the container.
+ * @param text - The loading message to display. If it contains "...", the dots will animate.
+ * @param loadingType - The animation style applied to the logo ("pulse", "spin", "bounce", or "fade").
+ *
+ * @returns A React element displaying the animated logo and loading text.
+ */
 export function LogoLoading({
   variant = "standard",
   size = "lg",

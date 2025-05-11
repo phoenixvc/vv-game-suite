@@ -10,13 +10,13 @@ import { FactionId, getAllFactions } from "@/components/logo-system/utils"
 import { useEffect, useRef, useState } from "react"
 
 /**
- * React component providing an interactive UI for generating, previewing, and downloading customizable faction-themed favicons.
+ * Displays an interactive page for creating, previewing, and downloading customizable faction-themed favicons.
  *
- * Users can select a faction, adjust appearance settings (background color, padding, border radius, size, monochrome, inverted), and choose between standard, letter, or icon favicon styles. The component renders a live preview on a canvas and allows downloading the generated favicon as a PNG file.
+ * Users can select a faction, adjust appearance settings, and choose between standard, letter, or icon favicon styles. The component renders a live preview and enables downloading the generated favicon as a PNG file.
  *
- * @returns The rendered favicon generator page component.
+ * @returns The favicon generator page React component.
  *
- * @remark The "Generate All Sizes" feature is currently a placeholder and does not produce multiple favicon files.
+ * @remark The "Generate All Sizes" feature is not fully implemented and currently only displays an informational alert.
  */
 export default function FaviconGeneratorPage() {
   const [selectedFaction, setSelectedFaction] = useState<FactionId>("cybernetic-nexus")

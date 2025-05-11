@@ -13,6 +13,13 @@ interface FaviconPreviewProps {
   generateAllSizes: () => void
 }
 
+/**
+ * Displays a preview of the favicon and provides options to download it or generate all favicon sizes.
+ *
+ * Renders a canvas showing the current favicon at the specified size, along with buttons to download the favicon or generate versions in all supported sizes.
+ *
+ * @param size - The pixel dimensions for the favicon preview canvas.
+ */
 export function FaviconPreview({ 
   size, 
   renderFavicon, 

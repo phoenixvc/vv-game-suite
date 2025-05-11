@@ -23,6 +23,11 @@ interface FaviconSettingsProps {
   setFaviconType: (value: "standard" | "letter" | "icon") => void
 }
 
+/**
+ * Renders a settings panel for customizing favicon appearance.
+ *
+ * Provides controls for selecting favicon type, background color, padding, border radius, size, and toggling monochrome and inverted modes. All changes are propagated via callback props for state management in the parent component.
+ */
 export function FaviconSettings({
   backgroundColor,
   setBackgroundColor,

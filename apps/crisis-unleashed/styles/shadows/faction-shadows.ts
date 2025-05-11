@@ -3,11 +3,11 @@
  */
 
 /**
- * Generates a shadow effect based on a faction color
- * 
- * @param factionColor - Hex color code (e.g., '#00a8ff')
- * @param intensity - Shadow intensity: 'low', 'medium', or 'high'
- * @returns CSS box-shadow string
+ * Generates a CSS box-shadow string using the specified faction color and shadow intensity.
+ *
+ * @param factionColor - Hex color code representing the faction (e.g., '#00a8ff').
+ * @param intensity - Shadow intensity level: 'low', 'medium', or 'high'. Defaults to 'medium'.
+ * @returns A CSS box-shadow string corresponding to the given color and intensity.
  */
 export function getFactionShadow(factionColor: string, intensity: 'low' | 'medium' | 'high' = 'medium'): string {
   // Convert hex to rgb components

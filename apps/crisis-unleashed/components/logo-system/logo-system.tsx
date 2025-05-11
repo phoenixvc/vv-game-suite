@@ -32,6 +32,11 @@ type ResponsiveVariant = typeof variantMap[keyof typeof variantMap]
 const mapVariantToResponsiveVariant = (v: LogoVariant): ResponsiveVariant =>
   variantMap[v] ?? "standard";
 
+/**
+ * Renders a responsive, animated logo with configurable appearance and behavior.
+ *
+ * Maps the provided logo variant to a supported variant for the underlying {@link ResponsiveAnimatedLogo} component, ensuring consistent rendering across different variant options.
+ */
 export default function LogoSystem({
   variant = "standard",
   size = "md",

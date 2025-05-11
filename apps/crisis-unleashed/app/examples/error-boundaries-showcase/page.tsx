@@ -1,16 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { AnimationErrorBoundary } from "@/components/error-boundaries/animation-error-boundary"
+import { CardCollectionErrorBoundary } from "@/components/error-boundaries/card-collection-error-boundary"
+import { CardPreviewErrorBoundary } from "@/components/error-boundaries/card-preview-error-boundary"
+import { ContentErrorBoundary } from "@/components/error-boundaries/content-error-boundary"
+import { FactionThemeErrorBoundary } from "@/components/error-boundaries/faction-theme-error-boundary"
+import { ImageLoadingErrorBoundary } from "@/components/error-boundaries/image-loading-error-boundary"
+import { ErrorSafeImage } from "@/components/error-safe-image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CardPreviewErrorBoundary } from "@/components/error-boundaries/card-preview-error-boundary"
-import { AnimationErrorBoundary } from "@/components/error-boundaries/animation-error-boundary"
-import { CardCollectionErrorBoundary } from "@/components/error-boundaries/card-collection-error-boundary"
-import { FactionThemeErrorBoundary } from "@/components/error-boundaries/faction-theme-error-boundary"
-import { ImageLoadingErrorBoundary } from "@/components/error-boundaries/image-loading-error-boundary"
-import { ContentErrorBoundary } from "@/components/error-boundaries/content-error-boundary"
-import { ErrorSafeImage } from "@/components/error-safe-image"
+import { useState } from "react"
 
 /**
  * Renders a button that, when clicked, throws an error with a customizable message.
@@ -115,9 +115,9 @@ function BrokenImage() {
 }
 
 /**
- * Demonstrates various error boundaries in the application using interactive UI examples.
+ * Renders an interactive showcase of error boundaries, allowing users to trigger and observe error handling for different UI sections.
  *
- * Renders a tabbed interface where each tab showcases a different error boundary component, allowing users to trigger and observe error handling for card previews, animations, collections, themes, and images. Also includes a content section wrapped in an error boundary to illustrate graceful error recovery in content areas.
+ * Displays a tabbed interface where each tab demonstrates a specific error boundary—covering card previews, animations, collections, themes, and images—with interactive components that intentionally throw errors. Also includes a content section wrapped in an error boundary to illustrate graceful recovery from content-related errors.
  */
 export default function ErrorBoundariesShowcase() {
   return (
@@ -146,7 +146,7 @@ export default function ErrorBoundariesShowcase() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <CardPreviewErrorBoundary cardData={{ id: "test", name: "Test Card", type: "Hero" }}>
+              <CardPreviewErrorBoundary cardData={{ id: "test", name: "Test Card", type: "Hero", description: "A test hero card for error boundary demonstration" }}>
                 <BrokenCardPreview />
               </CardPreviewErrorBoundary>
             </CardContent>

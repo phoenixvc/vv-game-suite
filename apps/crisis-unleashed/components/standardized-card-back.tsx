@@ -11,6 +11,17 @@ import { PrimordialCardBack } from "./card-backs/primordial-card-back"
 import { TitanbornCardBack } from "./card-backs/titanborn-card-back"
 import { VoidCardBack } from "./card-backs/void-card-back"
 
+/**
+ * Renders a standardized card back UI based on the card data and the current theme.
+ *
+ * Displays a faction-specific card back component if the theme matches a known faction; otherwise, renders a default card back layout with card details such as name, type, stats, abilities, effects, requirements, impact, duration, lore, and set. Handles missing or incomplete card data gracefully with fallback values.
+ *
+ * @param card - The card object containing data to display.
+ * @param darkMode - Whether to render the card back in dark mode. Defaults to false.
+ * @param className - Additional CSS class names to apply to the card back container.
+ *
+ * @returns The rendered card back component for the specified card and theme.
+ */
 export function StandardizedCardBack({ card, darkMode = false, className = "" }: CardBackProps) {
   const { currentTheme } = useTheme()
   const cardType = card.type?.toLowerCase() || "hero"
@@ -80,12 +91,12 @@ export function StandardizedCardBack({ card, darkMode = false, className = "" }:
               <div className={styles.artifactBackContent}>
                 <div className={styles.artifactEffect}>
                   <h4 className={styles.sectionTitle}>Effect</h4>
-                  <p>{card.effect || "No effect description available."}</p>
+                  <p>{card.content?.effect || "No effect description available."}</p>
                 </div>
 
                 <div className={styles.artifactRequirements}>
                   <h4 className={styles.sectionTitle}>Requirements</h4>
-                  <p>{card.requirements || "No special requirements."}</p>
+                  <p>{card.mechanics?.requirements || "No special requirements."}</p>
                 </div>
               </div>
             )}
@@ -94,19 +105,19 @@ export function StandardizedCardBack({ card, darkMode = false, className = "" }:
               <div className={styles.crisisBackContent}>
                 <div className={styles.crisisImpact}>
                   <h4 className={styles.sectionTitle}>Impact</h4>
-                  <p>{card.impact || "No impact description available."}</p>
+                  <p>{card.mechanics?.impact || "No impact description available."}</p>
                 </div>
 
                 <div className={styles.crisisDuration}>
                   <h4 className={styles.sectionTitle}>Duration</h4>
-                  <p>{card.duration || "Until resolved"}</p>
+                  <p>{card.mechanics?.duration || "Until resolved"}</p>
                 </div>
               </div>
             )}
           </div>
 
           <div className={styles.cardBackFooter}>
-            <div className={styles.cardLore}>{card.lore || "No lore available for this card."}</div>
+            <div className={styles.cardLore}>{card.content?.lore || "No lore available for this card."}</div>
             <div className={styles.cardSet}>{card.set || "Core Set"}</div>
           </div>
         </div>

@@ -1,11 +1,11 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import type { CardData } from "@/lib/card-data"
+import { logError } from "@/lib/error-logger"
+import { FileWarning, RefreshCw } from "lucide-react"
 import type React from "react"
 import ErrorBoundary from "../error-boundary"
-import { Button } from "@/components/ui/button"
-import { FileWarning, RefreshCw } from "lucide-react"
-import { logError } from "@/lib/error-logger"
-import type { CardData } from "@/lib/card-data"
 
 interface CardPreviewErrorBoundaryProps {
   children: React.ReactNode
@@ -14,13 +14,13 @@ interface CardPreviewErrorBoundaryProps {
 }
 
 /**
- * Wraps child components with an error boundary for card preview rendering, displaying a fallback UI and logging error details if a rendering error occurs.
+ * Provides an error boundary for card preview rendering, displaying a fallback UI and logging contextual error details if a rendering error occurs.
  *
- * If an error is caught, logs contextual information including card type, ID, and name (if available), and displays a user-friendly error message with an option to retry.
+ * If an error is caught, logs the error message, stack trace, and card-specific information (type, ID, name) when available. The fallback UI presents an error message, optional card details, and a "Retry" button that either invokes {@link onReset} or reloads the page.
  *
- * @param children - The React nodes to render within the error boundary.
- * @param cardData - Optional card data used for error logging and fallback display.
- * @param onReset - Optional callback invoked when the user clicks "Retry"; if not provided, the page reloads.
+ * @param children - React nodes to render within the error boundary.
+ * @param cardData - Optional card metadata for enhanced error logging and fallback display.
+ * @param onReset - Optional callback triggered when the user clicks "Retry"; defaults to reloading the page if not provided.
  */
 export function CardPreviewErrorBoundary({ children, cardData, onReset }: CardPreviewErrorBoundaryProps) {
   const handleError = (error: Error) => {
@@ -28,8 +28,8 @@ export function CardPreviewErrorBoundary({ children, cardData, onReset }: CardPr
       message: error.message,
       stack: error.stack,
       componentName: "CardPreview",
-      severity: "medium",
-      metadata: {
+      additionalInfo: {
+        severity: "medium",
         cardType: cardData?.type || cardData?.cardType || "Unknown",
         cardId: cardData?.id || "Unknown",
         cardName: cardData?.name || "Unknown",

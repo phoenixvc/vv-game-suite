@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { ResponsiveAnimatedLogo } from "@/components/responsive-animated-logo"
@@ -12,15 +12,28 @@ import AccessibilityControls from "@/components/accessibility-controls"
 export function SharedNavigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const pathname = usePathname()
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
     }
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false)
+        setOpenDropdown(null)
+      }
+    }
+
     window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    document.addEventListener("keydown", handleEscape)
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      document.removeEventListener("keydown", handleEscape)
+    }
   }, [])
 
   const navItems = [
@@ -67,26 +80,66 @@ export function SharedNavigation() {
           <nav className="hidden md:flex space-x-1">
             {navItems.map((item) => (
               <div key={item.name} className="relative group">
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "px-3 py-2 text-sm rounded-md transition-colors",
-                    pathname === item.href
-                      ? "text-white bg-gray-800"
-                      : "text-gray-300 hover:text-white hover:bg-gray-800/60",
-                  )}
-                >
-                  {item.name}
-                </Link>
+                {item.dropdown ? (
+                  <button
+                    className={cn(
+                      "px-3 py-2 text-sm rounded-md transition-colors flex items-center focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900",
+                      pathname === item.href
+                        ? "text-white bg-gray-800"
+                        : "text-gray-100 hover:text-white hover:bg-gray-800/60",
+                    )}
+                    onClick={() => setOpenDropdown(openDropdown === item.name ? null : item.name)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setOpenDropdown(openDropdown === item.name ? null : item.name)
+                      }
+                    }}
+                    aria-expanded={openDropdown === item.name}
+                    aria-haspopup="true"
+                  >
+                    {item.name}
+                    <svg className="ml-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                ) : (
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "px-3 py-2 text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900",
+                      pathname === item.href
+                        ? "text-white bg-gray-800"
+                        : "text-gray-100 hover:text-white hover:bg-gray-800/60",
+                    )}
+                  >
+                    {item.name}
+                  </Link>
+                )}
 
-                {item.dropdown && (
-                  <div className="absolute left-0 mt-1 w-48 origin-top-left rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                    <div className="py-1">
-                      {item.dropdown.map((subItem) => (
+                {item.dropdown && openDropdown === item.name && (
+                  <div className="absolute left-0 mt-1 w-48 origin-top-left rounded-md bg-gray-800 shadow-lg ring-1 ring-gray-600 z-10">
+                    <div className="py-1" role="menu" aria-orientation="vertical">
+                      {item.dropdown.map((subItem, index) => (
                         <Link
                           key={subItem.name}
                           href={subItem.href}
-                          className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                          role="menuitem"
+                          className="block px-4 py-2 text-sm text-gray-100 hover:bg-gray-700 hover:text-white focus:outline-none focus:bg-gray-700 focus:text-white transition-colors"
+                          onClick={() => setOpenDropdown(null)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'ArrowDown') {
+                              e.preventDefault()
+                              const nextElement = e.currentTarget.nextElementSibling as HTMLElement
+                              nextElement?.focus()
+                            } else if (e.key === 'ArrowUp') {
+                              e.preventDefault()
+                              const prevElement = e.currentTarget.previousElementSibling as HTMLElement
+                              prevElement?.focus()
+                            } else if (e.key === 'Escape') {
+                              setOpenDropdown(null)
+                            }
+                          }}
                         >
                           {subItem.name}
                         </Link>
@@ -118,10 +171,12 @@ export function SharedNavigation() {
 
             {/* Mobile menu button */}
             <button
-              className="md:hidden p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none"
+              className="md:hidden p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu"
             >
-              <span className="sr-only">Open main menu</span>
+              <span className="sr-only">{isMobileMenuOpen ? 'Close main menu' : 'Open main menu'}</span>
               {isMobileMenuOpen ? (
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -138,17 +193,17 @@ export function SharedNavigation() {
 
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-gray-900 shadow-lg">
+        <div id="mobile-menu" className="md:hidden bg-gray-900 shadow-lg" role="navigation" aria-label="Mobile navigation">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navItems.map((item) => (
               <div key={item.name}>
                 <Link
                   href={item.href}
                   className={cn(
-                    "block px-3 py-2 rounded-md text-base font-medium",
+                    "block px-3 py-2 rounded-md text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900 transition-colors",
                     pathname === item.href
                       ? "bg-gray-800 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      : "text-gray-100 hover:bg-gray-700 hover:text-white",
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -161,7 +216,7 @@ export function SharedNavigation() {
                       <Link
                         key={subItem.name}
                         href={subItem.href}
-                        className="block px-3 py-2 rounded-md text-sm text-gray-400 hover:bg-gray-700 hover:text-white"
+                        className="block px-3 py-2 rounded-md text-sm text-gray-200 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900 transition-colors"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {subItem.name}
@@ -176,7 +231,7 @@ export function SharedNavigation() {
               <div className="flex items-center px-3">
                 <Link
                   href="/login"
-                  className="block w-full px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  className="block w-full px-3 py-2 rounded-md text-base font-medium text-gray-100 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900 transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Sign In

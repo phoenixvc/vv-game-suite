@@ -130,7 +130,7 @@ export default function HomePage() {
 
   return (
     <GlossaryProvider>
-      <main className="relative min-h-screen overflow-x-hidden bg-[#0a0e1a]">
+      <main id="main-content" className="relative min-h-screen overflow-x-hidden bg-[#0a0e1a] content-with-header" tabIndex={-1}>
         {/* Background Animation Canvas */}
         <canvas 
           ref={canvasRef} 
@@ -140,35 +140,35 @@ export default function HomePage() {
 
         {/* Hero Section - Clean, Professional, No Header */}
         <section className="relative z-10 flex min-h-screen flex-col px-4 py-20 md:py-32">
-          <div className="container mx-auto max-w-7xl">
-            <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
+          <div className="container mx-auto max-w-7xl safe-container">
+            <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2 card-container">
               <div>
                 <div className="mb-2 inline-block rounded-full bg-indigo-900/30 px-4 py-1 text-sm font-medium text-blue-300">
                   Institutional-Grade Liquidity Management
                 </div>
-                <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tight text-white md:text-6xl">
+                <h1 className="mb-6 responsive-heading font-bold leading-tight tracking-tight text-white responsive-text">
                   <span className="bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 bg-clip-text text-transparent">
                     VeritasVault.ai
                   </span>
                 </h1>
-                <h2 className="mb-6 text-2xl font-medium text-blue-300">
+                <h2 className="mb-6 responsive-subheading font-medium text-blue-300 responsive-text">
                   Enterprise Treasury Solutions for Digital Gaming Assets
                 </h2>
-                <p className="mb-8 max-w-xl text-lg text-gray-300">
+                <p className="mb-8 max-w-xl responsive-body text-gray-300 responsive-text">
                   Optimize your gaming portfolio with advanced asset management, 
                   built on secure blockchain technology. Experience institutional-grade 
                   security with a gaming-focused interface.
                 </p>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 stack-on-mobile">
                   <Link
                     href="/vault"
-                    className="rounded-md bg-indigo-600 px-8 py-3 text-base font-medium text-white shadow-lg transition-all hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="btn-primary text-base px-8 py-3 interactive-element"
                   >
                     Access Your Vault
                   </Link>
                   <Link
                     href="/case-studies"
-                    className="rounded-md border border-gray-600 bg-transparent px-8 py-3 text-base font-medium text-gray-300 transition-all hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                    className="btn-secondary text-base px-8 py-3 interactive-element"
                   >
                     View Case Studies
                   </Link>
@@ -190,14 +190,14 @@ export default function HomePage() {
                 </div>
               </div>
               
-              <div className="relative">
-                <div className="relative h-[400px] w-full overflow-hidden rounded-lg">
+              <div className="relative safe-container">
+                <div className="relative h-[400px] w-full overflow-hidden rounded-lg image-container">
                   <div className="absolute inset-0 flex items-center justify-center">
                     {/* Using a more reliable image approach with fallback */}
-                    <div className="relative h-[250px] w-[250px]">
+                    <div className="relative h-[250px] w-[250px] image-container">
                       <Image 
                         src="/images/veritas-vault-logo.png" 
-                        alt="Veritas Vault Logo" 
+                        alt="Veritas Vault - Enterprise Treasury Solutions Logo" 
                         width={250} 
                         height={250}
                         className="animate-pulse-subtle"
@@ -209,7 +209,7 @@ export default function HomePage() {
                           if (parent) {
                             const fallback = document.createElement('div');
                             fallback.className = 'flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-800';
-                            fallback.innerHTML = '<span class="text-5xl font-bold text-yellow-400">VV</span>';
+                            fallback.innerHTML = '<span class="text-5xl font-bold text-yellow-400" aria-label="Veritas Vault">VV</span>';
                             parent.appendChild(fallback);
                           }
                         }}
@@ -404,37 +404,37 @@ export default function HomePage() {
 
         {/* Game Selection Section - Improved Balance */}
         <section className="relative z-10 py-20">
-          <div className="container mx-auto max-w-7xl px-4">
+          <div className="container mx-auto max-w-7xl px-4 safe-container">
             <div className="mb-12 text-center">
-              <h2 className="text-3xl font-bold text-white mb-4">Featured Games</h2>
-              <p className="text-gray-400 mx-auto max-w-2xl">
+              <h2 className="responsive-subheading font-bold text-white mb-4 responsive-text">Featured Games</h2>
+              <p className="responsive-body text-gray-400 mx-auto max-w-2xl responsive-text">
                 Explore our collection of blockchain-powered games with integrated asset management
               </p>
             </div>
             
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <div className="card-container gap-8">
               {/* Crisis Unleashed Card */}
-              <div className="overflow-hidden rounded-lg border border-blue-500/20 bg-[#0f172a] p-6">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600/20">
-                    <span className="text-xl font-bold text-blue-400">C</span>
+              <div className="overflow-safe rounded-lg border border-blue-500/20 bg-[#0f172a] p-6 interactive-element safe-container">
+                <div className="flex items-center gap-4 mb-6 flex-start">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600/20 flex-shrink-0">
+                    <span className="text-xl font-bold text-blue-400" aria-hidden="true">C</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-white">Crisis Unleashed</h3>
+                  <h3 className="responsive-subheading font-bold text-white responsive-text">Crisis Unleashed</h3>
                 </div>
-                <p className="mb-6 text-gray-300">
+                <p className="mb-6 responsive-body text-gray-300 responsive-text">
                   Strategic card game with faction politics and resource management in an ever-evolving game ecosystem.
                 </p>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 stack-on-mobile">
                   <Link
                     href="/crisis-unleashed"
-                    className="rounded-md bg-blue-600 px-4 py-3 text-center text-sm font-medium text-white shadow-lg transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="btn-primary text-sm px-4 py-3 text-center interactive-element"
                   >
                     Play Now
                   </Link>
                   <Link
                     href="/crisis-unleashed/learn"
-                    className="rounded-md border border-blue-600/30 bg-transparent px-4 py-3 text-center text-sm font-medium text-blue-400 transition-all hover:bg-blue-600/10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="btn-secondary text-sm px-4 py-3 text-center interactive-element"
                   >
                     Learn More
                   </Link>
@@ -442,27 +442,27 @@ export default function HomePage() {
               </div>
 
               {/* Crypto Paddle Card */}
-              <div className="overflow-hidden rounded-lg border border-green-500/20 bg-[#0f172a] p-6">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-600/20">
-                    <span className="text-xl font-bold text-green-400">CP</span>
+              <div className="overflow-safe rounded-lg border border-green-500/20 bg-[#0f172a] p-6 interactive-element safe-container">
+                <div className="flex items-center gap-4 mb-6 flex-start">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-600/20 flex-shrink-0">
+                    <span className="text-xl font-bold text-green-400" aria-hidden="true">CP</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-white">Crypto Paddle</h3>
+                  <h3 className="responsive-subheading font-bold text-white responsive-text">Crypto Paddle</h3>
                 </div>
-                <p className="mb-6 text-gray-300">
+                <p className="mb-6 responsive-body text-gray-300 responsive-text">
                   Fast-paced blockchain-powered arcade game with NFT collectibles and competitive gameplay.
                 </p>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 stack-on-mobile">
                   <Link
                     href="/crypto-paddle"
-                    className="rounded-md bg-green-600 px-4 py-3 text-center text-sm font-medium text-white shadow-lg transition-all hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    className="btn-primary bg-green-600 hover:bg-green-700 text-sm px-4 py-3 text-center interactive-element"
                   >
                     Play Now
                   </Link>
                   <Link
                     href="/crypto-paddle/learn"
-                    className="rounded-md border border-green-600/30 bg-transparent px-4 py-3 text-center text-sm font-medium text-green-400 transition-all hover:bg-green-600/10 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    className="btn-secondary border-green-600/30 text-green-400 hover:bg-green-600/10 text-sm px-4 py-3 text-center interactive-element"
                   >
                     Learn More
                   </Link>

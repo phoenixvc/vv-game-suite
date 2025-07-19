@@ -39,13 +39,29 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
     }
   }, [])
 
-  // Save preferences to localStorage when they change
+  // Save preferences to localStorage and apply styles when they change
   useEffect(() => {
     localStorage.setItem("reducedMotion", reducedMotion.toString())
+    
+    // Apply reduced motion to document
+    if (reducedMotion) {
+      document.documentElement.style.setProperty('--animation-duration', '0.01ms')
+      document.documentElement.style.setProperty('--transition-duration', '0.01ms')
+    } else {
+      document.documentElement.style.removeProperty('--animation-duration')
+      document.documentElement.style.removeProperty('--transition-duration')
+    }
   }, [reducedMotion])
 
   useEffect(() => {
     localStorage.setItem("highContrast", highContrast.toString())
+    
+    // Apply high contrast class to document
+    if (highContrast) {
+      document.documentElement.classList.add('high-contrast')
+    } else {
+      document.documentElement.classList.remove('high-contrast')
+    }
   }, [highContrast])
 
   const toggleReducedMotion = () => {

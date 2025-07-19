@@ -26,7 +26,15 @@ export function RequestQueueDemoClient() {
   const { data, error, isLoading, isSuccess, isError, isQueued, refetch, cancelQueuedRequest } = useApiWithQueue({
     url,
     method: method as any,
-    body: body ? JSON.parse(body) : undefined,
+    body: (() => {
+      if (!body) return undefined
+      try {
+        return JSON.parse(body)
+      } catch {
+        // Leave request un-sent & surface the issue gracefully
+        return undefined
+      }
+    })(),
     autoFetch: false,
     offlineSupport: true,
     offlineOptions: {

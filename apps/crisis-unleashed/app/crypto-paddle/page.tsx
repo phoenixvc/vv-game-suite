@@ -111,8 +111,8 @@ export default function CryptoPaddlePage() {
             className="flex flex-wrap justify-center gap-4 relative z-10"
           >
             <a
-              href="http://localhost:3001/"  // Direct link to the Breakout Game
-              target="_blank" 
+              href={process.env.NEXT_PUBLIC_BREAKOUT_GAME_URL ?? "/breakout-game"}
+              target="_blank"
               rel="noopener noreferrer"
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-green-500 to-emerald-400 p-0.5 text-lg font-medium text-white focus:outline-none focus:ring-4 focus:ring-green-300 focus-visible:ring-4"
             >

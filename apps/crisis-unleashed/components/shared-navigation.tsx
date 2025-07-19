@@ -8,6 +8,7 @@ import { ResponsiveAnimatedLogo } from "@/components/responsive-animated-logo"
 import { GuidedTourButton } from "@/components/onboarding/guided-tour-button"
 import { ThemeModeToggle } from "@/components/theme-mode-toggle"
 import AccessibilityControls from "@/components/accessibility-controls"
+import { SkipToContent, ScreenReaderOnly, useKeyboardNavigation } from "@/components/ui/accessibility-utils"
 
 export function SharedNavigation() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -63,21 +64,29 @@ export function SharedNavigation() {
   ]
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        isScrolled ? "bg-gray-900/95 backdrop-blur-sm shadow-md" : "bg-transparent",
-      )}
-    >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <>
+      <SkipToContent targetId="main-content" />
+      <header
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          isScrolled ? "bg-gray-900/95 backdrop-blur-sm shadow-md" : "bg-transparent",
+        )}
+        role="banner"
+        aria-label="Main navigation"
+      >
+        <div className="container mx-auto px-4 safe-container">
+          <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <ResponsiveAnimatedLogo variant="horizontal" size="sm" className="text-white" />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-1">
+          <nav 
+            className="hidden md:flex space-x-1 flex-1 justify-center"
+            role="navigation"
+            aria-label="Main navigation"
+          >
             {navItems.map((item) => (
               <div key={item.name} className="relative group">
                 {item.dropdown ? (
@@ -152,18 +161,21 @@ export function SharedNavigation() {
           </nav>
 
           {/* Right side controls */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 flex-shrink-0">
             <GuidedTourButton />
             <ThemeModeToggle />
             <AccessibilityControls />
 
             <div className="hidden md:flex items-center space-x-2">
-              <Link href="/login" className="px-3 py-1.5 text-sm text-gray-300 hover:text-white">
+              <Link 
+                href="/login" 
+                className="nav-link text-sm min-w-[80px] justify-center"
+              >
                 Sign In
               </Link>
               <Link
                 href="/signup"
-                className="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+                className="btn-primary text-sm"
               >
                 Sign Up
               </Link>
@@ -193,8 +205,13 @@ export function SharedNavigation() {
 
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div id="mobile-menu" className="md:hidden bg-gray-900 shadow-lg" role="navigation" aria-label="Mobile navigation">
-          <div className="px-2 pt-2 pb-3 space-y-1">
+        <div 
+          id="mobile-menu" 
+          className="md:hidden bg-gray-900 shadow-lg safe-container" 
+          role="navigation" 
+          aria-label="Mobile navigation"
+        >
+          <div className="px-2 pt-2 pb-3 space-y-1 max-h-[80vh] overflow-y-auto">
             {navItems.map((item) => (
               <div key={item.name}>
                 <Link
@@ -228,19 +245,17 @@ export function SharedNavigation() {
             ))}
 
             <div className="pt-4 pb-3 border-t border-gray-700">
-              <div className="flex items-center px-3">
+              <div className="px-3 space-y-2">
                 <Link
                   href="/login"
-                  className="block w-full px-3 py-2 rounded-md text-base font-medium text-gray-100 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900 transition-colors"
+                  className="block w-full px-3 py-2 rounded-md text-base font-medium text-gray-100 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900 transition-colors text-center"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Sign In
                 </Link>
-              </div>
-              <div className="mt-3 px-3">
                 <Link
                   href="/signup"
-                  className="block w-full px-3 py-2 rounded-md text-base font-medium bg-blue-600 text-white hover:bg-blue-700 text-center"
+                  className="btn-primary w-full justify-center text-base font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Sign Up
@@ -251,6 +266,7 @@ export function SharedNavigation() {
         </div>
       )}
     </header>
+    </>
   )
 }
 
